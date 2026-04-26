@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package involt.v1;
+
+import "involt/v1/models.proto";
+
+option go_package = "github.com/infira/involt/backend/internal/gen/involt/v1;involtv1";
+
+// SyncService handles bidirectional data exchange between mobile and cloud.
+service SyncService {
+  // PushReadings uploads multiple readings from the mobile device.
+  rpc PushReadings(PushReadingsRequest) returns (PushReadingsResponse);
+  
+  // PullMetadata retrieves the latest master data (Customers, Communities, Sectors).
+  rpc PullMetadata(PullMetadataRequest) returns (PullMetadataResponse);
+}
+
+message PushReadingsRequest {
+  repeated Reading readings = 1;
+}
+
+message PushReadingsResponse {
+  bool success = 1;
+  int32 synced_count = 2;
+}
+
+message PullMetadataRequest {
+  int64 last_sync_timestamp = 1;
+}
+
+message PullMetadataResponse {
+  repeated Community communities = 1;
+  repeated Sector sectors = 2;
+  repeated Customer customers = 3;
+}

@@ -1,0 +1,17 @@
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - revive
+    - gofmt
+    - misspell
+    - unparam
+    - prealloc
+    - whitespace
+
+run:
+  timeout: 5m

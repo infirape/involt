@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package involt.v1;
+
+option go_package = "github.com/infira/involt/backend/internal/gen/involt/v1;involtv1";
+
+// Community represents a village or Caserio (e.g., Alto Chetilla, Cadena).
+message Community {
+  string id = 1;
+  string name = 2;
+}
+
+// Sector represents a specific area within a community (e.g., Sector A, Tambillo Alto).
+message Sector {
+  string id = 1;
+  string community_id = 2;
+  string name = 3;
+}
+
+// ConnectionType defines the electrical connection setup.
+enum ConnectionType {
+  CONNECTION_TYPE_UNSPECIFIED = 0;
+  CONNECTION_TYPE_MONOFASICA = 1;
+  CONNECTION_TYPE_TRIFASICA = 2;
+}
+
+// Customer contains the master data for a water/electricity user.
+message Customer {
+  string id = 1;
+  string code = 2; // e.g., ACH001
+  string name = 3;
+  string community_id = 4;
+  string sector_id = 5;
+  ConnectionType connection_type = 6;
+  double tariff = 7;
+  string meter_number = 8;
+}
+
+// Reading represents a captured meter value at a point in time.
+message Reading {
+  string id = 1;
+  string customer_id = 2;
+  
+  // Consumption data
+  double previous_value = 3;
+  double current_value = 4;
+  double consumption_kwh = 5;
+  
+  // Metadata
+  string photo_url = 6;
+  int64 timestamp = 7; // Unix timestamp in seconds
+  double latitude = 8;
+  double longitude = 9;
+  
+  // Financial data (captured for receipt generation consistency)
+  double cargo_fijo = 10;
+  double alumbrado_publico = 11;
+  double saldo_redondeo = 12;
+  double total_to_pay = 13;
+}
