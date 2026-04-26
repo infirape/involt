@@ -6,6 +6,7 @@ import 'core/presentation/widgets/curved_navigation_bar.dart';
 import 'core/presentation/screens/sectors_list_screen.dart';
 import 'core/presentation/screens/search_screen.dart';
 import 'core/presentation/screens/sync_screen.dart';
+import 'core/presentation/screens/profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,30 +30,30 @@ Future<void> _seedData(AppDatabase db) async {
     final sectorsList = ['Alto Chetilla', 'Cadena', 'Casadencito', 'Cercado', 'Cochapampa'];
 
     for (var i = 0; i < sectorsList.length; i++) {
-      final sectorId = 'sec-${i + 1}';
+      final sectorId = 'sec-\${i + 1}';
       await db.into(db.sectors).insert(
         SectorsCompanion.insert(id: sectorId, communityId: 'com-1', name: sectorsList[i]),
       );
 
       // Seed 2 customers per sector
-      final cust1Id = 'cust-${sectorId}-1';
+      final cust1Id = 'cust-\${sectorId}-1';
       await db.into(db.customers).insert(
         CustomersCompanion.insert(
           id: cust1Id,
-          code: '${sectorsList[i].substring(0, 3).toUpperCase()}001',
-          name: 'Juan Perez - ${sectorsList[i]}',
+          code: '\${sectorsList[i].substring(0, 3).toUpperCase()}001',
+          name: 'Juan Perez - \${sectorsList[i]}',
           communityId: 'com-1',
           sectorId: sectorId,
           connectionType: 1,
           tariff: 0.25,
-          meterNumber: 'M-100$i',
+          meterNumber: 'M-100\$i',
         ),
       );
       
       // Seed an initial reading for verification
       await db.into(db.readings).insert(
         ReadingsCompanion.insert(
-          id: 'read-${cust1Id}',
+          id: 'read-\${cust1Id}',
           customerId: cust1Id,
           previousValue: 100,
           currentValue: 150,
@@ -112,7 +113,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       SearchScreen(db: widget.db),
       SyncScreen(db: widget.db),
       const Center(child: Text('Notificaciones', style: TextStyle(fontSize: 24))),
-      const Center(child: Text('Configuración', style: TextStyle(fontSize: 24))),
+      const ProfileScreen(),
     ];
   }
 
