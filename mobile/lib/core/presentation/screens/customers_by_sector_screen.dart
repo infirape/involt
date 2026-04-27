@@ -112,7 +112,6 @@ class _CustomersBySectorScreenState extends State<CustomersBySectorScreen> {
     setState(() => _isLoadingMore = true);
     final selectedPeriod = context.read<AppStateProvider>().selectedPeriod;
 
-    // Build query
     var query = widget.db.select(widget.db.customers)
       ..where((c) => c.sectorId.equals(widget.sector.id));
     
@@ -211,7 +210,6 @@ class _CustomersBySectorScreenState extends State<CustomersBySectorScreen> {
       ),
       body: Column(
         children: [
-          // Search + Stats Row
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Row(
@@ -264,7 +262,6 @@ class _CustomersBySectorScreenState extends State<CustomersBySectorScreen> {
             ),
           ),
 
-          // Filter Tabs
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: SingleChildScrollView(
@@ -307,38 +304,12 @@ class _CustomersBySectorScreenState extends State<CustomersBySectorScreen> {
                           final customer = _customers[index];
                           final isMeasured = registeredIds.contains(customer.id);
 
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: GlassCard(
-                              padding: EdgeInsets.zero,
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: isMeasured ? AppColors.cyan.withOpacity(0.2) : AppColors.magenta.withOpacity(0.1),
-                                  child: Icon(
-                                    isMeasured ? Icons.check_circle : Icons.pending, 
-                                    color: isMeasured ? AppColors.cyan : AppColors.magenta, 
-                                    size: 20
-                                  ),
-                                ),
-                                title: Text(customer.name,
-                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                                subtitle: Text('Suministro: ${customer.code}',
-                                    style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                                trailing: const Icon(Icons.chevron_right, color: Colors.white24),
-                                onTap: () async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ReadingScreen(
-                                        customer: customer,
-                                        db: widget.db,
-                                      ),
-                                    ),
-                                  );
-                                  _loadStats();
-                                },
-                              ),
-                            ),
+                          return AnimatedCustomerItem(
+                            customer: customer,
+                            isMeasured: isMeasured,
+                            activeFilter: _activeFilter,
+                            db: widget.db,
+                            onMeasured: () => _loadStats(),
                           );
                         },
                       );
@@ -393,11 +364,140 @@ class _CustomersBySectorScreenState extends State<CustomersBySectorScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.person_search_outlined, size: 60, color: Colors.white12),
+          const Icon(Icons.person_search_outlined, size: 60, color: Colors.white12),
           const SizedBox(height: 15),
-          Text('No se encontraron clientes', style: TextStyle(color: AppColors.textMuted)),
+          const Text('No se encontraron clientes', style: TextStyle(color: Colors.white24)),
         ],
       ),
+    );
+  }
+}
+
+class AnimatedCustomerItem extends StatefulWidget {
+  final Customer customer;
+  final bool isMeasured;
+  final String activeFilter;
+  final AppDatabase db;
+  final VoidCallback onMeasured;
+
+  const AnimatedCustomerItem({
+    super.key,
+    required this.customer,
+    required this.isMeasured,
+    required this.activeFilter,
+    required this.db,
+    required this.onMeasured,
+  });
+
+  @override
+  State<AnimatedCustomerItem> createState() => _AnimatedCustomerItemState();
+}
+
+class _AnimatedCustomerItemState extends State<AnimatedCustomerItem> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _opacityAnimation;
+  late Animation<double> _sizeAnimation;
+  
+  bool _shouldShow = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200));
+    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+      parent: _controller, 
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+    ));
+    _sizeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+      parent: _controller, 
+      curve: const Interval(0.4, 1.0, curve: Curves.easeInOutCubic),
+    ));
+    
+    _updateVisibility();
+  }
+
+  @override
+  void didUpdateWidget(AnimatedCustomerItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isMeasured != oldWidget.isMeasured || widget.activeFilter != oldWidget.activeFilter) {
+      _updateVisibility();
+    }
+  }
+
+  void _updateVisibility() {
+    final nowShouldShow = _calcShouldShow();
+    if (_shouldShow && !nowShouldShow) {
+      // Trigger disappearance animation
+      _controller.forward().then((_) {
+        if (mounted) setState(() => _shouldShow = false);
+      });
+    } else if (!_shouldShow && nowShouldShow) {
+      // Restore immediately or animate back
+      _controller.reverse();
+      setState(() => _shouldShow = true);
+    }
+  }
+
+  bool _calcShouldShow() {
+    if (widget.activeFilter == 'pending' && widget.isMeasured) return false;
+    if (widget.activeFilter == 'measured' && !widget.isMeasured) return false;
+    return true;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        if (!_shouldShow && _controller.isCompleted) return const SizedBox.shrink();
+        
+        return Opacity(
+          opacity: _opacityAnimation.value,
+          child: Align(
+            alignment: Alignment.topCenter,
+            heightFactor: _sizeAnimation.value,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: GlassCard(
+                padding: EdgeInsets.zero,
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: widget.isMeasured ? AppColors.cyan.withOpacity(0.2) : AppColors.magenta.withOpacity(0.1),
+                    child: Icon(
+                      widget.isMeasured ? Icons.check_circle : Icons.pending, 
+                      color: widget.isMeasured ? AppColors.cyan : AppColors.magenta, 
+                      size: 20
+                    ),
+                  ),
+                  title: Text(widget.customer.name,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                  subtitle: Text('Suministro: ${widget.customer.code}',
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                  trailing: const Icon(Icons.chevron_right, color: Colors.white24),
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReadingScreen(
+                          customer: widget.customer,
+                          db: widget.db,
+                        ),
+                      ),
+                    );
+                    widget.onMeasured();
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
