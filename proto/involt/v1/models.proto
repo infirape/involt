@@ -37,6 +37,7 @@ message Customer {
   double latitude = 9;
   double longitude = 10;
   double last_reading_value = 11;
+  double initial_reading = 12;
 }
 
 // Reading represents a captured meter value at a point in time.
@@ -65,4 +66,19 @@ message Reading {
 message AppConfig {
   string map_url_template = 1;
   string map_user_agent = 2;
+}
+
+message Settings {
+  string municipalidad = 1;
+  string empresa = 2;
+  string ruc = 3;
+  string direccion = 4;
+  string telefono = 5;
+  string email = 6;
+  int32 dias_vencimiento = 7;
+  double tarifa_kwh = 8;
+  double cargo_fijo = 9;
+  double alumbrado = 10;
+  double mantenimiento = 11;
+  bool igv = 12;
 }

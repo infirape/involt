@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Brand Colors
-  static const Color magenta = Color(0xFFFF00FF);
+  static const Color volt = Color(0xFFFFE600);
   static const Color cyan = Color(0xFF00FFFF);
-  static const Color green = Color(0xFF00FF88);
+  static const Color amber = Color(0xFFFF9900);
   
   // Backgrounds
   static const Color onyx = Color(0xFF050505);
-  static const Color deepPurple = Color(0xFF1A001A);
+  static const Color deepAmber = Color(0xFF1A1500);
   
   // Surfaces & Glass
   static const Color surface = Color(0xFF121212);
@@ -24,6 +24,6 @@ class AppColors {
   static const LinearGradient mainGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [deepPurple, onyx],
+    colors: [deepAmber, onyx],
   );
 }

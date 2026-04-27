@@ -70,3 +70,11 @@ func (r *PostgresMetadataRepository) GetAppConfig(ctx context.Context) (*domain.
 	}
 	return config, nil
 }
+
+func (r *PostgresMetadataRepository) GetSettings(ctx context.Context) (*domain.Settings, error) {
+	var settings domain.Settings
+	query := `SELECT id, municipalidad, empresa, ruc, direccion, telefono, email, dias_vencimiento, tarifa_kwh, cargo_fijo, alumbrado, mantenimiento, igv, created_at, updated_at 
+			 FROM settings WHERE id = 'main'`
+	err := r.db.GetContext(ctx, &settings, query)
+	return &settings, err
+}

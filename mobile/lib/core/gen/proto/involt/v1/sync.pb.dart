@@ -181,6 +181,7 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     $core.Iterable<$0.Sector>? sectors,
     $core.Iterable<$0.Customer>? customers,
     $0.AppConfig? config,
+    $0.Settings? settings,
   }) {
     final $result = create();
     if (communities != null) {
@@ -195,6 +196,9 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     if (config != null) {
       $result.config = config;
     }
+    if (settings != null) {
+      $result.settings = settings;
+    }
     return $result;
   }
   PullMetadataResponse._() : super();
@@ -206,6 +210,7 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     ..pc<$0.Sector>(2, _omitFieldNames ? '' : 'sectors', $pb.PbFieldType.PM, subBuilder: $0.Sector.create)
     ..pc<$0.Customer>(3, _omitFieldNames ? '' : 'customers', $pb.PbFieldType.PM, subBuilder: $0.Customer.create)
     ..aOM<$0.AppConfig>(4, _omitFieldNames ? '' : 'config', subBuilder: $0.AppConfig.create)
+    ..aOM<$0.Settings>(5, _omitFieldNames ? '' : 'settings', subBuilder: $0.Settings.create)
     ..hasRequiredFields = false
   ;
 
@@ -249,6 +254,17 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
   void clearConfig() => clearField(4);
   @$pb.TagNumber(4)
   $0.AppConfig ensureConfig() => $_ensure(3);
+
+  @$pb.TagNumber(5)
+  $0.Settings get settings => $_getN(4);
+  @$pb.TagNumber(5)
+  set settings($0.Settings v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasSettings() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearSettings() => clearField(5);
+  @$pb.TagNumber(5)
+  $0.Settings ensureSettings() => $_ensure(4);
 }
 
 class UploadPhotoRequest extends $pb.GeneratedMessage {

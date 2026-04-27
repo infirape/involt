@@ -1,0 +1,64 @@
+<div id="modal-container" class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+    <div class="bg-dark-card border border-gray-700 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-2xl font-bold text-cyan">{{.Customer.Name}}</h3>
+                    <p class="text-gray-400 font-mono text-sm">{{.Customer.Code}} | {{.Community}} - {{.Sector}}</p>
+                </div>
+                <button onclick="document.getElementById('modal-container').remove()" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-dark p-4 rounded-lg border border-gray-800">
+                    <div class="text-gray-500 text-xs uppercase tracking-wider mb-1">Medidor</div>
+                    <div class="text-xl font-mono text-magenta">{{.Customer.MeterNumber}}</div>
+                </div>
+                <div class="bg-dark p-4 rounded-lg border border-gray-800">
+                    <div class="text-gray-500 text-xs uppercase tracking-wider mb-1">Tipo de Conexión</div>
+                    <div class="text-xl">{{if eq .Customer.ConnectionType 1}}Monofásica{{else}}Trifásica{{end}}</div>
+                </div>
+            </div>
+
+            <h4 class="text-lg font-semibold mb-4 text-gray-300">Historial de Lecturas</h4>
+            <div class="overflow-hidden border border-gray-800 rounded-lg">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-900 text-gray-400">
+                        <tr>
+                            <th class="px-4 py-3 text-left">Fecha</th>
+                            <th class="px-4 py-3 text-right">Lectura</th>
+                            <th class="px-4 py-3 text-right">Consumo</th>
+                            <th class="px-4 py-3 text-right">Total</th>
+                            <th class="px-4 py-3 text-center">Recibo</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-800">
+                        {{range .Readings}}
+                        <tr class="hover:bg-gray-800/50 transition">
+                            <td class="px-4 py-3">{{.Timestamp.Format "02/01/2006"}}</td>
+                            <td class="px-4 py-3 text-right font-mono">{{printf "%.0f" .CurrentValue}}</td>
+                            <td class="px-4 py-3 text-right text-cyan">{{printf "%.0f" .Consumption}} kWh</td>
+                            <td class="px-4 py-3 text-right font-bold text-magenta">S/ {{printf "%.2f" .TotalToPay}}</td>
+                            <td class="px-4 py-3 text-center">
+                                <a href="/admin/customers/pdf/{{$.Customer.Code}}" target="_blank" class="text-gray-400 hover:text-magenta transition" title="Descargar PDF">
+                                    📄
+                                </a>
+                            </td>
+                        </tr>
+                        {{else}}
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-gray-500 italic">No hay lecturas registradas</td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-8 flex justify-end">
+                <button onclick="document.getElementById('modal-container').remove()" class="bg-gray-800 px-6 py-2 rounded-lg font-semibold hover:bg-gray-700 transition">
+                    Cerrar Detalle
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

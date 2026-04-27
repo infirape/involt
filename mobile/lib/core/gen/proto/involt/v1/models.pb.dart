@@ -176,6 +176,7 @@ class Customer extends $pb.GeneratedMessage {
     $core.double? latitude,
     $core.double? longitude,
     $core.double? lastReadingValue,
+    $core.double? initialReading,
   }) {
     final $result = create();
     if (id != null) {
@@ -211,6 +212,9 @@ class Customer extends $pb.GeneratedMessage {
     if (lastReadingValue != null) {
       $result.lastReadingValue = lastReadingValue;
     }
+    if (initialReading != null) {
+      $result.initialReading = initialReading;
+    }
     return $result;
   }
   Customer._() : super();
@@ -229,6 +233,7 @@ class Customer extends $pb.GeneratedMessage {
     ..a<$core.double>(9, _omitFieldNames ? '' : 'latitude', $pb.PbFieldType.OD)
     ..a<$core.double>(10, _omitFieldNames ? '' : 'longitude', $pb.PbFieldType.OD)
     ..a<$core.double>(11, _omitFieldNames ? '' : 'lastReadingValue', $pb.PbFieldType.OD)
+    ..a<$core.double>(12, _omitFieldNames ? '' : 'initialReading', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -351,6 +356,15 @@ class Customer extends $pb.GeneratedMessage {
   $core.bool hasLastReadingValue() => $_has(10);
   @$pb.TagNumber(11)
   void clearLastReadingValue() => clearField(11);
+
+  @$pb.TagNumber(12)
+  $core.double get initialReading => $_getN(11);
+  @$pb.TagNumber(12)
+  set initialReading($core.double v) { $_setDouble(11, v); }
+  @$pb.TagNumber(12)
+  $core.bool hasInitialReading() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearInitialReading() => clearField(12);
 }
 
 /// Reading represents a captured meter value at a point in time.
@@ -638,6 +652,210 @@ class AppConfig extends $pb.GeneratedMessage {
   $core.bool hasMapUserAgent() => $_has(1);
   @$pb.TagNumber(2)
   void clearMapUserAgent() => clearField(2);
+}
+
+class Settings extends $pb.GeneratedMessage {
+  factory Settings({
+    $core.String? municipalidad,
+    $core.String? empresa,
+    $core.String? ruc,
+    $core.String? direccion,
+    $core.String? telefono,
+    $core.String? email,
+    $core.int? diasVencimiento,
+    $core.double? tarifaKwh,
+    $core.double? cargoFijo,
+    $core.double? alumbrado,
+    $core.double? mantenimiento,
+    $core.bool? igv,
+  }) {
+    final $result = create();
+    if (municipalidad != null) {
+      $result.municipalidad = municipalidad;
+    }
+    if (empresa != null) {
+      $result.empresa = empresa;
+    }
+    if (ruc != null) {
+      $result.ruc = ruc;
+    }
+    if (direccion != null) {
+      $result.direccion = direccion;
+    }
+    if (telefono != null) {
+      $result.telefono = telefono;
+    }
+    if (email != null) {
+      $result.email = email;
+    }
+    if (diasVencimiento != null) {
+      $result.diasVencimiento = diasVencimiento;
+    }
+    if (tarifaKwh != null) {
+      $result.tarifaKwh = tarifaKwh;
+    }
+    if (cargoFijo != null) {
+      $result.cargoFijo = cargoFijo;
+    }
+    if (alumbrado != null) {
+      $result.alumbrado = alumbrado;
+    }
+    if (mantenimiento != null) {
+      $result.mantenimiento = mantenimiento;
+    }
+    if (igv != null) {
+      $result.igv = igv;
+    }
+    return $result;
+  }
+  Settings._() : super();
+  factory Settings.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Settings.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Settings', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'municipalidad')
+    ..aOS(2, _omitFieldNames ? '' : 'empresa')
+    ..aOS(3, _omitFieldNames ? '' : 'ruc')
+    ..aOS(4, _omitFieldNames ? '' : 'direccion')
+    ..aOS(5, _omitFieldNames ? '' : 'telefono')
+    ..aOS(6, _omitFieldNames ? '' : 'email')
+    ..a<$core.int>(7, _omitFieldNames ? '' : 'diasVencimiento', $pb.PbFieldType.O3)
+    ..a<$core.double>(8, _omitFieldNames ? '' : 'tarifaKwh', $pb.PbFieldType.OD)
+    ..a<$core.double>(9, _omitFieldNames ? '' : 'cargoFijo', $pb.PbFieldType.OD)
+    ..a<$core.double>(10, _omitFieldNames ? '' : 'alumbrado', $pb.PbFieldType.OD)
+    ..a<$core.double>(11, _omitFieldNames ? '' : 'mantenimiento', $pb.PbFieldType.OD)
+    ..aOB(12, _omitFieldNames ? '' : 'igv')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Settings clone() => Settings()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Settings copyWith(void Function(Settings) updates) => super.copyWith((message) => updates(message as Settings)) as Settings;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Settings create() => Settings._();
+  Settings createEmptyInstance() => create();
+  static $pb.PbList<Settings> createRepeated() => $pb.PbList<Settings>();
+  @$core.pragma('dart2js:noInline')
+  static Settings getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Settings>(create);
+  static Settings? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get municipalidad => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set municipalidad($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMunicipalidad() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMunicipalidad() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get empresa => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set empresa($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasEmpresa() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearEmpresa() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get ruc => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set ruc($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasRuc() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearRuc() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get direccion => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set direccion($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasDireccion() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearDireccion() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get telefono => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set telefono($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasTelefono() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearTelefono() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.String get email => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set email($core.String v) { $_setString(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasEmail() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearEmail() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.int get diasVencimiento => $_getIZ(6);
+  @$pb.TagNumber(7)
+  set diasVencimiento($core.int v) { $_setSignedInt32(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasDiasVencimiento() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearDiasVencimiento() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.double get tarifaKwh => $_getN(7);
+  @$pb.TagNumber(8)
+  set tarifaKwh($core.double v) { $_setDouble(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasTarifaKwh() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearTarifaKwh() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $core.double get cargoFijo => $_getN(8);
+  @$pb.TagNumber(9)
+  set cargoFijo($core.double v) { $_setDouble(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasCargoFijo() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearCargoFijo() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.double get alumbrado => $_getN(9);
+  @$pb.TagNumber(10)
+  set alumbrado($core.double v) { $_setDouble(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasAlumbrado() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearAlumbrado() => clearField(10);
+
+  @$pb.TagNumber(11)
+  $core.double get mantenimiento => $_getN(10);
+  @$pb.TagNumber(11)
+  set mantenimiento($core.double v) { $_setDouble(10, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasMantenimiento() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearMantenimiento() => clearField(11);
+
+  @$pb.TagNumber(12)
+  $core.bool get igv => $_getBF(11);
+  @$pb.TagNumber(12)
+  set igv($core.bool v) { $_setBool(11, v); }
+  @$pb.TagNumber(12)
+  $core.bool hasIgv() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearIgv() => clearField(12);
 }
 
 

@@ -199,6 +199,7 @@ type Customer struct {
 	Latitude         float64                `protobuf:"fixed64,9,opt,name=latitude,proto3" json:"latitude,omitempty"`
 	Longitude        float64                `protobuf:"fixed64,10,opt,name=longitude,proto3" json:"longitude,omitempty"`
 	LastReadingValue float64                `protobuf:"fixed64,11,opt,name=last_reading_value,json=lastReadingValue,proto3" json:"last_reading_value,omitempty"`
+	InitialReading   float64                `protobuf:"fixed64,12,opt,name=initial_reading,json=initialReading,proto3" json:"initial_reading,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -306,6 +307,13 @@ func (x *Customer) GetLongitude() float64 {
 func (x *Customer) GetLastReadingValue() float64 {
 	if x != nil {
 		return x.LastReadingValue
+	}
+	return 0
+}
+
+func (x *Customer) GetInitialReading() float64 {
+	if x != nil {
+		return x.InitialReading
 	}
 	return 0
 }
@@ -507,6 +515,138 @@ func (x *AppConfig) GetMapUserAgent() string {
 	return ""
 }
 
+type Settings struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Municipalidad   string                 `protobuf:"bytes,1,opt,name=municipalidad,proto3" json:"municipalidad,omitempty"`
+	Empresa         string                 `protobuf:"bytes,2,opt,name=empresa,proto3" json:"empresa,omitempty"`
+	Ruc             string                 `protobuf:"bytes,3,opt,name=ruc,proto3" json:"ruc,omitempty"`
+	Direccion       string                 `protobuf:"bytes,4,opt,name=direccion,proto3" json:"direccion,omitempty"`
+	Telefono        string                 `protobuf:"bytes,5,opt,name=telefono,proto3" json:"telefono,omitempty"`
+	Email           string                 `protobuf:"bytes,6,opt,name=email,proto3" json:"email,omitempty"`
+	DiasVencimiento int32                  `protobuf:"varint,7,opt,name=dias_vencimiento,json=diasVencimiento,proto3" json:"dias_vencimiento,omitempty"`
+	TarifaKwh       float64                `protobuf:"fixed64,8,opt,name=tarifa_kwh,json=tarifaKwh,proto3" json:"tarifa_kwh,omitempty"`
+	CargoFijo       float64                `protobuf:"fixed64,9,opt,name=cargo_fijo,json=cargoFijo,proto3" json:"cargo_fijo,omitempty"`
+	Alumbrado       float64                `protobuf:"fixed64,10,opt,name=alumbrado,proto3" json:"alumbrado,omitempty"`
+	Mantenimiento   float64                `protobuf:"fixed64,11,opt,name=mantenimiento,proto3" json:"mantenimiento,omitempty"`
+	Igv             bool                   `protobuf:"varint,12,opt,name=igv,proto3" json:"igv,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *Settings) Reset() {
+	*x = Settings{}
+	mi := &file_involt_v1_models_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Settings) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Settings) ProtoMessage() {}
+
+func (x *Settings) ProtoReflect() protoreflect.Message {
+	mi := &file_involt_v1_models_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Settings.ProtoReflect.Descriptor instead.
+func (*Settings) Descriptor() ([]byte, []int) {
+	return file_involt_v1_models_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *Settings) GetMunicipalidad() string {
+	if x != nil {
+		return x.Municipalidad
+	}
+	return ""
+}
+
+func (x *Settings) GetEmpresa() string {
+	if x != nil {
+		return x.Empresa
+	}
+	return ""
+}
+
+func (x *Settings) GetRuc() string {
+	if x != nil {
+		return x.Ruc
+	}
+	return ""
+}
+
+func (x *Settings) GetDireccion() string {
+	if x != nil {
+		return x.Direccion
+	}
+	return ""
+}
+
+func (x *Settings) GetTelefono() string {
+	if x != nil {
+		return x.Telefono
+	}
+	return ""
+}
+
+func (x *Settings) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *Settings) GetDiasVencimiento() int32 {
+	if x != nil {
+		return x.DiasVencimiento
+	}
+	return 0
+}
+
+func (x *Settings) GetTarifaKwh() float64 {
+	if x != nil {
+		return x.TarifaKwh
+	}
+	return 0
+}
+
+func (x *Settings) GetCargoFijo() float64 {
+	if x != nil {
+		return x.CargoFijo
+	}
+	return 0
+}
+
+func (x *Settings) GetAlumbrado() float64 {
+	if x != nil {
+		return x.Alumbrado
+	}
+	return 0
+}
+
+func (x *Settings) GetMantenimiento() float64 {
+	if x != nil {
+		return x.Mantenimiento
+	}
+	return 0
+}
+
+func (x *Settings) GetIgv() bool {
+	if x != nil {
+		return x.Igv
+	}
+	return false
+}
+
 var File_involt_v1_models_proto protoreflect.FileDescriptor
 
 const file_involt_v1_models_proto_rawDesc = "" +
@@ -518,7 +658,7 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\x06Sector\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\fcommunity_id\x18\x02 \x01(\tR\vcommunityId\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\"\xe9\x02\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\"\x92\x03\n" +
 	"\bCustomer\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
@@ -531,7 +671,8 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\blatitude\x18\t \x01(\x01R\blatitude\x12\x1c\n" +
 	"\tlongitude\x18\n" +
 	" \x01(\x01R\tlongitude\x12,\n" +
-	"\x12last_reading_value\x18\v \x01(\x01R\x10lastReadingValue\"\xb9\x03\n" +
+	"\x12last_reading_value\x18\v \x01(\x01R\x10lastReadingValue\x12'\n" +
+	"\x0finitial_reading\x18\f \x01(\x01R\x0einitialReading\"\xb9\x03\n" +
 	"\aReading\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcustomer_id\x18\x02 \x01(\tR\n" +
@@ -552,7 +693,23 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"totalToPay\"[\n" +
 	"\tAppConfig\x12(\n" +
 	"\x10map_url_template\x18\x01 \x01(\tR\x0emapUrlTemplate\x12$\n" +
-	"\x0emap_user_agent\x18\x02 \x01(\tR\fmapUserAgent*p\n" +
+	"\x0emap_user_agent\x18\x02 \x01(\tR\fmapUserAgent\"\xeb\x02\n" +
+	"\bSettings\x12$\n" +
+	"\rmunicipalidad\x18\x01 \x01(\tR\rmunicipalidad\x12\x18\n" +
+	"\aempresa\x18\x02 \x01(\tR\aempresa\x12\x10\n" +
+	"\x03ruc\x18\x03 \x01(\tR\x03ruc\x12\x1c\n" +
+	"\tdireccion\x18\x04 \x01(\tR\tdireccion\x12\x1a\n" +
+	"\btelefono\x18\x05 \x01(\tR\btelefono\x12\x14\n" +
+	"\x05email\x18\x06 \x01(\tR\x05email\x12)\n" +
+	"\x10dias_vencimiento\x18\a \x01(\x05R\x0fdiasVencimiento\x12\x1d\n" +
+	"\n" +
+	"tarifa_kwh\x18\b \x01(\x01R\ttarifaKwh\x12\x1d\n" +
+	"\n" +
+	"cargo_fijo\x18\t \x01(\x01R\tcargoFijo\x12\x1c\n" +
+	"\talumbrado\x18\n" +
+	" \x01(\x01R\talumbrado\x12$\n" +
+	"\rmantenimiento\x18\v \x01(\x01R\rmantenimiento\x12\x10\n" +
+	"\x03igv\x18\f \x01(\bR\x03igv*p\n" +
 	"\x0eConnectionType\x12\x1f\n" +
 	"\x1bCONNECTION_TYPE_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aCONNECTION_TYPE_MONOFASICA\x10\x01\x12\x1d\n" +
@@ -571,7 +728,7 @@ func file_involt_v1_models_proto_rawDescGZIP() []byte {
 }
 
 var file_involt_v1_models_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_involt_v1_models_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_involt_v1_models_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_involt_v1_models_proto_goTypes = []any{
 	(ConnectionType)(0), // 0: involt.v1.ConnectionType
 	(*Community)(nil),   // 1: involt.v1.Community
@@ -579,6 +736,7 @@ var file_involt_v1_models_proto_goTypes = []any{
 	(*Customer)(nil),    // 3: involt.v1.Customer
 	(*Reading)(nil),     // 4: involt.v1.Reading
 	(*AppConfig)(nil),   // 5: involt.v1.AppConfig
+	(*Settings)(nil),    // 6: involt.v1.Settings
 }
 var file_involt_v1_models_proto_depIdxs = []int32{
 	0, // 0: involt.v1.Customer.connection_type:type_name -> involt.v1.ConnectionType
@@ -600,7 +758,7 @@ func file_involt_v1_models_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_involt_v1_models_proto_rawDesc), len(file_involt_v1_models_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

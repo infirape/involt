@@ -26,13 +26,19 @@
 - Ensure PR description summarizes changes clearly.
 
 ### go-testing
-- Use Bubbletea TUI testing patterns for CLI tools.
-- Mock external dependencies (DB, API) where possible.
+- Use standard Go testing for backend logic.
+- Mock external dependencies where possible.
+- Use `httptest` for RPC/HTTP handlers.
+
+### jira-integration
+- Connect to Jira API using credentials from .env.
+- Sync tasks with Jira board status.
 
 ## Project Conventions
 
 | File | Path | Notes |
 |------|------|-------|
-| README.md | /Users/hbs/.gemini/antigravity/scratch/infira-mvp/README.md | Project root |
+| AGENTS.md | /Users/hbs/Documents/infira/involt/AGENTS.md | Core project rules and rules |
+| README.md | /Users/hbs/Documents/infira/involt/README.md | Project root |
 
 Read the convention files listed above for project-specific patterns and rules.
