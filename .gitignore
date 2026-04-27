@@ -1,1 +1,7 @@
 .env
+backend/bin/
+.DS_Store
+*.exe
+*.dll
+*.so
+*.dylib
