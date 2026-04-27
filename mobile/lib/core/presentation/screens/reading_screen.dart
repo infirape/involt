@@ -49,9 +49,54 @@ class _ReadingScreenState extends State<ReadingScreen> {
     final repo = DriftReadingRepository(widget.db);
     final readings = await repo.getReadingsForCustomer(widget.customer.id);
     
-    if (readings.any((r) => r.period == selectedPeriod)) {
-      if (mounted) setState(() => _isAlreadyRegistered = true);
+    try {
+      final existingReading = readings.firstWhere(
+        (r) => r.period == selectedPeriod,
+        orElse: () => throw Exception('Not found'),
+      );
+      
+      if (mounted) {
+        setState(() {
+          _isAlreadyRegistered = true;
+          _kwhController.text = existingReading.currentValue.toStringAsFixed(1);
+          _commentController.text = existingReading.comment ?? '';
+          if (existingReading.photoUrl != null) {
+            _image = File(existingReading.photoUrl!);
+          }
+          _showDuplicateEntryWarning();
+        });
+      }
+    } catch (e) {
+      // No reading found for period, no action needed
     }
+  }
+
+  void _showDuplicateEntryWarning() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: AppColors.onyx,
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.amber),
+              SizedBox(width: 10),
+              Text('Atención', style: TextStyle(color: Colors.white)),
+            ],
+          ),
+          content: const Text(
+            'Ya existe un registro previo para este cliente en el periodo actual. Al guardar, se actualizará la información existente.',
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('ENTENDIDO', style: TextStyle(color: AppColors.cyan)),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Future<void> _determinePosition() async {
@@ -79,19 +124,13 @@ class _ReadingScreenState extends State<ReadingScreen> {
     }
 
     if (_currentValue < _previousValue) {
-      final confirmLower = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: AppColors.onyx,
-          title: const Text('Lectura Menor', style: TextStyle(color: Colors.white)),
-          content: const Text('La lectura ingresada es menor a la anterior. ¿Está seguro de que es correcta?', style: TextStyle(color: Colors.white70)),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('CORREGIR')),
-            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('SÍ, ES CORRECTA', style: TextStyle(color: AppColors.magenta))),
-          ],
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('ERROR: La lectura no puede ser menor a la anterior.'),
         ),
       );
-      if (confirmLower != true) return;
+      return;
     }
 
     if (_isAlreadyRegistered) {
@@ -116,7 +155,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
     try {
       final repo = DriftReadingRepository(widget.db);
       final reading = Reading(
-        id: 'read-${widget.customer.id}-${DateTime.now().millisecondsSinceEpoch}',
+        id: 'read-${widget.customer.id}-$selectedPeriod',
         customerId: widget.customer.id,
         period: selectedPeriod,
         previousValue: _previousValue,
