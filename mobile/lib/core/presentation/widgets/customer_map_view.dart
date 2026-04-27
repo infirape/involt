@@ -152,7 +152,7 @@ class _CustomerMapViewState extends State<CustomerMapView> {
                   return CircleMarker(
                     point: LatLng(c.latitude, c.longitude),
                     radius: 6,
-                    color: (hasReading ? AppColors.cyan : AppColors.magenta).withOpacity(0.5),
+                    color: (hasReading ? AppColors.cyan : AppColors.volt).withOpacity(0.5),
                     useRadiusInMeter: false,
                   );
                 }).toList();
@@ -168,7 +168,7 @@ class _CustomerMapViewState extends State<CustomerMapView> {
               }).map((c) {
                 final reading = widget.readings.cast<Reading?>().firstWhere((r) => r?.customerId == c.id, orElse: () => null);
                 final bool hasReading = reading != null;
-                final markerColor = hasReading ? AppColors.magenta : AppColors.cyan;
+                final markerColor = hasReading ? AppColors.volt : AppColors.cyan;
                 final isSelected = c.id == widget.selectedCustomerId;
 
                 return Marker(
@@ -202,7 +202,7 @@ class _CustomerMapViewState extends State<CustomerMapView> {
                           child: Text(
                             hasReading ? '${reading!.currentValue.toStringAsFixed(1)}' : c.code,
                             style: TextStyle(
-                              color: hasReading ? AppColors.magenta : Colors.white, 
+                              color: hasReading ? AppColors.volt : Colors.white, 
                               fontSize: 9, 
                               fontWeight: FontWeight.bold
                             ),

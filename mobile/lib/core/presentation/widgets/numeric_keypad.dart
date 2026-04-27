@@ -81,19 +81,19 @@ class NumericKeypad extends StatelessWidget {
             child: Container(
               height: 55,
               decoration: BoxDecoration(
-                color: isSpecial ? AppColors.magenta.withOpacity(0.1) : Colors.white.withOpacity(0.05),
+                color: isSpecial ? AppColors.volt.withOpacity(0.1) : Colors.white.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(
-                  color: isSpecial ? AppColors.magenta.withOpacity(0.3) : Colors.white.withOpacity(0.1),
+                  color: isSpecial ? AppColors.volt.withOpacity(0.3) : Colors.white.withOpacity(0.1),
                 ),
               ),
               child: Center(
                 child: label == 'DEL' 
-                  ? const Icon(Icons.backspace_outlined, color: AppColors.magenta, size: 22)
+                  ? const Icon(Icons.backspace_outlined, color: AppColors.volt, size: 22)
                   : Text(
                       label,
                       style: TextStyle(
-                        color: isSpecial ? AppColors.magenta : Colors.white,
+                        color: isSpecial ? AppColors.volt : Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),

@@ -249,13 +249,13 @@ class _CustomersBySectorScreenState extends State<CustomersBySectorScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
-                    color: AppColors.magenta.withOpacity(0.1),
+                    color: AppColors.volt.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: AppColors.magenta.withOpacity(0.3)),
+                    border: Border.all(color: AppColors.volt.withOpacity(0.3)),
                   ),
                   child: Text(
                     '$_measuredCount/$_totalCount',
-                    style: const TextStyle(color: AppColors.magenta, fontWeight: FontWeight.bold, fontSize: 13),
+                    style: const TextStyle(color: AppColors.volt, fontWeight: FontWeight.bold, fontSize: 13),
                   ),
                 ),
               ],
@@ -279,7 +279,7 @@ class _CustomersBySectorScreenState extends State<CustomersBySectorScreen> {
 
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator(color: AppColors.magenta))
+                ? const Center(child: CircularProgressIndicator(color: AppColors.volt))
                 : StreamBuilder<List<Reading>>(
                     stream: (widget.db.select(widget.db.readings)
                           ..where((r) => r.period.equals(selectedPeriod)))
@@ -297,7 +297,7 @@ class _CustomersBySectorScreenState extends State<CustomersBySectorScreen> {
                           if (index == _customers.length) {
                             return const Padding(
                               padding: EdgeInsets.symmetric(vertical: 20),
-                              child: Center(child: CircularProgressIndicator(color: AppColors.magenta, strokeWidth: 2)),
+                              child: Center(child: CircularProgressIndicator(color: AppColors.volt, strokeWidth: 2)),
                             );
                           }
 
@@ -335,15 +335,15 @@ class _CustomersBySectorScreenState extends State<CustomersBySectorScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.magenta.withOpacity(0.2) : Colors.white.withOpacity(0.05),
+            color: isSelected ? AppColors.volt.withOpacity(0.2) : Colors.white.withOpacity(0.05),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? AppColors.magenta : Colors.white10,
+              color: isSelected ? AppColors.volt : Colors.white10,
             ),
           ),
           child: Row(
             children: [
-              Icon(icon, size: 14, color: isSelected ? AppColors.magenta : Colors.white38),
+              Icon(icon, size: 14, color: isSelected ? AppColors.volt : Colors.white38),
               const SizedBox(width: 6),
               Text(
                 label,
@@ -468,10 +468,10 @@ class _AnimatedCustomerItemState extends State<AnimatedCustomerItem> with Single
                 padding: EdgeInsets.zero,
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: widget.isMeasured ? AppColors.cyan.withOpacity(0.2) : AppColors.magenta.withOpacity(0.1),
+                    backgroundColor: widget.isMeasured ? AppColors.cyan.withOpacity(0.2) : AppColors.volt.withOpacity(0.1),
                     child: Icon(
                       widget.isMeasured ? Icons.check_circle : Icons.pending, 
-                      color: widget.isMeasured ? AppColors.cyan : AppColors.magenta, 
+                      color: widget.isMeasured ? AppColors.cyan : AppColors.volt, 
                       size: 20
                     ),
                   ),

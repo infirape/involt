@@ -45,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: const BoxDecoration(
-                      color: AppColors.magenta,
+                      color: AppColors.volt,
                       shape: BoxShape.circle,
                     ),
                     child: const CircleAvatar(
@@ -63,12 +63,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.magenta.withOpacity(0.1),
+                      color: AppColors.volt.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.magenta.withOpacity(0.3)),
+                      border: Border.all(color: AppColors.volt.withOpacity(0.3)),
                     ),
                     child: const Text('OPERADOR SENIOR', 
-                      style: TextStyle(color: AppColors.magenta, fontSize: 10, fontWeight: FontWeight.bold)),
+                      style: TextStyle(color: AppColors.volt, fontSize: 10, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
@@ -164,11 +164,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: OutlinedButton(
                 onPressed: () => _showLogoutDialog(context),
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppColors.magenta),
+                  side: const BorderSide(color: AppColors.volt),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 ),
                 child: const Text('CERRAR SESIÓN', 
-                  style: TextStyle(color: AppColors.magenta, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                  style: TextStyle(color: AppColors.volt, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
               ),
             ),
             
@@ -252,7 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildSummaryRow('Total Lecturas:', readings.length.toString()),
-            _buildSummaryRow('Pendientes de Subir:', unsynced.toString(), color: AppColors.magenta),
+            _buildSummaryRow('Pendientes de Subir:', unsynced.toString(), color: AppColors.volt),
             _buildSummaryRow('Sincronizadas:', (readings.length - unsynced).toString(), color: AppColors.cyan),
           ],
         ),
@@ -310,7 +310,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
-                    activeColor: AppColors.magenta,
+                    activeColor: AppColors.volt,
                     checkColor: Colors.black,
                   ),
                 ),
@@ -348,7 +348,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(color: AppColors.magenta),
+            CircularProgressIndicator(color: AppColors.volt),
             SizedBox(height: 20),
             Text('Reiniciando sistema...', style: TextStyle(color: Colors.white, decoration: TextDecoration.none, fontSize: 16)),
           ],
@@ -363,7 +363,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('✅ Sistema reiniciado y datos actualizados correctamente'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.cyan,
           ),
         );
       }
@@ -395,7 +395,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR')),
           TextButton(
             onPressed: () => Navigator.pop(context), 
-            child: const Text('SALIR', style: TextStyle(color: AppColors.magenta))
+            child: const Text('SALIR', style: TextStyle(color: AppColors.volt))
           ),
         ],
       ),

@@ -73,7 +73,7 @@ class _SectorsListScreenState extends State<SectorsListScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text('Hidroeléctrica Qarwaqiru',
+            const Text('Registro Electrico',
                 style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16)),
             GestureDetector(
               onTap: () {
@@ -104,7 +104,7 @@ class _SectorsListScreenState extends State<SectorsListScreen> {
         stream: widget.db.select(widget.db.sectors).watch(),
         builder: (context, sectorsSnapshot) {
           if (!sectorsSnapshot.hasData) {
-            return const Center(child: CircularProgressIndicator(color: AppColors.magenta));
+            return const Center(child: CircularProgressIndicator(color: AppColors.volt));
           }
 
           return StreamBuilder<List<Customer>>(
@@ -142,11 +142,11 @@ class _SectorsListScreenState extends State<SectorsListScreen> {
                               height: 50,
                               decoration: BoxDecoration(
                                 color: percentage == 100
-                                    ? AppColors.green.withOpacity(0.1)
-                                    : AppColors.magenta.withOpacity(0.1),
+                                    ? AppColors.cyan.withOpacity(0.1)
+                                    : AppColors.volt.withOpacity(0.1),
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: percentage == 100 ? AppColors.green : AppColors.magenta.withOpacity(0.3),
+                                  color: percentage == 100 ? AppColors.cyan : AppColors.volt.withOpacity(0.3),
                                   width: 1,
                                 ),
                               ),
@@ -154,7 +154,7 @@ class _SectorsListScreenState extends State<SectorsListScreen> {
                               child: Text(
                                 '$measured/$total',
                                 style: TextStyle(
-                                  color: percentage == 100 ? AppColors.green : AppColors.magenta,
+                                  color: percentage == 100 ? AppColors.cyan : AppColors.volt,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -185,7 +185,7 @@ class _SectorsListScreenState extends State<SectorsListScreen> {
                                           width: constraints.maxWidth * progress,
                                           decoration: BoxDecoration(
                                             gradient: const LinearGradient(
-                                              colors: [AppColors.cyan, AppColors.magenta],
+                                              colors: [AppColors.cyan, AppColors.volt],
                                               begin: Alignment.centerLeft,
                                               end: Alignment.centerRight,
                                             ),

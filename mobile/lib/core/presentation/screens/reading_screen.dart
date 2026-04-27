@@ -142,7 +142,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
           content: const Text('Ya existe una lectura para este período. ¿Desea actualizarla?', style: TextStyle(color: Colors.white70)),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('CANCELAR')),
-            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('ACTUALIZAR', style: TextStyle(color: AppColors.magenta))),
+            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('ACTUALIZAR', style: TextStyle(color: AppColors.volt))),
           ],
         ),
       );
@@ -313,7 +313,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
                 child: ElevatedButton(
                   onPressed: _isSaving ? null : _saveReading,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.magenta,
+                    backgroundColor: AppColors.volt,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: _isSaving
@@ -344,9 +344,9 @@ class _ReadingScreenState extends State<ReadingScreen> {
             ? const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.camera_alt, color: AppColors.magenta, size: 20),
+                  Icon(Icons.camera_alt, color: AppColors.volt, size: 20),
                   SizedBox(width: 10),
-                  Text('AÑADIR FOTO (OPCIONAL)', style: TextStyle(color: AppColors.magenta, fontSize: 12, fontWeight: FontWeight.bold)),
+                  Text('AÑADIR FOTO (OPCIONAL)', style: TextStyle(color: AppColors.volt, fontSize: 12, fontWeight: FontWeight.bold)),
                 ],
               )
             : null,

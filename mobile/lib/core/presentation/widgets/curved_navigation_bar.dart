@@ -54,14 +54,14 @@ class CurvedNavigationBar extends StatelessWidget {
             const SizedBox(height: 10),
             Icon(
               isSelected ? selectedIcon : icon,
-              color: isSelected ? AppColors.magenta : Colors.black45,
+              color: isSelected ? AppColors.volt : Colors.black45,
               size: 26,
             ),
             const SizedBox(height: 2),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? AppColors.magenta : Colors.black45,
+                color: isSelected ? AppColors.volt : Colors.black45,
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
@@ -115,7 +115,7 @@ class BNBCustomPainter extends CustomPainter {
     canvas.drawPath(path, paint);
 
     // Draw the dot indicator
-    Paint dotPaint = Paint()..color = AppColors.magenta;
+    Paint dotPaint = Paint()..color = AppColors.volt;
     canvas.drawCircle(Offset(centerX, 10), 3, dotPaint);
   }
 

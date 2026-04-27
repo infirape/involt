@@ -50,7 +50,7 @@ class _SyncScreenState extends State<SyncScreen> {
                           child: _buildStatusCard(
                             'Pendientes', 
                             unsynced.toString(), 
-                            AppColors.magenta, 
+                            AppColors.volt, 
                             Icons.cloud_upload_outlined
                           ),
                         ),
@@ -83,7 +83,7 @@ class _SyncScreenState extends State<SyncScreen> {
                                     label: Text(_isProcessing ? 'PROCESANDO...' : 'SUBIR MEDIDAS', 
                                       style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.1)),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.magenta,
+                                      backgroundColor: AppColors.volt,
                                       foregroundColor: Colors.white,
                                       disabledBackgroundColor: Colors.white10,
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -162,12 +162,12 @@ class _SyncScreenState extends State<SyncScreen> {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: reading.isSynced ? AppColors.cyan.withOpacity(0.1) : AppColors.magenta.withOpacity(0.1),
+                                  color: reading.isSynced ? AppColors.cyan.withOpacity(0.1) : AppColors.volt.withOpacity(0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
                                   reading.isSynced ? Icons.check : Icons.sync,
-                                  color: reading.isSynced ? AppColors.cyan : AppColors.magenta,
+                                  color: reading.isSynced ? AppColors.cyan : AppColors.volt,
                                   size: 16,
                                 ),
                               ),
@@ -217,7 +217,7 @@ class _SyncScreenState extends State<SyncScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('ENTENDIDO', style: TextStyle(color: AppColors.magenta, fontWeight: FontWeight.bold)),
+            child: const Text('ENTENDIDO', style: TextStyle(color: AppColors.volt, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -284,7 +284,7 @@ class _SyncScreenState extends State<SyncScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Sincronizando con el servidor de Infira...'),
-        backgroundColor: AppColors.magenta,
+        backgroundColor: AppColors.volt,
         duration: Duration(seconds: 2),
       ),
     );
@@ -395,7 +395,7 @@ class _NetworkStatusCardState extends State<NetworkStatusCard> {
     } else if (isMobile) {
       statusText = 'Datos Móviles';
       statusIcon = Icons.signal_cellular_alt;
-      statusColor = AppColors.magenta;
+      statusColor = AppColors.volt;
     }
 
     return GlassCard(
