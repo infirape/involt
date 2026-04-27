@@ -130,7 +130,7 @@ class SyncService {
               saldoRedondeo: r.saldoRedondeo,
               totalToPay: r.totalToPay,
               isSynced: const Value(true),
-              period: r.period,
+              period: Value(r.period),
             ),
             mode: InsertMode.insertOrReplace,
           );
