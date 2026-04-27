@@ -41,7 +41,13 @@ class _ReadingScreenState extends State<ReadingScreen> {
   }
 
   Future<void> _loadInitialData() async {
-    _previousValue = widget.customer.lastReadingValue;
+    // Use lastReadingValue if available, otherwise fallback to initialReading
+    if (widget.customer.lastReadingValue > 0) {
+      _previousValue = widget.customer.lastReadingValue;
+    } else {
+      _previousValue = widget.customer.initialReading;
+    }
+    
     _determinePosition();
     
     // Proactive duplicate check
@@ -314,11 +320,15 @@ class _ReadingScreenState extends State<ReadingScreen> {
                   onPressed: _isSaving ? null : _saveReading,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.volt,
+                    foregroundColor: Colors.black, // High contrast text
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: _isSaving
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(_isAlreadyRegistered ? 'ACTUALIZAR LECTURA' : 'GUARDAR LECTURA', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ? const CircularProgressIndicator(color: Colors.black)
+                      : Text(
+                          _isAlreadyRegistered ? 'ACTUALIZAR LECTURA' : 'GUARDAR LECTURA', 
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
                 ),
               ),
             ),

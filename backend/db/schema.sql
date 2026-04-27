@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS readings (
     -- Conceptos de cobro
     cargo_fijo DOUBLE PRECISION NOT NULL,
     alumbrado_publico DOUBLE PRECISION NOT NULL,
+    mantenimiento DOUBLE PRECISION NOT NULL DEFAULT 0,
     adjustment DOUBLE PRECISION DEFAULT 0,  -- Ajuste tarifario
     subtotal DOUBLE PRECISION NOT NULL,
     saldo_redondeo DOUBLE PRECISION DEFAULT 0,

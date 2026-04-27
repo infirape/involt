@@ -34,6 +34,7 @@ class Customers extends Table {
   RealColumn get latitude => real().withDefault(const Constant(0.0))();
   RealColumn get longitude => real().withDefault(const Constant(0.0))();
   RealColumn get lastReadingValue => real().withDefault(const Constant(0.0))();
+  RealColumn get initialReading => real().withDefault(const Constant(0.0))();
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -77,7 +78,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.withExecutor(QueryExecutor e) : super(e);
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -102,6 +103,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 6) {
         await m.addColumn(readings, readings.comment);
+      }
+      if (from < 7) {
+        await m.addColumn(customers, customers.initialReading);
       }
     },
     beforeOpen: (details) async {

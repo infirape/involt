@@ -54,14 +54,14 @@ class CurvedNavigationBar extends StatelessWidget {
             const SizedBox(height: 10),
             Icon(
               isSelected ? selectedIcon : icon,
-              color: isSelected ? AppColors.volt : Colors.black45,
+              color: isSelected ? AppColors.volt : Colors.white38,
               size: 26,
             ),
             const SizedBox(height: 2),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? AppColors.volt : Colors.black45,
+                color: isSelected ? AppColors.volt : Colors.white38,
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
@@ -80,7 +80,7 @@ class BNBCustomPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.white
+      ..color = const Color(0xFF151515) // Deep Charcoal
       ..style = PaintingStyle.fill;
 
     double width = size.width;
@@ -111,11 +111,11 @@ class BNBCustomPainter extends CustomPainter {
     path.lineTo(0, size.height);
     path.close();
 
-    canvas.drawShadow(path, Colors.black, 15, true);
+    canvas.drawShadow(path, Colors.black, 20, true);
     canvas.drawPath(path, paint);
 
-    // Draw the dot indicator
-    Paint dotPaint = Paint()..color = AppColors.volt;
+    // Draw the dot indicator in Cyan
+    Paint dotPaint = Paint()..color = AppColors.cyan;
     canvas.drawCircle(Offset(centerX, 10), 3, dotPaint);
   }
 

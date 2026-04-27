@@ -26,14 +26,14 @@ func (r *PostgresReadingRepository) Save(ctx context.Context, reading *domain.Re
 	query := `INSERT INTO readings (
 				id, customer_id, previous_value, current_value, consumption, 
 				photo_url, timestamp, latitude, longitude, period_start, period_end,
-				cargo_fijo, alumbrado_publico, adjustment, subtotal, 
+				cargo_fijo, alumbrado_publico, mantenimiento, adjustment, subtotal, 
 				saldo_redondeo, round_difference, total_to_pay, previous_balance, 
 				overdue_total, expiration_date
 			  ) 
 	          VALUES (
 				:id, :customer_id, :previous_value, :current_value, :consumption, 
 				:photo_url, :timestamp, :latitude, :longitude, :period_start, :period_end,
-				:cargo_fijo, :alumbrado_publico, :adjustment, :subtotal, 
+				:cargo_fijo, :alumbrado_publico, :mantenimiento, :adjustment, :subtotal, 
 				:saldo_redondeo, :round_difference, :total_to_pay, :previous_balance, 
 				:overdue_total, :expiration_date
 			  ) 

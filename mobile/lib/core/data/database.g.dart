@@ -599,6 +599,18 @@ class $CustomersTable extends Customers
     requiredDuringInsert: false,
     defaultValue: const Constant(0.0),
   );
+  static const VerificationMeta _initialReadingMeta = const VerificationMeta(
+    'initialReading',
+  );
+  @override
+  late final GeneratedColumn<double> initialReading = GeneratedColumn<double>(
+    'initial_reading',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0.0),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -612,6 +624,7 @@ class $CustomersTable extends Customers
     latitude,
     longitude,
     lastReadingValue,
+    initialReading,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -716,6 +729,15 @@ class $CustomersTable extends Customers
         ),
       );
     }
+    if (data.containsKey('initial_reading')) {
+      context.handle(
+        _initialReadingMeta,
+        initialReading.isAcceptableOrUnknown(
+          data['initial_reading']!,
+          _initialReadingMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -769,6 +791,10 @@ class $CustomersTable extends Customers
         DriftSqlType.double,
         data['${effectivePrefix}last_reading_value'],
       )!,
+      initialReading: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}initial_reading'],
+      )!,
     );
   }
 
@@ -790,6 +816,7 @@ class Customer extends DataClass implements Insertable<Customer> {
   final double latitude;
   final double longitude;
   final double lastReadingValue;
+  final double initialReading;
   const Customer({
     required this.id,
     required this.code,
@@ -802,6 +829,7 @@ class Customer extends DataClass implements Insertable<Customer> {
     required this.latitude,
     required this.longitude,
     required this.lastReadingValue,
+    required this.initialReading,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -817,6 +845,7 @@ class Customer extends DataClass implements Insertable<Customer> {
     map['latitude'] = Variable<double>(latitude);
     map['longitude'] = Variable<double>(longitude);
     map['last_reading_value'] = Variable<double>(lastReadingValue);
+    map['initial_reading'] = Variable<double>(initialReading);
     return map;
   }
 
@@ -833,6 +862,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       latitude: Value(latitude),
       longitude: Value(longitude),
       lastReadingValue: Value(lastReadingValue),
+      initialReading: Value(initialReading),
     );
   }
 
@@ -853,6 +883,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       latitude: serializer.fromJson<double>(json['latitude']),
       longitude: serializer.fromJson<double>(json['longitude']),
       lastReadingValue: serializer.fromJson<double>(json['lastReadingValue']),
+      initialReading: serializer.fromJson<double>(json['initialReading']),
     );
   }
   @override
@@ -870,6 +901,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       'latitude': serializer.toJson<double>(latitude),
       'longitude': serializer.toJson<double>(longitude),
       'lastReadingValue': serializer.toJson<double>(lastReadingValue),
+      'initialReading': serializer.toJson<double>(initialReading),
     };
   }
 
@@ -885,6 +917,7 @@ class Customer extends DataClass implements Insertable<Customer> {
     double? latitude,
     double? longitude,
     double? lastReadingValue,
+    double? initialReading,
   }) => Customer(
     id: id ?? this.id,
     code: code ?? this.code,
@@ -897,6 +930,7 @@ class Customer extends DataClass implements Insertable<Customer> {
     latitude: latitude ?? this.latitude,
     longitude: longitude ?? this.longitude,
     lastReadingValue: lastReadingValue ?? this.lastReadingValue,
+    initialReading: initialReading ?? this.initialReading,
   );
   Customer copyWithCompanion(CustomersCompanion data) {
     return Customer(
@@ -919,6 +953,9 @@ class Customer extends DataClass implements Insertable<Customer> {
       lastReadingValue: data.lastReadingValue.present
           ? data.lastReadingValue.value
           : this.lastReadingValue,
+      initialReading: data.initialReading.present
+          ? data.initialReading.value
+          : this.initialReading,
     );
   }
 
@@ -935,7 +972,8 @@ class Customer extends DataClass implements Insertable<Customer> {
           ..write('meterNumber: $meterNumber, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
-          ..write('lastReadingValue: $lastReadingValue')
+          ..write('lastReadingValue: $lastReadingValue, ')
+          ..write('initialReading: $initialReading')
           ..write(')'))
         .toString();
   }
@@ -953,6 +991,7 @@ class Customer extends DataClass implements Insertable<Customer> {
     latitude,
     longitude,
     lastReadingValue,
+    initialReading,
   );
   @override
   bool operator ==(Object other) =>
@@ -968,7 +1007,8 @@ class Customer extends DataClass implements Insertable<Customer> {
           other.meterNumber == this.meterNumber &&
           other.latitude == this.latitude &&
           other.longitude == this.longitude &&
-          other.lastReadingValue == this.lastReadingValue);
+          other.lastReadingValue == this.lastReadingValue &&
+          other.initialReading == this.initialReading);
 }
 
 class CustomersCompanion extends UpdateCompanion<Customer> {
@@ -983,6 +1023,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
   final Value<double> latitude;
   final Value<double> longitude;
   final Value<double> lastReadingValue;
+  final Value<double> initialReading;
   final Value<int> rowid;
   const CustomersCompanion({
     this.id = const Value.absent(),
@@ -996,6 +1037,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
     this.lastReadingValue = const Value.absent(),
+    this.initialReading = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CustomersCompanion.insert({
@@ -1010,6 +1052,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
     this.lastReadingValue = const Value.absent(),
+    this.initialReading = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        code = Value(code),
@@ -1031,6 +1074,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     Expression<double>? latitude,
     Expression<double>? longitude,
     Expression<double>? lastReadingValue,
+    Expression<double>? initialReading,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1045,6 +1089,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
       if (lastReadingValue != null) 'last_reading_value': lastReadingValue,
+      if (initialReading != null) 'initial_reading': initialReading,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1061,6 +1106,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     Value<double>? latitude,
     Value<double>? longitude,
     Value<double>? lastReadingValue,
+    Value<double>? initialReading,
     Value<int>? rowid,
   }) {
     return CustomersCompanion(
@@ -1075,6 +1121,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       lastReadingValue: lastReadingValue ?? this.lastReadingValue,
+      initialReading: initialReading ?? this.initialReading,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1115,6 +1162,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     if (lastReadingValue.present) {
       map['last_reading_value'] = Variable<double>(lastReadingValue.value);
     }
+    if (initialReading.present) {
+      map['initial_reading'] = Variable<double>(initialReading.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1135,6 +1185,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
           ..write('lastReadingValue: $lastReadingValue, ')
+          ..write('initialReading: $initialReading, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3017,6 +3068,7 @@ typedef $$CustomersTableCreateCompanionBuilder =
       Value<double> latitude,
       Value<double> longitude,
       Value<double> lastReadingValue,
+      Value<double> initialReading,
       Value<int> rowid,
     });
 typedef $$CustomersTableUpdateCompanionBuilder =
@@ -3032,6 +3084,7 @@ typedef $$CustomersTableUpdateCompanionBuilder =
       Value<double> latitude,
       Value<double> longitude,
       Value<double> lastReadingValue,
+      Value<double> initialReading,
       Value<int> rowid,
     });
 
@@ -3146,6 +3199,11 @@ class $$CustomersTableFilterComposer
 
   ColumnFilters<double> get lastReadingValue => $composableBuilder(
     column: $table.lastReadingValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get initialReading => $composableBuilder(
+    column: $table.initialReading,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3275,6 +3333,11 @@ class $$CustomersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<double> get initialReading => $composableBuilder(
+    column: $table.initialReading,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$CommunitiesTableOrderingComposer get communityId {
     final $$CommunitiesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -3361,6 +3424,11 @@ class $$CustomersTableAnnotationComposer
 
   GeneratedColumn<double> get lastReadingValue => $composableBuilder(
     column: $table.lastReadingValue,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get initialReading => $composableBuilder(
+    column: $table.initialReading,
     builder: (column) => column,
   );
 
@@ -3479,6 +3547,7 @@ class $$CustomersTableTableManager
                 Value<double> latitude = const Value.absent(),
                 Value<double> longitude = const Value.absent(),
                 Value<double> lastReadingValue = const Value.absent(),
+                Value<double> initialReading = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CustomersCompanion(
                 id: id,
@@ -3492,6 +3561,7 @@ class $$CustomersTableTableManager
                 latitude: latitude,
                 longitude: longitude,
                 lastReadingValue: lastReadingValue,
+                initialReading: initialReading,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -3507,6 +3577,7 @@ class $$CustomersTableTableManager
                 Value<double> latitude = const Value.absent(),
                 Value<double> longitude = const Value.absent(),
                 Value<double> lastReadingValue = const Value.absent(),
+                Value<double> initialReading = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CustomersCompanion.insert(
                 id: id,
@@ -3520,6 +3591,7 @@ class $$CustomersTableTableManager
                 latitude: latitude,
                 longitude: longitude,
                 lastReadingValue: lastReadingValue,
+                initialReading: initialReading,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -401,10 +401,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: AppColors.volt,
+                                              foregroundColor: Colors.black,
                                               padding: const EdgeInsets.symmetric(horizontal: 10),
                                               minimumSize: const Size(60, 30),
                                             ),
-                                            child: const Text('Registrar', style: TextStyle(fontSize: 10)),
+                                            child: const Text('Registrar', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                                           ),
                                       onTap: () {
                                         if (hasCoords) {
@@ -474,6 +475,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.volt,
+                                    foregroundColor: Colors.black,
                                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                   ),

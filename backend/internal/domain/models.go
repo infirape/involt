@@ -81,6 +81,7 @@ type Reading struct {
 	// Financial data for receipt consistency
 	CargoFijo        float64 `db:"cargo_fijo"`
 	AlumbradoPublico float64 `db:"alumbrado_publico"`
+	Mantenimiento    float64 `db:"mantenimiento"`
 	Adjustment       float64 `db:"adjustment"`
 	Subtotal         float64 `db:"subtotal"`
 	SaldoRedondeo    float64 `db:"saldo_redondeo"`

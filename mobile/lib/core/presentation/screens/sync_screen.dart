@@ -84,7 +84,7 @@ class _SyncScreenState extends State<SyncScreen> {
                                       style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.1)),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.volt,
-                                      foregroundColor: Colors.white,
+                                      foregroundColor: Colors.black,
                                       disabledBackgroundColor: Colors.white10,
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                                     ),
@@ -283,7 +283,7 @@ class _SyncScreenState extends State<SyncScreen> {
     
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Sincronizando con el servidor de Infira...'),
+        content: Text('Sincronizando con el servidor de Infira...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         backgroundColor: AppColors.volt,
         duration: Duration(seconds: 2),
       ),

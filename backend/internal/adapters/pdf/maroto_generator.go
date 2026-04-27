@@ -161,7 +161,7 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 				text.New(fmt.Sprintf("%.2f", reading.AlumbradoPublico), props.Text{Right: 3, Top: 14, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
 				
 				text.New("Mantenimiento:", props.Text{Top: 17, Size: fontSmall}),
-				text.New(fmt.Sprintf("%.2f", settings.Mantenimiento), props.Text{Right: 3, Top: 17, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				text.New(fmt.Sprintf("%.2f", reading.Mantenimiento), props.Text{Right: 3, Top: 17, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
 				
 				text.New("SUBTOTAL:", props.Text{Top: 21, Size: fontSmall, Style: fontstyle.Bold}),
 				text.New(fmt.Sprintf("%.2f", reading.Subtotal), props.Text{Right: 3, Top: 21, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),

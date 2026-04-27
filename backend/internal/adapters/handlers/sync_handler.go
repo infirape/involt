@@ -136,16 +136,14 @@ func (h *SyncHandler) PushReadings(
 	for _, r := range req.Msg.Readings {
 		customer, _ := h.customerRepo.GetByID(ctx, r.CustomerId)
 		
+		// Use the previous value sent by the app to ensure consistency with the UI
 		prevVal := r.PreviousValue
-		if prevVal == 0 && customer != nil && customer.InitialReading > 0 {
-			prevVal = customer.InitialReading
-		}
-
 		consumption := r.CurrentValue - prevVal
 		if consumption < 0 {
 			consumption = 0
 		}
 
+		// Use settings for charges if not provided by app
 		cargoFijo := r.CargoFijo
 		if cargoFijo == 0 {
 			cargoFijo = settings.CargoFijo
@@ -156,9 +154,9 @@ func (h *SyncHandler) PushReadings(
 			alumbrado = settings.Alumbrado
 		}
 
-		subtotal := (consumption * settings.TarifaKWh) + cargoFijo + alumbrado + settings.Mantenimiento
-		
-		// For now, simple total. In future we can add IGV if configured.
+		// Calculate components
+		consumptionCharge := consumption * settings.TarifaKWh
+		subtotal := consumptionCharge + cargoFijo + alumbrado + settings.Mantenimiento
 		total := subtotal + r.SaldoRedondeo
 
 		reading := &domain.Reading{
@@ -173,8 +171,10 @@ func (h *SyncHandler) PushReadings(
 			Longitude:        r.Longitude,
 			CargoFijo:        cargoFijo,
 			AlumbradoPublico: alumbrado,
-			SaldoRedondeo:    r.SaldoRedondeo,
+			Mantenimiento:    settings.Mantenimiento, // We need to store this in the reading
+			Subtotal:         subtotal,
 			TotalToPay:       total,
+			SaldoRedondeo:    r.SaldoRedondeo,
 		}
 		if err := h.readingRepo.Save(ctx, reading); err != nil {
 			log.Printf("⚠️ Error saving reading %s: %v", r.Id, err)

@@ -84,6 +84,7 @@ class SyncService {
               latitude: Value(cust.latitude),
               longitude: Value(cust.longitude),
               lastReadingValue: Value(cust.lastReadingValue),
+              initialReading: Value(cust.initialReading),
             ),
             mode: InsertMode.insertOrReplace,
           );
