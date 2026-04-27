@@ -29,6 +29,19 @@ func (r *PostgresCustomerRepository) GetByCode(ctx context.Context, code string)
 	return &customer, nil
 }
 
+func (r *PostgresCustomerRepository) GetByID(ctx context.Context, id string) (*domain.Customer, error) {
+	var customer domain.Customer
+	query := `SELECT id, code, name, community_id AS communityid, sector_id AS sectorid, 
+	          connection_type AS connectiontype, tariff, meter_number AS meternumber,
+	          latitude, longitude, last_reading_value AS lastreadingvalue
+	          FROM customers WHERE id = $1`
+	err := r.db.GetContext(ctx, &customer, query, id)
+	if err != nil {
+		return nil, fmt.Errorf("error getting customer by id: %w", err)
+	}
+	return &customer, nil
+}
+
 func (r *PostgresCustomerRepository) ListAll(ctx context.Context) ([]domain.Customer, error) {
 	var customers []domain.Customer
 	query := `SELECT id, code, name, community_id AS communityid, sector_id AS sectorid, 

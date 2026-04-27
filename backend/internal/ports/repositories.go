@@ -6,18 +6,21 @@ import (
 	"github.com/infira/involt/backend/internal/domain"
 )
 
-// CustomerRepository defines operations for customer data.
-type CustomerRepository interface {
-	GetByCode(ctx context.Context, code string) (*domain.Customer, error)
-	ListAll(ctx context.Context) ([]domain.Customer, error)
-	SaveBatch(ctx context.Context, customers []domain.Customer) error
-}
-
 // ReadingRepository defines operations for meter readings.
 type ReadingRepository interface {
 	Save(ctx context.Context, reading *domain.Reading) error
+	GetByID(ctx context.Context, id string) (*domain.Reading, error)
 	ListByCustomer(ctx context.Context, customerID string) ([]domain.Reading, error)
 	GetLatestByCustomer(ctx context.Context, customerID string) (*domain.Reading, error)
+	ListBySectorAndPeriod(ctx context.Context, sectorID string, start, end string) ([]domain.Reading, error)
+}
+
+// CustomerRepository defines operations for customer data.
+type CustomerRepository interface {
+	GetByID(ctx context.Context, id string) (*domain.Customer, error)
+	GetByCode(ctx context.Context, code string) (*domain.Customer, error)
+	ListAll(ctx context.Context) ([]domain.Customer, error)
+	SaveBatch(ctx context.Context, customers []domain.Customer) error
 }
 
 // MetadataRepository defines operations for communities and sectors.
