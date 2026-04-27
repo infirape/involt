@@ -1,8 +1,0 @@
-=== RUN   TestResolveAssetsDir
-=== RUN   TestResolveAssetsDir/prefers_../assets_when_available
-=== RUN   TestResolveAssetsDir/falls_back_to_assets_when_../assets_missing
---- PASS: TestResolveAssetsDir (0.00s)
-    --- PASS: TestResolveAssetsDir/prefers_../assets_when_available (0.00s)
-    --- PASS: TestResolveAssetsDir/falls_back_to_assets_when_../assets_missing (0.00s)
-PASS
-ok  	github.com/infira/involt/backend/cmd/server	0.182s
