@@ -35,7 +35,11 @@ func main() {
 
 	// 2. Parse Cleaned CSV
 	fmt.Println("📊 Seeding from cleaned CSV...")
-	file, err := os.Open("/Users/hbs/Documents/infira/involt/docs/cleaned_customers.csv")
+	csvPath := os.Getenv("CSV_PATH")
+	if csvPath == "" {
+		csvPath = "./docs/cleaned_customers.csv"
+	}
+	file, err := os.Open(csvPath)
 	if err != nil {
 		log.Fatal(err)
 	}
