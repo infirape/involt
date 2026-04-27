@@ -17,6 +17,12 @@ func NewPostgresReadingRepository(db *sqlx.DB) *PostgresReadingRepository {
 }
 
 func (r *PostgresReadingRepository) Save(ctx context.Context, reading *domain.Reading) error {
+	tx, err := r.db.BeginTxx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
 	query := `INSERT INTO readings (
 				id, customer_id, previous_value, current_value, consumption, 
 				photo_url, timestamp, latitude, longitude, period_start, period_end,
@@ -31,9 +37,23 @@ func (r *PostgresReadingRepository) Save(ctx context.Context, reading *domain.Re
 				:saldo_redondeo, :round_difference, :total_to_pay, :previous_balance, 
 				:overdue_total, :expiration_date
 			  ) 
-	          ON CONFLICT (id) DO NOTHING`
-	_, err := r.db.NamedExecContext(ctx, query, reading)
-	return err
+	          ON CONFLICT (id) DO UPDATE SET 
+				current_value = EXCLUDED.current_value,
+				consumption = EXCLUDED.consumption,
+				total_to_pay = EXCLUDED.total_to_pay`
+
+	_, err = tx.NamedExecContext(ctx, query, reading)
+	if err != nil {
+		return err
+	}
+
+	// Update customer's last reading value
+	_, err = tx.ExecContext(ctx, "UPDATE customers SET last_reading_value = $1 WHERE id = $2", reading.CurrentValue, reading.CustomerID)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
 
 func (r *PostgresReadingRepository) ListByCustomer(ctx context.Context, customerID string) ([]domain.Reading, error) {
