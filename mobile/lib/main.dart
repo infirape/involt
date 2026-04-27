@@ -1,75 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:drift/drift.dart' as drift;
-import 'core/data/database.dart';
-import 'core/presentation/theme/app_colors.dart';
-import 'core/presentation/widgets/curved_navigation_bar.dart';
-import 'core/presentation/screens/sectors_list_screen.dart';
-import 'core/presentation/screens/search_screen.dart';
-import 'core/presentation/screens/sync_screen.dart';
-import 'core/presentation/screens/profile_screen.dart';
+import 'package:involt/core/data/database.dart';
+import 'package:involt/core/presentation/theme/app_colors.dart';
+import 'package:involt/core/presentation/widgets/curved_navigation_bar.dart';
+import 'package:involt/core/presentation/screens/sectors_list_screen.dart';
+import 'package:involt/core/presentation/screens/search_screen.dart';
+import 'package:involt/core/presentation/screens/sync_screen.dart';
+import 'package:involt/core/presentation/screens/profile_screen.dart';
+import 'package:involt/core/presentation/providers/app_state_provider.dart';
+import 'package:involt/core/data/services/sync_service.dart';
+import 'package:involt/core/config/app_config.dart';
+import 'package:involt/core/presentation/screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final db = AppDatabase();
-  
-  // Seed data if empty
-  await _seedData(db);
-
-  runApp(MyApp(db: db));
-}
-
-Future<void> _seedData(AppDatabase db) async {
-  final communities = await db.select(db.communities).get();
-  if (communities.isEmpty) {
-    // Add Chetilla community
-    await db.into(db.communities).insert(
-      CommunitiesCompanion.insert(id: 'com-1', name: 'Chetilla'),
-    );
-
-    // Sectors from the PDF
-    final sectorsList = ['Alto Chetilla', 'Cadena', 'Casadencito', 'Cercado', 'Cochapampa'];
-
-    for (var i = 0; i < sectorsList.length; i++) {
-      final sectorId = 'sec-\${i + 1}';
-      await db.into(db.sectors).insert(
-        SectorsCompanion.insert(id: sectorId, communityId: 'com-1', name: sectorsList[i]),
-      );
-
-      // Seed 2 customers per sector
-      final cust1Id = 'cust-\${sectorId}-1';
-      await db.into(db.customers).insert(
-        CustomersCompanion.insert(
-          id: cust1Id,
-          code: '\${sectorsList[i].substring(0, 3).toUpperCase()}001',
-          name: 'Juan Perez - \${sectorsList[i]}',
-          communityId: 'com-1',
-          sectorId: sectorId,
-          connectionType: 1,
-          tariff: 0.25,
-          meterNumber: 'M-100\$i',
-        ),
-      );
-      
-      // Seed an initial reading for verification
-      await db.into(db.readings).insert(
-        ReadingsCompanion.insert(
-          id: 'read-\${cust1Id}',
-          customerId: cust1Id,
-          previousValue: 100,
-          currentValue: 150,
-          consumptionKwh: 50,
-          timestamp: DateTime.now().subtract(const Duration(hours: 2)),
-          latitude: -7.0,
-          longitude: -78.0,
-          cargoFijo: 6.0,
-          alumbradoPublico: 1.0,
-          saldoRedondeo: 0.0,
-          totalToPay: 7.0,
-          isSynced: drift.Value(false),
-        ),
-      );
-    }
-  }
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppStateProvider(db)),
+      ],
+      child: MyApp(db: db),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -79,15 +33,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'InVolt',
+      title: 'Hidroeléctrica Qarwaqiru',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: AppColors.magenta,
         scaffoldBackgroundColor: AppColors.onyx,
+        fontFamily: 'Inter',
         useMaterial3: true,
       ),
-      home: MainNavigationScreen(db: db),
+      home: SplashScreen(db: db),
     );
   }
 }
@@ -102,36 +57,48 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
-
-  late final List<Widget> _screens;
-
-  @override
-  void initState() {
-    super.initState();
-    _screens = [
-      SectorsListScreen(db: widget.db),
-      SearchScreen(db: widget.db),
-      SyncScreen(db: widget.db),
-      const Center(child: Text('Notificaciones', style: TextStyle(fontSize: 24))),
-      const ProfileScreen(),
-    ];
-  }
+  String? _pendingSectorId;
 
   @override
   Widget build(BuildContext context) {
+    // Watch the global state
+    final appState = context.watch<AppStateProvider>();
+    
+    if (appState.isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final screens = [
+      SectorsListScreen(db: widget.db),
+      SearchScreen(
+        db: widget.db, 
+        initialSectorId: _pendingSectorId,
+        onSectorHandled: () => _pendingSectorId = null,
+      ),
+      SyncScreen(db: widget.db),
+      ProfileScreen(
+        db: widget.db,
+        syncService: SyncService(db: widget.db, baseUrl: AppConfig.baseUrl),
+      ),
+    ];
+
     return Scaffold(
       extendBody: true,
       body: Container(
         decoration: const BoxDecoration(
           gradient: AppColors.mainGradient,
         ),
-        child: _screens[_currentIndex],
+        child: IndexedStack(
+          index: _currentIndex,
+          children: screens,
+        ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
+            if (index != 1) _pendingSectorId = null;
           });
         },
       ),

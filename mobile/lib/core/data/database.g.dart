@@ -563,6 +563,42 @@ class $CustomersTable extends Customers
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _latitudeMeta = const VerificationMeta(
+    'latitude',
+  );
+  @override
+  late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
+    'latitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0.0),
+  );
+  static const VerificationMeta _longitudeMeta = const VerificationMeta(
+    'longitude',
+  );
+  @override
+  late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
+    'longitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0.0),
+  );
+  static const VerificationMeta _lastReadingValueMeta = const VerificationMeta(
+    'lastReadingValue',
+  );
+  @override
+  late final GeneratedColumn<double> lastReadingValue = GeneratedColumn<double>(
+    'last_reading_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0.0),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -573,6 +609,9 @@ class $CustomersTable extends Customers
     connectionType,
     tariff,
     meterNumber,
+    latitude,
+    longitude,
+    lastReadingValue,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -656,6 +695,27 @@ class $CustomersTable extends Customers
     } else if (isInserting) {
       context.missing(_meterNumberMeta);
     }
+    if (data.containsKey('latitude')) {
+      context.handle(
+        _latitudeMeta,
+        latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta),
+      );
+    }
+    if (data.containsKey('longitude')) {
+      context.handle(
+        _longitudeMeta,
+        longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta),
+      );
+    }
+    if (data.containsKey('last_reading_value')) {
+      context.handle(
+        _lastReadingValueMeta,
+        lastReadingValue.isAcceptableOrUnknown(
+          data['last_reading_value']!,
+          _lastReadingValueMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -697,6 +757,18 @@ class $CustomersTable extends Customers
         DriftSqlType.string,
         data['${effectivePrefix}meter_number'],
       )!,
+      latitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}latitude'],
+      )!,
+      longitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}longitude'],
+      )!,
+      lastReadingValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}last_reading_value'],
+      )!,
     );
   }
 
@@ -715,6 +787,9 @@ class Customer extends DataClass implements Insertable<Customer> {
   final int connectionType;
   final double tariff;
   final String meterNumber;
+  final double latitude;
+  final double longitude;
+  final double lastReadingValue;
   const Customer({
     required this.id,
     required this.code,
@@ -724,6 +799,9 @@ class Customer extends DataClass implements Insertable<Customer> {
     required this.connectionType,
     required this.tariff,
     required this.meterNumber,
+    required this.latitude,
+    required this.longitude,
+    required this.lastReadingValue,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -736,6 +814,9 @@ class Customer extends DataClass implements Insertable<Customer> {
     map['connection_type'] = Variable<int>(connectionType);
     map['tariff'] = Variable<double>(tariff);
     map['meter_number'] = Variable<String>(meterNumber);
+    map['latitude'] = Variable<double>(latitude);
+    map['longitude'] = Variable<double>(longitude);
+    map['last_reading_value'] = Variable<double>(lastReadingValue);
     return map;
   }
 
@@ -749,6 +830,9 @@ class Customer extends DataClass implements Insertable<Customer> {
       connectionType: Value(connectionType),
       tariff: Value(tariff),
       meterNumber: Value(meterNumber),
+      latitude: Value(latitude),
+      longitude: Value(longitude),
+      lastReadingValue: Value(lastReadingValue),
     );
   }
 
@@ -766,6 +850,9 @@ class Customer extends DataClass implements Insertable<Customer> {
       connectionType: serializer.fromJson<int>(json['connectionType']),
       tariff: serializer.fromJson<double>(json['tariff']),
       meterNumber: serializer.fromJson<String>(json['meterNumber']),
+      latitude: serializer.fromJson<double>(json['latitude']),
+      longitude: serializer.fromJson<double>(json['longitude']),
+      lastReadingValue: serializer.fromJson<double>(json['lastReadingValue']),
     );
   }
   @override
@@ -780,6 +867,9 @@ class Customer extends DataClass implements Insertable<Customer> {
       'connectionType': serializer.toJson<int>(connectionType),
       'tariff': serializer.toJson<double>(tariff),
       'meterNumber': serializer.toJson<String>(meterNumber),
+      'latitude': serializer.toJson<double>(latitude),
+      'longitude': serializer.toJson<double>(longitude),
+      'lastReadingValue': serializer.toJson<double>(lastReadingValue),
     };
   }
 
@@ -792,6 +882,9 @@ class Customer extends DataClass implements Insertable<Customer> {
     int? connectionType,
     double? tariff,
     String? meterNumber,
+    double? latitude,
+    double? longitude,
+    double? lastReadingValue,
   }) => Customer(
     id: id ?? this.id,
     code: code ?? this.code,
@@ -801,6 +894,9 @@ class Customer extends DataClass implements Insertable<Customer> {
     connectionType: connectionType ?? this.connectionType,
     tariff: tariff ?? this.tariff,
     meterNumber: meterNumber ?? this.meterNumber,
+    latitude: latitude ?? this.latitude,
+    longitude: longitude ?? this.longitude,
+    lastReadingValue: lastReadingValue ?? this.lastReadingValue,
   );
   Customer copyWithCompanion(CustomersCompanion data) {
     return Customer(
@@ -818,6 +914,11 @@ class Customer extends DataClass implements Insertable<Customer> {
       meterNumber: data.meterNumber.present
           ? data.meterNumber.value
           : this.meterNumber,
+      latitude: data.latitude.present ? data.latitude.value : this.latitude,
+      longitude: data.longitude.present ? data.longitude.value : this.longitude,
+      lastReadingValue: data.lastReadingValue.present
+          ? data.lastReadingValue.value
+          : this.lastReadingValue,
     );
   }
 
@@ -831,7 +932,10 @@ class Customer extends DataClass implements Insertable<Customer> {
           ..write('sectorId: $sectorId, ')
           ..write('connectionType: $connectionType, ')
           ..write('tariff: $tariff, ')
-          ..write('meterNumber: $meterNumber')
+          ..write('meterNumber: $meterNumber, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('lastReadingValue: $lastReadingValue')
           ..write(')'))
         .toString();
   }
@@ -846,6 +950,9 @@ class Customer extends DataClass implements Insertable<Customer> {
     connectionType,
     tariff,
     meterNumber,
+    latitude,
+    longitude,
+    lastReadingValue,
   );
   @override
   bool operator ==(Object other) =>
@@ -858,7 +965,10 @@ class Customer extends DataClass implements Insertable<Customer> {
           other.sectorId == this.sectorId &&
           other.connectionType == this.connectionType &&
           other.tariff == this.tariff &&
-          other.meterNumber == this.meterNumber);
+          other.meterNumber == this.meterNumber &&
+          other.latitude == this.latitude &&
+          other.longitude == this.longitude &&
+          other.lastReadingValue == this.lastReadingValue);
 }
 
 class CustomersCompanion extends UpdateCompanion<Customer> {
@@ -870,6 +980,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
   final Value<int> connectionType;
   final Value<double> tariff;
   final Value<String> meterNumber;
+  final Value<double> latitude;
+  final Value<double> longitude;
+  final Value<double> lastReadingValue;
   final Value<int> rowid;
   const CustomersCompanion({
     this.id = const Value.absent(),
@@ -880,6 +993,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     this.connectionType = const Value.absent(),
     this.tariff = const Value.absent(),
     this.meterNumber = const Value.absent(),
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
+    this.lastReadingValue = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CustomersCompanion.insert({
@@ -891,6 +1007,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     required int connectionType,
     required double tariff,
     required String meterNumber,
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
+    this.lastReadingValue = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        code = Value(code),
@@ -909,6 +1028,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     Expression<int>? connectionType,
     Expression<double>? tariff,
     Expression<String>? meterNumber,
+    Expression<double>? latitude,
+    Expression<double>? longitude,
+    Expression<double>? lastReadingValue,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -920,6 +1042,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       if (connectionType != null) 'connection_type': connectionType,
       if (tariff != null) 'tariff': tariff,
       if (meterNumber != null) 'meter_number': meterNumber,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+      if (lastReadingValue != null) 'last_reading_value': lastReadingValue,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -933,6 +1058,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     Value<int>? connectionType,
     Value<double>? tariff,
     Value<String>? meterNumber,
+    Value<double>? latitude,
+    Value<double>? longitude,
+    Value<double>? lastReadingValue,
     Value<int>? rowid,
   }) {
     return CustomersCompanion(
@@ -944,6 +1072,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       connectionType: connectionType ?? this.connectionType,
       tariff: tariff ?? this.tariff,
       meterNumber: meterNumber ?? this.meterNumber,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      lastReadingValue: lastReadingValue ?? this.lastReadingValue,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -975,6 +1106,15 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     if (meterNumber.present) {
       map['meter_number'] = Variable<String>(meterNumber.value);
     }
+    if (latitude.present) {
+      map['latitude'] = Variable<double>(latitude.value);
+    }
+    if (longitude.present) {
+      map['longitude'] = Variable<double>(longitude.value);
+    }
+    if (lastReadingValue.present) {
+      map['last_reading_value'] = Variable<double>(lastReadingValue.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -992,6 +1132,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
           ..write('connectionType: $connectionType, ')
           ..write('tariff: $tariff, ')
           ..write('meterNumber: $meterNumber, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('lastReadingValue: $lastReadingValue, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1025,6 +1168,16 @@ class $ReadingsTable extends Readings with TableInfo<$ReadingsTable, Reading> {
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES customers (id)',
     ),
+  );
+  static const VerificationMeta _periodMeta = const VerificationMeta('period');
+  @override
+  late final GeneratedColumn<String> period = GeneratedColumn<String>(
+    'period',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
   );
   static const VerificationMeta _previousValueMeta = const VerificationMeta(
     'previousValue',
@@ -1166,6 +1319,7 @@ class $ReadingsTable extends Readings with TableInfo<$ReadingsTable, Reading> {
   List<GeneratedColumn> get $columns => [
     id,
     customerId,
+    period,
     previousValue,
     currentValue,
     consumptionKwh,
@@ -1203,6 +1357,12 @@ class $ReadingsTable extends Readings with TableInfo<$ReadingsTable, Reading> {
       );
     } else if (isInserting) {
       context.missing(_customerIdMeta);
+    }
+    if (data.containsKey('period')) {
+      context.handle(
+        _periodMeta,
+        period.isAcceptableOrUnknown(data['period']!, _periodMeta),
+      );
     }
     if (data.containsKey('previous_value')) {
       context.handle(
@@ -1331,6 +1491,10 @@ class $ReadingsTable extends Readings with TableInfo<$ReadingsTable, Reading> {
         DriftSqlType.string,
         data['${effectivePrefix}customer_id'],
       )!,
+      period: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}period'],
+      )!,
       previousValue: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}previous_value'],
@@ -1391,6 +1555,7 @@ class $ReadingsTable extends Readings with TableInfo<$ReadingsTable, Reading> {
 class Reading extends DataClass implements Insertable<Reading> {
   final String id;
   final String customerId;
+  final String period;
   final double previousValue;
   final double currentValue;
   final double consumptionKwh;
@@ -1406,6 +1571,7 @@ class Reading extends DataClass implements Insertable<Reading> {
   const Reading({
     required this.id,
     required this.customerId,
+    required this.period,
     required this.previousValue,
     required this.currentValue,
     required this.consumptionKwh,
@@ -1424,6 +1590,7 @@ class Reading extends DataClass implements Insertable<Reading> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['customer_id'] = Variable<String>(customerId);
+    map['period'] = Variable<String>(period);
     map['previous_value'] = Variable<double>(previousValue);
     map['current_value'] = Variable<double>(currentValue);
     map['consumption_kwh'] = Variable<double>(consumptionKwh);
@@ -1445,6 +1612,7 @@ class Reading extends DataClass implements Insertable<Reading> {
     return ReadingsCompanion(
       id: Value(id),
       customerId: Value(customerId),
+      period: Value(period),
       previousValue: Value(previousValue),
       currentValue: Value(currentValue),
       consumptionKwh: Value(consumptionKwh),
@@ -1470,6 +1638,7 @@ class Reading extends DataClass implements Insertable<Reading> {
     return Reading(
       id: serializer.fromJson<String>(json['id']),
       customerId: serializer.fromJson<String>(json['customerId']),
+      period: serializer.fromJson<String>(json['period']),
       previousValue: serializer.fromJson<double>(json['previousValue']),
       currentValue: serializer.fromJson<double>(json['currentValue']),
       consumptionKwh: serializer.fromJson<double>(json['consumptionKwh']),
@@ -1490,6 +1659,7 @@ class Reading extends DataClass implements Insertable<Reading> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'customerId': serializer.toJson<String>(customerId),
+      'period': serializer.toJson<String>(period),
       'previousValue': serializer.toJson<double>(previousValue),
       'currentValue': serializer.toJson<double>(currentValue),
       'consumptionKwh': serializer.toJson<double>(consumptionKwh),
@@ -1508,6 +1678,7 @@ class Reading extends DataClass implements Insertable<Reading> {
   Reading copyWith({
     String? id,
     String? customerId,
+    String? period,
     double? previousValue,
     double? currentValue,
     double? consumptionKwh,
@@ -1523,6 +1694,7 @@ class Reading extends DataClass implements Insertable<Reading> {
   }) => Reading(
     id: id ?? this.id,
     customerId: customerId ?? this.customerId,
+    period: period ?? this.period,
     previousValue: previousValue ?? this.previousValue,
     currentValue: currentValue ?? this.currentValue,
     consumptionKwh: consumptionKwh ?? this.consumptionKwh,
@@ -1542,6 +1714,7 @@ class Reading extends DataClass implements Insertable<Reading> {
       customerId: data.customerId.present
           ? data.customerId.value
           : this.customerId,
+      period: data.period.present ? data.period.value : this.period,
       previousValue: data.previousValue.present
           ? data.previousValue.value
           : this.previousValue,
@@ -1574,6 +1747,7 @@ class Reading extends DataClass implements Insertable<Reading> {
     return (StringBuffer('Reading(')
           ..write('id: $id, ')
           ..write('customerId: $customerId, ')
+          ..write('period: $period, ')
           ..write('previousValue: $previousValue, ')
           ..write('currentValue: $currentValue, ')
           ..write('consumptionKwh: $consumptionKwh, ')
@@ -1594,6 +1768,7 @@ class Reading extends DataClass implements Insertable<Reading> {
   int get hashCode => Object.hash(
     id,
     customerId,
+    period,
     previousValue,
     currentValue,
     consumptionKwh,
@@ -1613,6 +1788,7 @@ class Reading extends DataClass implements Insertable<Reading> {
       (other is Reading &&
           other.id == this.id &&
           other.customerId == this.customerId &&
+          other.period == this.period &&
           other.previousValue == this.previousValue &&
           other.currentValue == this.currentValue &&
           other.consumptionKwh == this.consumptionKwh &&
@@ -1630,6 +1806,7 @@ class Reading extends DataClass implements Insertable<Reading> {
 class ReadingsCompanion extends UpdateCompanion<Reading> {
   final Value<String> id;
   final Value<String> customerId;
+  final Value<String> period;
   final Value<double> previousValue;
   final Value<double> currentValue;
   final Value<double> consumptionKwh;
@@ -1646,6 +1823,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
   const ReadingsCompanion({
     this.id = const Value.absent(),
     this.customerId = const Value.absent(),
+    this.period = const Value.absent(),
     this.previousValue = const Value.absent(),
     this.currentValue = const Value.absent(),
     this.consumptionKwh = const Value.absent(),
@@ -1663,6 +1841,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
   ReadingsCompanion.insert({
     required String id,
     required String customerId,
+    this.period = const Value.absent(),
     required double previousValue,
     required double currentValue,
     required double consumptionKwh,
@@ -1691,6 +1870,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
   static Insertable<Reading> custom({
     Expression<String>? id,
     Expression<String>? customerId,
+    Expression<String>? period,
     Expression<double>? previousValue,
     Expression<double>? currentValue,
     Expression<double>? consumptionKwh,
@@ -1708,6 +1888,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (customerId != null) 'customer_id': customerId,
+      if (period != null) 'period': period,
       if (previousValue != null) 'previous_value': previousValue,
       if (currentValue != null) 'current_value': currentValue,
       if (consumptionKwh != null) 'consumption_kwh': consumptionKwh,
@@ -1727,6 +1908,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
   ReadingsCompanion copyWith({
     Value<String>? id,
     Value<String>? customerId,
+    Value<String>? period,
     Value<double>? previousValue,
     Value<double>? currentValue,
     Value<double>? consumptionKwh,
@@ -1744,6 +1926,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
     return ReadingsCompanion(
       id: id ?? this.id,
       customerId: customerId ?? this.customerId,
+      period: period ?? this.period,
       previousValue: previousValue ?? this.previousValue,
       currentValue: currentValue ?? this.currentValue,
       consumptionKwh: consumptionKwh ?? this.consumptionKwh,
@@ -1768,6 +1951,9 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
     }
     if (customerId.present) {
       map['customer_id'] = Variable<String>(customerId.value);
+    }
+    if (period.present) {
+      map['period'] = Variable<String>(period.value);
     }
     if (previousValue.present) {
       map['previous_value'] = Variable<double>(previousValue.value);
@@ -1816,6 +2002,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
     return (StringBuffer('ReadingsCompanion(')
           ..write('id: $id, ')
           ..write('customerId: $customerId, ')
+          ..write('period: $period, ')
           ..write('previousValue: $previousValue, ')
           ..write('currentValue: $currentValue, ')
           ..write('consumptionKwh: $consumptionKwh, ')
@@ -1834,6 +2021,211 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
   }
 }
 
+class $SettingsTable extends Settings with TableInfo<$SettingsTable, Setting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _keyMeta = const VerificationMeta('key');
+  @override
+  late final GeneratedColumn<String> key = GeneratedColumn<String>(
+    'key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _valueMeta = const VerificationMeta('value');
+  @override
+  late final GeneratedColumn<String> value = GeneratedColumn<String>(
+    'value',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [key, value];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Setting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('key')) {
+      context.handle(
+        _keyMeta,
+        key.isAcceptableOrUnknown(data['key']!, _keyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_keyMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+        _valueMeta,
+        value.isAcceptableOrUnknown(data['value']!, _valueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_valueMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {key};
+  @override
+  Setting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Setting(
+      key: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key'],
+      )!,
+      value: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}value'],
+      )!,
+    );
+  }
+
+  @override
+  $SettingsTable createAlias(String alias) {
+    return $SettingsTable(attachedDatabase, alias);
+  }
+}
+
+class Setting extends DataClass implements Insertable<Setting> {
+  final String key;
+  final String value;
+  const Setting({required this.key, required this.value});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['key'] = Variable<String>(key);
+    map['value'] = Variable<String>(value);
+    return map;
+  }
+
+  SettingsCompanion toCompanion(bool nullToAbsent) {
+    return SettingsCompanion(key: Value(key), value: Value(value));
+  }
+
+  factory Setting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Setting(
+      key: serializer.fromJson<String>(json['key']),
+      value: serializer.fromJson<String>(json['value']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'key': serializer.toJson<String>(key),
+      'value': serializer.toJson<String>(value),
+    };
+  }
+
+  Setting copyWith({String? key, String? value}) =>
+      Setting(key: key ?? this.key, value: value ?? this.value);
+  Setting copyWithCompanion(SettingsCompanion data) {
+    return Setting(
+      key: data.key.present ? data.key.value : this.key,
+      value: data.value.present ? data.value.value : this.value,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Setting(')
+          ..write('key: $key, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(key, value);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Setting && other.key == this.key && other.value == this.value);
+}
+
+class SettingsCompanion extends UpdateCompanion<Setting> {
+  final Value<String> key;
+  final Value<String> value;
+  final Value<int> rowid;
+  const SettingsCompanion({
+    this.key = const Value.absent(),
+    this.value = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SettingsCompanion.insert({
+    required String key,
+    required String value,
+    this.rowid = const Value.absent(),
+  }) : key = Value(key),
+       value = Value(value);
+  static Insertable<Setting> custom({
+    Expression<String>? key,
+    Expression<String>? value,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (key != null) 'key': key,
+      if (value != null) 'value': value,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SettingsCompanion copyWith({
+    Value<String>? key,
+    Value<String>? value,
+    Value<int>? rowid,
+  }) {
+    return SettingsCompanion(
+      key: key ?? this.key,
+      value: value ?? this.value,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (key.present) {
+      map['key'] = Variable<String>(key.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<String>(value.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SettingsCompanion(')
+          ..write('key: $key, ')
+          ..write('value: $value, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1841,6 +2233,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SectorsTable sectors = $SectorsTable(this);
   late final $CustomersTable customers = $CustomersTable(this);
   late final $ReadingsTable readings = $ReadingsTable(this);
+  late final $SettingsTable settings = $SettingsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1850,6 +2243,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     sectors,
     customers,
     readings,
+    settings,
   ];
 }
 
@@ -2571,6 +2965,9 @@ typedef $$CustomersTableCreateCompanionBuilder =
       required int connectionType,
       required double tariff,
       required String meterNumber,
+      Value<double> latitude,
+      Value<double> longitude,
+      Value<double> lastReadingValue,
       Value<int> rowid,
     });
 typedef $$CustomersTableUpdateCompanionBuilder =
@@ -2583,6 +2980,9 @@ typedef $$CustomersTableUpdateCompanionBuilder =
       Value<int> connectionType,
       Value<double> tariff,
       Value<String> meterNumber,
+      Value<double> latitude,
+      Value<double> longitude,
+      Value<double> lastReadingValue,
       Value<int> rowid,
     });
 
@@ -2682,6 +3082,21 @@ class $$CustomersTableFilterComposer
 
   ColumnFilters<String> get meterNumber => $composableBuilder(
     column: $table.meterNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get lastReadingValue => $composableBuilder(
+    column: $table.lastReadingValue,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2796,6 +3211,21 @@ class $$CustomersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get lastReadingValue => $composableBuilder(
+    column: $table.lastReadingValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$CommunitiesTableOrderingComposer get communityId {
     final $$CommunitiesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2871,6 +3301,17 @@ class $$CustomersTableAnnotationComposer
 
   GeneratedColumn<String> get meterNumber => $composableBuilder(
     column: $table.meterNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get latitude =>
+      $composableBuilder(column: $table.latitude, builder: (column) => column);
+
+  GeneratedColumn<double> get longitude =>
+      $composableBuilder(column: $table.longitude, builder: (column) => column);
+
+  GeneratedColumn<double> get lastReadingValue => $composableBuilder(
+    column: $table.lastReadingValue,
     builder: (column) => column,
   );
 
@@ -2986,6 +3427,9 @@ class $$CustomersTableTableManager
                 Value<int> connectionType = const Value.absent(),
                 Value<double> tariff = const Value.absent(),
                 Value<String> meterNumber = const Value.absent(),
+                Value<double> latitude = const Value.absent(),
+                Value<double> longitude = const Value.absent(),
+                Value<double> lastReadingValue = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CustomersCompanion(
                 id: id,
@@ -2996,6 +3440,9 @@ class $$CustomersTableTableManager
                 connectionType: connectionType,
                 tariff: tariff,
                 meterNumber: meterNumber,
+                latitude: latitude,
+                longitude: longitude,
+                lastReadingValue: lastReadingValue,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -3008,6 +3455,9 @@ class $$CustomersTableTableManager
                 required int connectionType,
                 required double tariff,
                 required String meterNumber,
+                Value<double> latitude = const Value.absent(),
+                Value<double> longitude = const Value.absent(),
+                Value<double> lastReadingValue = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CustomersCompanion.insert(
                 id: id,
@@ -3018,6 +3468,9 @@ class $$CustomersTableTableManager
                 connectionType: connectionType,
                 tariff: tariff,
                 meterNumber: meterNumber,
+                latitude: latitude,
+                longitude: longitude,
+                lastReadingValue: lastReadingValue,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -3131,6 +3584,7 @@ typedef $$ReadingsTableCreateCompanionBuilder =
     ReadingsCompanion Function({
       required String id,
       required String customerId,
+      Value<String> period,
       required double previousValue,
       required double currentValue,
       required double consumptionKwh,
@@ -3149,6 +3603,7 @@ typedef $$ReadingsTableUpdateCompanionBuilder =
     ReadingsCompanion Function({
       Value<String> id,
       Value<String> customerId,
+      Value<String> period,
       Value<double> previousValue,
       Value<double> currentValue,
       Value<double> consumptionKwh,
@@ -3199,6 +3654,11 @@ class $$ReadingsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get period => $composableBuilder(
+    column: $table.period,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3300,6 +3760,11 @@ class $$ReadingsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get period => $composableBuilder(
+    column: $table.period,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get previousValue => $composableBuilder(
     column: $table.previousValue,
     builder: (column) => ColumnOrderings(column),
@@ -3395,6 +3860,9 @@ class $$ReadingsTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get period =>
+      $composableBuilder(column: $table.period, builder: (column) => column);
 
   GeneratedColumn<double> get previousValue => $composableBuilder(
     column: $table.previousValue,
@@ -3498,6 +3966,7 @@ class $$ReadingsTableTableManager
               ({
                 Value<String> id = const Value.absent(),
                 Value<String> customerId = const Value.absent(),
+                Value<String> period = const Value.absent(),
                 Value<double> previousValue = const Value.absent(),
                 Value<double> currentValue = const Value.absent(),
                 Value<double> consumptionKwh = const Value.absent(),
@@ -3514,6 +3983,7 @@ class $$ReadingsTableTableManager
               }) => ReadingsCompanion(
                 id: id,
                 customerId: customerId,
+                period: period,
                 previousValue: previousValue,
                 currentValue: currentValue,
                 consumptionKwh: consumptionKwh,
@@ -3532,6 +4002,7 @@ class $$ReadingsTableTableManager
               ({
                 required String id,
                 required String customerId,
+                Value<String> period = const Value.absent(),
                 required double previousValue,
                 required double currentValue,
                 required double consumptionKwh,
@@ -3548,6 +4019,7 @@ class $$ReadingsTableTableManager
               }) => ReadingsCompanion.insert(
                 id: id,
                 customerId: customerId,
+                period: period,
                 previousValue: previousValue,
                 currentValue: currentValue,
                 consumptionKwh: consumptionKwh,
@@ -3629,6 +4101,139 @@ typedef $$ReadingsTableProcessedTableManager =
       Reading,
       PrefetchHooks Function({bool customerId})
     >;
+typedef $$SettingsTableCreateCompanionBuilder =
+    SettingsCompanion Function({
+      required String key,
+      required String value,
+      Value<int> rowid,
+    });
+typedef $$SettingsTableUpdateCompanionBuilder =
+    SettingsCompanion Function({
+      Value<String> key,
+      Value<String> value,
+      Value<int> rowid,
+    });
+
+class $$SettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $SettingsTable> {
+  $$SettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $SettingsTable> {
+  $$SettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SettingsTable> {
+  $$SettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get key =>
+      $composableBuilder(column: $table.key, builder: (column) => column);
+
+  GeneratedColumn<String> get value =>
+      $composableBuilder(column: $table.value, builder: (column) => column);
+}
+
+class $$SettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SettingsTable,
+          Setting,
+          $$SettingsTableFilterComposer,
+          $$SettingsTableOrderingComposer,
+          $$SettingsTableAnnotationComposer,
+          $$SettingsTableCreateCompanionBuilder,
+          $$SettingsTableUpdateCompanionBuilder,
+          (Setting, BaseReferences<_$AppDatabase, $SettingsTable, Setting>),
+          Setting,
+          PrefetchHooks Function()
+        > {
+  $$SettingsTableTableManager(_$AppDatabase db, $SettingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> key = const Value.absent(),
+                Value<String> value = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SettingsCompanion(key: key, value: value, rowid: rowid),
+          createCompanionCallback:
+              ({
+                required String key,
+                required String value,
+                Value<int> rowid = const Value.absent(),
+              }) => SettingsCompanion.insert(
+                key: key,
+                value: value,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SettingsTable,
+      Setting,
+      $$SettingsTableFilterComposer,
+      $$SettingsTableOrderingComposer,
+      $$SettingsTableAnnotationComposer,
+      $$SettingsTableCreateCompanionBuilder,
+      $$SettingsTableUpdateCompanionBuilder,
+      (Setting, BaseReferences<_$AppDatabase, $SettingsTable, Setting>),
+      Setting,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3641,4 +4246,6 @@ class $AppDatabaseManager {
       $$CustomersTableTableManager(_db, _db.customers);
   $$ReadingsTableTableManager get readings =>
       $$ReadingsTableTableManager(_db, _db.readings);
+  $$SettingsTableTableManager get settings =>
+      $$SettingsTableTableManager(_db, _db.settings);
 }

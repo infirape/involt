@@ -1,14 +1,13 @@
-// This is a generated file - do not edit.
 //
-// Generated from involt/v1/sync.proto.
-
-// @dart = 3.3
+//  Generated code. Do not modify.
+//  source: involt/v1/sync.proto
+//
+// @dart = 2.12
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names
-// ignore_for_file: curly_braces_in_flow_control_structures
-// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: constant_identifier_names, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_final_fields
+// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
 
 import 'dart:async' as $async;
 import 'dart:core' as $core;
@@ -18,55 +17,48 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'models.pb.dart' as $0;
 
-export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
-
 class PushReadingsRequest extends $pb.GeneratedMessage {
   factory PushReadingsRequest({
     $core.Iterable<$0.Reading>? readings,
   }) {
-    final result = create();
-    if (readings != null) result.readings.addAll(readings);
-    return result;
+    final $result = create();
+    if (readings != null) {
+      $result.readings.addAll(readings);
+    }
+    return $result;
   }
+  PushReadingsRequest._() : super();
+  factory PushReadingsRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PushReadingsRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  PushReadingsRequest._();
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PushReadingsRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..pc<$0.Reading>(1, _omitFieldNames ? '' : 'readings', $pb.PbFieldType.PM, subBuilder: $0.Reading.create)
+    ..hasRequiredFields = false
+  ;
 
-  factory PushReadingsRequest.fromBuffer($core.List<$core.int> data,
-          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
-  factory PushReadingsRequest.fromJson($core.String json,
-          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PushReadingsRequest clone() => PushReadingsRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PushReadingsRequest copyWith(void Function(PushReadingsRequest) updates) => super.copyWith((message) => updates(message as PushReadingsRequest)) as PushReadingsRequest;
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'PushReadingsRequest',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'),
-      createEmptyInstance: create)
-    ..pPM<$0.Reading>(1, _omitFieldNames ? '' : 'readings',
-        subBuilder: $0.Reading.create)
-    ..hasRequiredFields = false;
-
-  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  PushReadingsRequest clone() => deepCopy();
-  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  PushReadingsRequest copyWith(void Function(PushReadingsRequest) updates) =>
-      super.copyWith((message) => updates(message as PushReadingsRequest))
-          as PushReadingsRequest;
-
-  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static PushReadingsRequest create() => PushReadingsRequest._();
-  @$core.override
   PushReadingsRequest createEmptyInstance() => create();
+  static $pb.PbList<PushReadingsRequest> createRepeated() => $pb.PbList<PushReadingsRequest>();
   @$core.pragma('dart2js:noInline')
-  static PushReadingsRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PushReadingsRequest>(create);
+  static PushReadingsRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PushReadingsRequest>(create);
   static PushReadingsRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $pb.PbList<$0.Reading> get readings => $_getList(0);
+  $core.List<$0.Reading> get readings => $_getList(0);
 }
 
 class PushReadingsResponse extends $pb.GeneratedMessage {
@@ -74,119 +66,113 @@ class PushReadingsResponse extends $pb.GeneratedMessage {
     $core.bool? success,
     $core.int? syncedCount,
   }) {
-    final result = create();
-    if (success != null) result.success = success;
-    if (syncedCount != null) result.syncedCount = syncedCount;
-    return result;
+    final $result = create();
+    if (success != null) {
+      $result.success = success;
+    }
+    if (syncedCount != null) {
+      $result.syncedCount = syncedCount;
+    }
+    return $result;
   }
+  PushReadingsResponse._() : super();
+  factory PushReadingsResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PushReadingsResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  PushReadingsResponse._();
-
-  factory PushReadingsResponse.fromBuffer($core.List<$core.int> data,
-          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
-  factory PushReadingsResponse.fromJson($core.String json,
-          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'PushReadingsResponse',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'),
-      createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PushReadingsResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'success')
-    ..aI(2, _omitFieldNames ? '' : 'syncedCount')
-    ..hasRequiredFields = false;
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'syncedCount', $pb.PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
 
-  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  PushReadingsResponse clone() => deepCopy();
-  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  PushReadingsResponse copyWith(void Function(PushReadingsResponse) updates) =>
-      super.copyWith((message) => updates(message as PushReadingsResponse))
-          as PushReadingsResponse;
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PushReadingsResponse clone() => PushReadingsResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PushReadingsResponse copyWith(void Function(PushReadingsResponse) updates) => super.copyWith((message) => updates(message as PushReadingsResponse)) as PushReadingsResponse;
 
-  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static PushReadingsResponse create() => PushReadingsResponse._();
-  @$core.override
   PushReadingsResponse createEmptyInstance() => create();
+  static $pb.PbList<PushReadingsResponse> createRepeated() => $pb.PbList<PushReadingsResponse>();
   @$core.pragma('dart2js:noInline')
-  static PushReadingsResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PushReadingsResponse>(create);
+  static PushReadingsResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PushReadingsResponse>(create);
   static PushReadingsResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get success => $_getBF(0);
   @$pb.TagNumber(1)
-  set success($core.bool value) => $_setBool(0, value);
+  set success($core.bool v) { $_setBool(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasSuccess() => $_has(0);
   @$pb.TagNumber(1)
-  void clearSuccess() => $_clearField(1);
+  void clearSuccess() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.int get syncedCount => $_getIZ(1);
   @$pb.TagNumber(2)
-  set syncedCount($core.int value) => $_setSignedInt32(1, value);
+  set syncedCount($core.int v) { $_setSignedInt32(1, v); }
   @$pb.TagNumber(2)
   $core.bool hasSyncedCount() => $_has(1);
   @$pb.TagNumber(2)
-  void clearSyncedCount() => $_clearField(2);
+  void clearSyncedCount() => clearField(2);
 }
 
 class PullMetadataRequest extends $pb.GeneratedMessage {
   factory PullMetadataRequest({
     $fixnum.Int64? lastSyncTimestamp,
   }) {
-    final result = create();
-    if (lastSyncTimestamp != null) result.lastSyncTimestamp = lastSyncTimestamp;
-    return result;
+    final $result = create();
+    if (lastSyncTimestamp != null) {
+      $result.lastSyncTimestamp = lastSyncTimestamp;
+    }
+    return $result;
   }
+  PullMetadataRequest._() : super();
+  factory PullMetadataRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PullMetadataRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  PullMetadataRequest._();
-
-  factory PullMetadataRequest.fromBuffer($core.List<$core.int> data,
-          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
-  factory PullMetadataRequest.fromJson($core.String json,
-          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'PullMetadataRequest',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'),
-      createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PullMetadataRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..aInt64(1, _omitFieldNames ? '' : 'lastSyncTimestamp')
-    ..hasRequiredFields = false;
+    ..hasRequiredFields = false
+  ;
 
-  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  PullMetadataRequest clone() => deepCopy();
-  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  PullMetadataRequest copyWith(void Function(PullMetadataRequest) updates) =>
-      super.copyWith((message) => updates(message as PullMetadataRequest))
-          as PullMetadataRequest;
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PullMetadataRequest clone() => PullMetadataRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PullMetadataRequest copyWith(void Function(PullMetadataRequest) updates) => super.copyWith((message) => updates(message as PullMetadataRequest)) as PullMetadataRequest;
 
-  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static PullMetadataRequest create() => PullMetadataRequest._();
-  @$core.override
   PullMetadataRequest createEmptyInstance() => create();
+  static $pb.PbList<PullMetadataRequest> createRepeated() => $pb.PbList<PullMetadataRequest>();
   @$core.pragma('dart2js:noInline')
-  static PullMetadataRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PullMetadataRequest>(create);
+  static PullMetadataRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PullMetadataRequest>(create);
   static PullMetadataRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get lastSyncTimestamp => $_getI64(0);
   @$pb.TagNumber(1)
-  set lastSyncTimestamp($fixnum.Int64 value) => $_setInt64(0, value);
+  set lastSyncTimestamp($fixnum.Int64 v) { $_setInt64(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasLastSyncTimestamp() => $_has(0);
   @$pb.TagNumber(1)
-  void clearLastSyncTimestamp() => $_clearField(1);
+  void clearLastSyncTimestamp() => clearField(1);
 }
 
 class PullMetadataResponse extends $pb.GeneratedMessage {
@@ -194,84 +180,309 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     $core.Iterable<$0.Community>? communities,
     $core.Iterable<$0.Sector>? sectors,
     $core.Iterable<$0.Customer>? customers,
+    $0.AppConfig? config,
   }) {
-    final result = create();
-    if (communities != null) result.communities.addAll(communities);
-    if (sectors != null) result.sectors.addAll(sectors);
-    if (customers != null) result.customers.addAll(customers);
-    return result;
+    final $result = create();
+    if (communities != null) {
+      $result.communities.addAll(communities);
+    }
+    if (sectors != null) {
+      $result.sectors.addAll(sectors);
+    }
+    if (customers != null) {
+      $result.customers.addAll(customers);
+    }
+    if (config != null) {
+      $result.config = config;
+    }
+    return $result;
   }
+  PullMetadataResponse._() : super();
+  factory PullMetadataResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PullMetadataResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  PullMetadataResponse._();
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PullMetadataResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..pc<$0.Community>(1, _omitFieldNames ? '' : 'communities', $pb.PbFieldType.PM, subBuilder: $0.Community.create)
+    ..pc<$0.Sector>(2, _omitFieldNames ? '' : 'sectors', $pb.PbFieldType.PM, subBuilder: $0.Sector.create)
+    ..pc<$0.Customer>(3, _omitFieldNames ? '' : 'customers', $pb.PbFieldType.PM, subBuilder: $0.Customer.create)
+    ..aOM<$0.AppConfig>(4, _omitFieldNames ? '' : 'config', subBuilder: $0.AppConfig.create)
+    ..hasRequiredFields = false
+  ;
 
-  factory PullMetadataResponse.fromBuffer($core.List<$core.int> data,
-          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(data, registry);
-  factory PullMetadataResponse.fromJson($core.String json,
-          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(json, registry);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PullMetadataResponse clone() => PullMetadataResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PullMetadataResponse copyWith(void Function(PullMetadataResponse) updates) => super.copyWith((message) => updates(message as PullMetadataResponse)) as PullMetadataResponse;
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'PullMetadataResponse',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'),
-      createEmptyInstance: create)
-    ..pPM<$0.Community>(1, _omitFieldNames ? '' : 'communities',
-        subBuilder: $0.Community.create)
-    ..pPM<$0.Sector>(2, _omitFieldNames ? '' : 'sectors',
-        subBuilder: $0.Sector.create)
-    ..pPM<$0.Customer>(3, _omitFieldNames ? '' : 'customers',
-        subBuilder: $0.Customer.create)
-    ..hasRequiredFields = false;
-
-  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  PullMetadataResponse clone() => deepCopy();
-  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  PullMetadataResponse copyWith(void Function(PullMetadataResponse) updates) =>
-      super.copyWith((message) => updates(message as PullMetadataResponse))
-          as PullMetadataResponse;
-
-  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static PullMetadataResponse create() => PullMetadataResponse._();
-  @$core.override
   PullMetadataResponse createEmptyInstance() => create();
+  static $pb.PbList<PullMetadataResponse> createRepeated() => $pb.PbList<PullMetadataResponse>();
   @$core.pragma('dart2js:noInline')
-  static PullMetadataResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<PullMetadataResponse>(create);
+  static PullMetadataResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PullMetadataResponse>(create);
   static PullMetadataResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $pb.PbList<$0.Community> get communities => $_getList(0);
+  $core.List<$0.Community> get communities => $_getList(0);
 
   @$pb.TagNumber(2)
-  $pb.PbList<$0.Sector> get sectors => $_getList(1);
+  $core.List<$0.Sector> get sectors => $_getList(1);
 
   @$pb.TagNumber(3)
-  $pb.PbList<$0.Customer> get customers => $_getList(2);
+  $core.List<$0.Customer> get customers => $_getList(2);
+
+  @$pb.TagNumber(4)
+  $0.AppConfig get config => $_getN(3);
+  @$pb.TagNumber(4)
+  set config($0.AppConfig v) { setField(4, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasConfig() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearConfig() => clearField(4);
+  @$pb.TagNumber(4)
+  $0.AppConfig ensureConfig() => $_ensure(3);
 }
 
-/// SyncService handles bidirectional data exchange between mobile and cloud.
-class SyncServiceApi {
-  final $pb.RpcClient _client;
+class UploadPhotoRequest extends $pb.GeneratedMessage {
+  factory UploadPhotoRequest({
+    $core.String? fileName,
+    $core.List<$core.int>? data,
+  }) {
+    final $result = create();
+    if (fileName != null) {
+      $result.fileName = fileName;
+    }
+    if (data != null) {
+      $result.data = data;
+    }
+    return $result;
+  }
+  UploadPhotoRequest._() : super();
+  factory UploadPhotoRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UploadPhotoRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UploadPhotoRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'fileName')
+    ..a<$core.List<$core.int>>(2, _omitFieldNames ? '' : 'data', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UploadPhotoRequest clone() => UploadPhotoRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UploadPhotoRequest copyWith(void Function(UploadPhotoRequest) updates) => super.copyWith((message) => updates(message as UploadPhotoRequest)) as UploadPhotoRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UploadPhotoRequest create() => UploadPhotoRequest._();
+  UploadPhotoRequest createEmptyInstance() => create();
+  static $pb.PbList<UploadPhotoRequest> createRepeated() => $pb.PbList<UploadPhotoRequest>();
+  @$core.pragma('dart2js:noInline')
+  static UploadPhotoRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UploadPhotoRequest>(create);
+  static UploadPhotoRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get fileName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set fileName($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasFileName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearFileName() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.int> get data => $_getN(1);
+  @$pb.TagNumber(2)
+  set data($core.List<$core.int> v) { $_setBytes(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasData() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearData() => clearField(2);
+}
+
+class UploadPhotoResponse extends $pb.GeneratedMessage {
+  factory UploadPhotoResponse({
+    $core.String? url,
+  }) {
+    final $result = create();
+    if (url != null) {
+      $result.url = url;
+    }
+    return $result;
+  }
+  UploadPhotoResponse._() : super();
+  factory UploadPhotoResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UploadPhotoResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UploadPhotoResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'url')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UploadPhotoResponse clone() => UploadPhotoResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UploadPhotoResponse copyWith(void Function(UploadPhotoResponse) updates) => super.copyWith((message) => updates(message as UploadPhotoResponse)) as UploadPhotoResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UploadPhotoResponse create() => UploadPhotoResponse._();
+  UploadPhotoResponse createEmptyInstance() => create();
+  static $pb.PbList<UploadPhotoResponse> createRepeated() => $pb.PbList<UploadPhotoResponse>();
+  @$core.pragma('dart2js:noInline')
+  static UploadPhotoResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UploadPhotoResponse>(create);
+  static UploadPhotoResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get url => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set url($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUrl() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUrl() => clearField(1);
+}
+
+class DownloadReceiptRequest extends $pb.GeneratedMessage {
+  factory DownloadReceiptRequest({
+    $core.String? readingId,
+  }) {
+    final $result = create();
+    if (readingId != null) {
+      $result.readingId = readingId;
+    }
+    return $result;
+  }
+  DownloadReceiptRequest._() : super();
+  factory DownloadReceiptRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DownloadReceiptRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DownloadReceiptRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'readingId')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DownloadReceiptRequest clone() => DownloadReceiptRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DownloadReceiptRequest copyWith(void Function(DownloadReceiptRequest) updates) => super.copyWith((message) => updates(message as DownloadReceiptRequest)) as DownloadReceiptRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DownloadReceiptRequest create() => DownloadReceiptRequest._();
+  DownloadReceiptRequest createEmptyInstance() => create();
+  static $pb.PbList<DownloadReceiptRequest> createRepeated() => $pb.PbList<DownloadReceiptRequest>();
+  @$core.pragma('dart2js:noInline')
+  static DownloadReceiptRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DownloadReceiptRequest>(create);
+  static DownloadReceiptRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get readingId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set readingId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasReadingId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearReadingId() => clearField(1);
+}
+
+class DownloadReceiptResponse extends $pb.GeneratedMessage {
+  factory DownloadReceiptResponse({
+    $core.List<$core.int>? pdfData,
+  }) {
+    final $result = create();
+    if (pdfData != null) {
+      $result.pdfData = pdfData;
+    }
+    return $result;
+  }
+  DownloadReceiptResponse._() : super();
+  factory DownloadReceiptResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DownloadReceiptResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DownloadReceiptResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'pdfData', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DownloadReceiptResponse clone() => DownloadReceiptResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DownloadReceiptResponse copyWith(void Function(DownloadReceiptResponse) updates) => super.copyWith((message) => updates(message as DownloadReceiptResponse)) as DownloadReceiptResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DownloadReceiptResponse create() => DownloadReceiptResponse._();
+  DownloadReceiptResponse createEmptyInstance() => create();
+  static $pb.PbList<DownloadReceiptResponse> createRepeated() => $pb.PbList<DownloadReceiptResponse>();
+  @$core.pragma('dart2js:noInline')
+  static DownloadReceiptResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DownloadReceiptResponse>(create);
+  static DownloadReceiptResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.int> get pdfData => $_getN(0);
+  @$pb.TagNumber(1)
+  set pdfData($core.List<$core.int> v) { $_setBytes(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPdfData() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPdfData() => clearField(1);
+}
+
+class SyncServiceApi {
+  $pb.RpcClient _client;
   SyncServiceApi(this._client);
 
-  /// PushReadings uploads multiple readings from the mobile device.
-  $async.Future<PushReadingsResponse> pushReadings(
-          $pb.ClientContext? ctx, PushReadingsRequest request) =>
-      _client.invoke<PushReadingsResponse>(
-          ctx, 'SyncService', 'PushReadings', request, PushReadingsResponse());
-
-  /// PullMetadata retrieves the latest master data (Customers, Communities, Sectors).
-  $async.Future<PullMetadataResponse> pullMetadata(
-          $pb.ClientContext? ctx, PullMetadataRequest request) =>
-      _client.invoke<PullMetadataResponse>(
-          ctx, 'SyncService', 'PullMetadata', request, PullMetadataResponse());
+  $async.Future<PushReadingsResponse> pushReadings($pb.ClientContext? ctx, PushReadingsRequest request) =>
+    _client.invoke<PushReadingsResponse>(ctx, 'SyncService', 'PushReadings', request, PushReadingsResponse())
+  ;
+  $async.Future<PullMetadataResponse> pullMetadata($pb.ClientContext? ctx, PullMetadataRequest request) =>
+    _client.invoke<PullMetadataResponse>(ctx, 'SyncService', 'PullMetadata', request, PullMetadataResponse())
+  ;
+  $async.Future<UploadPhotoResponse> uploadPhoto($pb.ClientContext? ctx, UploadPhotoRequest request) =>
+    _client.invoke<UploadPhotoResponse>(ctx, 'SyncService', 'UploadPhoto', request, UploadPhotoResponse())
+  ;
+  $async.Future<DownloadReceiptResponse> downloadReceipt($pb.ClientContext? ctx, DownloadReceiptRequest request) =>
+    _client.invoke<DownloadReceiptResponse>(ctx, 'SyncService', 'DownloadReceipt', request, DownloadReceiptResponse())
+  ;
 }
 
-const $core.bool _omitFieldNames =
-    $core.bool.fromEnvironment('protobuf.omit_field_names');
-const $core.bool _omitMessageNames =
-    $core.bool.fromEnvironment('protobuf.omit_message_names');
+
+const _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
+const _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');

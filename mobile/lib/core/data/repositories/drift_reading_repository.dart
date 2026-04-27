@@ -9,10 +9,7 @@ class DriftReadingRepository implements ReadingRepository {
 
   @override
   Future<void> saveReading(Reading reading) async {
-    await db.into(db.readings).insert(
-          reading.toCompanion(true),
-          mode: InsertMode.insertOrReplace,
-        );
+    await db.into(db.readings).insertOnConflictUpdate(reading);
   }
 
   @override

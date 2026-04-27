@@ -4,6 +4,7 @@ class AppColors {
   // Brand Colors
   static const Color magenta = Color(0xFFFF00FF);
   static const Color cyan = Color(0xFF00FFFF);
+  static const Color green = Color(0xFF00FF88);
   
   // Backgrounds
   static const Color onyx = Color(0xFF050505);

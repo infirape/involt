@@ -27,13 +27,12 @@ class CurvedNavigationBar extends StatelessWidget {
               height: 90,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildNavItem(0, Icons.home_outlined, Icons.home, "Inicio"),
-                  _buildNavItem(1, Icons.search, Icons.search, "Buscar"),
-                  _buildNavItem(2, Icons.sync, Icons.sync, "Sincro"),
-                  _buildNavItem(3, Icons.notifications_none, Icons.notifications, "Alertas"),
-                  _buildNavItem(4, Icons.person_outline, Icons.person, "Perfil"),
-                ],
+                  children: [
+                    _buildNavItem(0, Icons.home_outlined, Icons.home, "Inicio"),
+                    _buildNavItem(1, Icons.search, Icons.search, "Buscar"),
+                    _buildNavItem(2, Icons.sync, Icons.sync, "Sincro"),
+                    _buildNavItem(3, Icons.person_outline, Icons.person, "Perfil"),
+                  ],
               ),
             ),
           ),
@@ -85,7 +84,7 @@ class BNBCustomPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     double width = size.width;
-    double itemWidth = width / 5;
+    double itemWidth = width / 4;
     double centerX = (itemWidth * index) + (itemWidth / 2);
 
     Path path = Path();
