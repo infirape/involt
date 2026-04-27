@@ -101,7 +101,7 @@ func main() {
 		lastVal := 100.0 + r.Float64()*500.0
 
 		_, err = db.ExecContext(ctx, `
-			INSERT INTO customers (id, code, name, community_id, sector_id, connection_type, tariff, meter_number, latitude, longitude, last_reading_value)
+			INSERT INTO customers (id, code, name, community_id, sector_id, connection_type, tariff, meter_number, latitude, longitude, initial_reading)
 			VALUES ($1, $2, $3, $4, $5, 'MONOFASICA', 0.85, $6, $7, $8, $9)`,
 			custID, code, name, commID, secID, "MET-"+code, lat, lng, lastVal)
 		if err != nil {
@@ -112,10 +112,14 @@ func main() {
 		// Seed historical reading for first 50
 		if count < 50 {
 			readingID := fmt.Sprintf("hist-%s", custID)
+			now := time.Now()
+			periodStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC)
+			periodEnd := periodStart.AddDate(0, 1, -1)
+			expirationDate := periodEnd.AddDate(0, 0, 15)
 			_, err = db.ExecContext(ctx, `
-				INSERT INTO readings (id, customer_id, previous_value, current_value, consumption, photo_url, timestamp, latitude, longitude, cargo_fijo, alumbrado_publico, saldo_redondeo, total_to_pay)
-				VALUES ($1, $2, $3, $4, $5, '', $6, $7, $8, 6.45, 1.20, 0.0, $9)`,
-				readingID, custID, lastVal-20.0, lastVal, 20.0, time.Now().Add(-24*time.Hour), lat, lng, 15.50)
+				INSERT INTO readings (id, customer_id, previous_value, current_value, consumption, photo_url, timestamp, latitude, longitude, period_start, period_end, cargo_fijo, alumbrado_publico, subtotal, saldo_redondeo, total_to_pay, expiration_date)
+				VALUES ($1, $2, $3, $4, $5, '', $6, $7, $8, $9, $10, 6.45, 1.20, 13.45, 0.0, 15.50, $11)`,
+				readingID, custID, lastVal-20.0, lastVal, 20.0, now.Add(-24*time.Hour), lat, lng, periodStart, periodEnd, expirationDate)
 			if err != nil {
 				log.Fatal(err)
 			}
