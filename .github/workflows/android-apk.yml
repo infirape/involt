@@ -31,8 +31,20 @@ jobs:
         run: flutter build apk --release
         working-directory: mobile
         
-      - name: Upload APK
+      - name: Upload APK to Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: involt-app-release
           path: mobile/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Create New Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "build-${{ github.run_number }}"
+          name: "Release Registro Electrico v1.0.${{ github.run_number }}"
+          body: "Nueva versión generada automáticamente desde la rama main.\n\n**Commit:** ${{ github.sha }}\n**Fecha:** ${{ github.event.head_commit.timestamp }}"
+          draft: false
+          prerelease: false
+          files: mobile/build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

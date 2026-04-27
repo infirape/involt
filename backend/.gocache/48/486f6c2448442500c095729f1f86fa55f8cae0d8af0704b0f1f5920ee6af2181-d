@@ -1,0 +1,5 @@
+./mem_metadata_repository.go
+./pg_customer_repository.go
+./pg_metadata_repository.go
+./pg_reading_repository.go
+./pg_settings_repository.go
