@@ -64,31 +64,31 @@ type Customer struct {
 
 // Reading represents a captured meter value.
 type Reading struct {
-	ID            string
-	CustomerID    string
-	PreviousValue float64
-	CurrentValue  float64
-	Consumption   float64
-	PhotoURL      string
-	Timestamp     time.Time
-	Latitude      float64
-	Longitude     float64
+	ID               string    `db:"id"`
+	CustomerID       string    `db:"customer_id"`
+	PreviousValue    float64   `db:"previous_value"`
+	CurrentValue     float64   `db:"current_value"`
+	Consumption      float64   `db:"consumption"`
+	PhotoURL         string    `db:"photo_url"`
+	Timestamp        time.Time `db:"timestamp"`
+	Latitude         float64   `db:"latitude"`
+	Longitude        float64   `db:"longitude"`
 
 	// Period for the reading
-	PeriodStart time.Time
-	PeriodEnd   time.Time
+	PeriodStart time.Time `db:"period_start"`
+	PeriodEnd   time.Time `db:"period_end"`
 
 	// Financial data for receipt consistency
-	CargoFijo        float64
-	AlumbradoPublico float64
-	Adjustment       float64 // Ajuste Tarifario
-	Subtotal         float64
-	SaldoRedondeo    float64 // Saldo por Redondeo
-	RoundDifference  float64 // Diferencia de redondeo
-	TotalToPay       float64
-	PreviousBalance  float64   // Saldo anterior
-	OverdueTotal     float64   // Total recibos vencidos
-	ExpirationDate   time.Time // Fecha de vencimiento
+	CargoFijo        float64 `db:"cargo_fijo"`
+	AlumbradoPublico float64 `db:"alumbrado_publico"`
+	Adjustment       float64 `db:"adjustment"`
+	Subtotal         float64 `db:"subtotal"`
+	SaldoRedondeo    float64 `db:"saldo_redondeo"`
+	RoundDifference  float64 `db:"round_difference"`
+	TotalToPay       float64 `db:"total_to_pay"`
+	PreviousBalance  float64 `db:"previous_balance"`
+	OverdueTotal     float64 `db:"overdue_total"`
+	ExpirationDate   time.Time `db:"expiration_date"`
 }
 
 // AppConfig contains remote configuration.

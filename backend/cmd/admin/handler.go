@@ -30,7 +30,13 @@ func NewAdminHandler(
 	metadataRepo ports.MetadataRepository,
 	pdfGen ports.ReceiptGenerator,
 ) *AdminHandler {
-	templates, err := template.ParseGlob("cmd/admin/templates/*.html")
+	templates := template.New("admin").Funcs(template.FuncMap{
+		"multiply": func(a, b float64) float64 {
+			return a * b
+		},
+	})
+	
+	templates, err := templates.ParseGlob("cmd/admin/templates/*.html")
 	if err != nil {
 		panic(err)
 	}
@@ -66,6 +72,8 @@ func (h *AdminHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.DownloadReceipt(w, r)
 	case strings.HasPrefix(path, "/admin/customers/detail/"):
 		h.CustomerDetail(w, r)
+	case strings.HasPrefix(path, "/admin/customers/receipt/"):
+		h.CustomerReceipt(w, r)
 	case strings.HasPrefix(path, "/admin/customers/edit/"):
 		h.CustomerEdit(w, r)
 	case path == "/admin/customers/save":
@@ -353,11 +361,23 @@ func (h *AdminHandler) StatsCustomers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *AdminHandler) StatsReadings(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("0"))
+	ctx := r.Context()
+	count, err := h.readingRepo.CountCurrentMonth(ctx)
+	if err != nil {
+		w.Write([]byte("0"))
+		return
+	}
+	w.Write([]byte(fmt.Sprintf("%d", count)))
 }
 
 func (h *AdminHandler) StatsPending(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("0"))
+	ctx := r.Context()
+	count, err := h.readingRepo.CountPendingCurrentMonth(ctx)
+	if err != nil {
+		w.Write([]byte("0"))
+		return
+	}
+	w.Write([]byte(fmt.Sprintf("%d", count)))
 }
 
 func (h *AdminHandler) DownloadReceipt(w http.ResponseWriter, r *http.Request) {
@@ -378,7 +398,33 @@ func (h *AdminHandler) DownloadReceipt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pdfData, err := h.pdfGen.Generate(ctx, reading, customer)
+	settings, _ := h.metadataRepo.GetSettings(ctx)
+	if settings == nil {
+		settings = &domain.Settings{}
+	}
+
+	communities, _ := h.metadataRepo.ListCommunities(ctx)
+	sectors, _ := h.metadataRepo.ListSectors(ctx)
+
+	h.populateReadingDetails(reading, settings)
+
+	commName := ""
+	for _, c := range communities {
+		if c.ID == customer.CommunityID {
+			commName = c.Name
+			break
+		}
+	}
+
+	sectName := ""
+	for _, s := range sectors {
+		if s.ID == customer.SectorID {
+			sectName = s.Name
+			break
+		}
+	}
+
+	pdfData, err := h.pdfGen.Generate(ctx, reading, customer, settings, commName, sectName)
 	if err != nil {
 		log.Printf("Error generating PDF for customer %s: %v", customerCode, err)
 		http.Error(w, "Error generating PDF", http.StatusInternalServerError)
@@ -386,8 +432,33 @@ func (h *AdminHandler) DownloadReceipt(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/pdf")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=recibo_%s.pdf", customerCode))
+	w.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=recibo_%s.pdf", customerCode))
 	w.Write(pdfData)
+}
+
+func (h *AdminHandler) populateReadingDetails(reading *domain.Reading, settings *domain.Settings) {
+	// Populate period and expiration dates if zero
+	if reading.PeriodStart.IsZero() {
+		reading.PeriodStart = reading.Timestamp.AddDate(0, -1, 0)
+	}
+	if reading.PeriodEnd.IsZero() {
+		reading.PeriodEnd = reading.Timestamp
+	}
+	if reading.ExpirationDate.IsZero() {
+		days := settings.DiasVencimiento
+		if days == 0 {
+			days = 15 // Default
+		}
+		reading.ExpirationDate = reading.Timestamp.AddDate(0, 0, days)
+	}
+
+	// Calculate subtotal on the fly if zero
+	if reading.Subtotal == 0 {
+		reading.Subtotal = (reading.Consumption * settings.TarifaKWh) + 
+			reading.CargoFijo + 
+			reading.AlumbradoPublico + 
+			settings.Mantenimiento
+	}
 }
 
 type CustomerDetailData struct {
@@ -401,6 +472,69 @@ type CustomerEditData struct {
 	Customer    domain.Customer
 	Communities []domain.Community
 	Sectors     []domain.Sector
+}
+
+type CustomerReceiptData struct {
+	Customer  domain.Customer
+	Reading   domain.Reading
+	Settings  domain.Settings
+	Community string
+	Sector    string
+}
+
+func (h *AdminHandler) CustomerReceipt(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	customerCode := r.URL.Path[25:] // After /admin/customers/receipt/
+
+	customer, err := h.customerRepo.GetByCode(ctx, customerCode)
+	if err != nil {
+		http.Error(w, "Customer not found", http.StatusNotFound)
+		return
+	}
+
+	latestReading, err := h.readingRepo.GetLatestByCustomer(ctx, customer.ID)
+	if err != nil || latestReading == nil {
+		// If no reading, show detail instead
+		h.CustomerDetail(w, r)
+		return
+	}
+
+	settings, _ := h.settingsRepo.Get(ctx)
+	if settings == nil {
+		settings = &domain.Settings{}
+	}
+
+	// Names for UI
+	communities, _ := h.metadataRepo.ListCommunities(ctx)
+	sectors, _ := h.metadataRepo.ListSectors(ctx)
+	
+	commName := ""
+	for _, c := range communities {
+		if c.ID == customer.CommunityID {
+			commName = c.Name
+			break
+		}
+	}
+	
+	sectName := ""
+	for _, s := range sectors {
+		if s.ID == customer.SectorID {
+			sectName = s.Name
+			break
+		}
+	}
+
+	h.populateReadingDetails(latestReading, settings)
+
+	data := CustomerReceiptData{
+		Customer:  *customer,
+		Reading:   *latestReading,
+		Settings:  *settings,
+		Community: commName,
+		Sector:    sectName,
+	}
+
+	h.templates.ExecuteTemplate(w, "modal_receipt.html", data)
 }
 
 func (h *AdminHandler) CustomerDetail(w http.ResponseWriter, r *http.Request) {

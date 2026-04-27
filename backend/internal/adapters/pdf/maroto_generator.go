@@ -13,6 +13,7 @@ import (
 	"github.com/johnfercher/maroto/v2/pkg/components/text"
 	"github.com/johnfercher/maroto/v2/pkg/config"
 	"github.com/johnfercher/maroto/v2/pkg/consts/align"
+	"github.com/johnfercher/maroto/v2/pkg/consts/border"
 	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
 	"github.com/johnfercher/maroto/v2/pkg/consts/pagesize"
 	"github.com/johnfercher/maroto/v2/pkg/core"
@@ -27,13 +28,16 @@ func NewMarotoGenerator() *MarotoGenerator {
 	return &MarotoGenerator{}
 }
 
-func (g *MarotoGenerator) Generate(ctx context.Context, reading *domain.Reading, customer *domain.Customer) ([]byte, error) {
+func (g *MarotoGenerator) Generate(ctx context.Context, reading *domain.Reading, customer *domain.Customer, settings *domain.Settings, community, sector string) ([]byte, error) {
 	cfg := config.NewBuilder().
-		WithPageSize(pagesize.A5).
+		WithPageSize(pagesize.A4).
+		WithLeftMargin(31).
+		WithRightMargin(31).
+		WithTopMargin(15).
 		Build()
 
 	m := maroto.New(cfg)
-	g.addReceiptComponents(m, reading, customer)
+	g.addReceiptComponents(m, reading, customer, settings, community, sector)
 
 	document, err := m.Generate()
 	if err != nil {
@@ -43,153 +47,168 @@ func (g *MarotoGenerator) Generate(ctx context.Context, reading *domain.Reading,
 	return g.applyWatermark(document.GetBytes())
 }
 
-func (g *MarotoGenerator) GenerateBatch(ctx context.Context, readings []domain.Reading, customers map[string]*domain.Customer) ([]byte, error) {
+func (g *MarotoGenerator) GenerateBatch(ctx context.Context, readings []domain.Reading, customers map[string]*domain.Customer, settings *domain.Settings) ([]byte, error) {
 	if len(readings) == 0 {
 		return nil, nil
 	}
 
-	r := readings[0]
-	customer := customers[r.CustomerID]
-	if customer == nil {
-		customer = &domain.Customer{Name: "Desconocido", Code: "N/A"}
+	cfg := config.NewBuilder().
+		WithPageSize(pagesize.A4).
+		WithLeftMargin(31).
+		WithRightMargin(31).
+		WithTopMargin(15).
+		Build()
+	m := maroto.New(cfg)
+
+	for _, r := range readings {
+		customer := customers[r.CustomerID]
+		if customer == nil {
+			customer = &domain.Customer{Name: "Desconocido", Code: "N/A"}
+		}
+		g.addReceiptComponents(m, &r, customer, settings, customer.CommunityName, customer.SectorName)
+		m.AddRows(row.New(10)) 
 	}
 
-	return g.Generate(ctx, &r, customer)
+	document, err := m.Generate()
+	if err != nil {
+		return nil, err
+	}
+
+	return g.applyWatermark(document.GetBytes())
 }
 
-func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Reading, customer *domain.Customer) {
-	fontSmall := 8.0
+func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Reading, customer *domain.Customer, settings *domain.Settings, community, sector string) {
+	fontSmall := 7.5
 	fontNormal := 9.0
+	fontLarge := 12.0
+	borderThick := 0.6 
 
 	// ===== HEADER SECTION =====
-	// Row 1: Companies (left) + Suministro info (right)
 	m.AddRows(
-		row.New(8).Add(
-			col.New(6).Add(
-				text.New("MUNICIPALIDAD DISTRITAL DE CHETILLA", props.Text{Top: 1, Size: fontNormal, Style: fontstyle.Bold}),
-				text.New("HIDROELECTRICA QARWAQIRU", props.Text{Top: 4, Size: fontSmall}),
-			),
-			col.New(6).Add(
-				text.New(fmt.Sprintf("Código: %s", customer.Code), props.Text{Top: 1, Size: fontNormal, Align: align.Right}),
-				text.New(fmt.Sprintf("Fecha Emisión: %s", formatDate(reading.Timestamp)), props.Text{Top: 4, Size: fontSmall, Align: align.Right}),
-			),
+		row.New(18).Add(
+			col.New(7).Add(
+				text.New(community, props.Text{Left: 1, Top: 1, Size: fontSmall}),
+				text.New(fmt.Sprintf("Para consulta su código es: %s", customer.Code), props.Text{Left: 1, Top: 4.5, Size: fontSmall, Style: fontstyle.Bold}),
+				text.New(customer.Name, props.Text{Left: 1, Top: 8, Size: fontNormal, Style: fontstyle.Bold}),
+				text.New(customer.Address, props.Text{Left: 1, Top: 11.5, Size: fontSmall}),
+			).WithStyle(&props.Cell{BorderType: border.Left | border.Top, BorderThickness: borderThick}),
+			col.New(5).Add(
+				text.New(sector, props.Text{Right: 1, Top: 1, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				text.New(settings.Municipalidad, props.Text{Right: 1, Top: 4.5, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				text.New(settings.Empresa, props.Text{Right: 1, Top: 8, Size: fontSmall, Align: align.Right}),
+			).WithStyle(&props.Cell{BorderType: border.Right | border.Top, BorderThickness: borderThick}),
 		),
 	)
 
-	// Row 2: Customer info box
+	m.AddRows(
+		row.New(0.5).Add(col.New(12).WithStyle(&props.Cell{BorderType: border.Left | border.Right | border.Bottom, BorderThickness: borderThick})),
+		row.New(0.5).Add(col.New(12).WithStyle(&props.Cell{BorderType: border.Left | border.Right | border.Bottom, BorderThickness: borderThick})),
+	)
+
+	// ===== DATOS DEL SUMINISTRO Y CONSUMO TITLE =====
+	m.AddRows(
+		row.New(6).Add(
+			col.New(12).Add(
+				text.New("DATOS DEL SUMINISTRO Y CONSUMO", props.Text{Left: 3, Top: 1, Size: fontNormal, Style: fontstyle.Bold}),
+			).WithStyle(&props.Cell{BorderType: border.Left | border.Right, BorderThickness: borderThick}),
+		),
+	)
+
+	m.AddRows(
+		row.New(0.5).Add(col.New(12).WithStyle(&props.Cell{BorderType: border.Left | border.Right | border.Bottom, BorderThickness: borderThick})),
+	)
+
+	// ===== BODY SECTION =====
+	m.AddRows(
+		row.New(48).Add(
+			// Left Column
+			col.New(5).Add(
+				text.New("Tipo de Conexión:", props.Text{Left: 3, Top: 2, Size: fontSmall}),
+				text.New(string(customer.ConnectionType), props.Text{Top: 2, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				
+				text.New("Tarifa:", props.Text{Left: 3, Top: 5, Size: fontSmall}),
+				text.New(fmt.Sprintf("%.4f", settings.TarifaKWh), props.Text{Top: 5, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				
+				text.New("Medidor N°:", props.Text{Left: 3, Top: 8, Size: fontSmall}),
+				text.New(customer.MeterNumber, props.Text{Top: 8, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				
+				text.New("Lectura Anterior:", props.Text{Left: 3, Top: 15, Size: fontSmall}),
+				text.New(fmt.Sprintf("%.2f", reading.PreviousValue), props.Text{Top: 15, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				
+				text.New("Lectura Actual:", props.Text{Left: 3, Top: 18, Size: fontSmall}),
+				text.New(fmt.Sprintf("%.2f", reading.CurrentValue), props.Text{Top: 18, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				
+				text.New("Consumo:", props.Text{Left: 3, Top: 25, Size: fontNormal, Style: fontstyle.Bold}),
+				text.New(fmt.Sprintf("%.0f kWh", reading.Consumption), props.Text{Top: 25, Size: fontNormal, Align: align.Right, Style: fontstyle.Bold}),
+				
+				text.New("Fecha de Emisión:", props.Text{Left: 3, Top: 28, Size: fontSmall}),
+				text.New(formatDate(reading.Timestamp), props.Text{Top: 28, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+			).WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick}),
+			
+			col.New(2).Add(), // GAP
+			
+			// Right Column
+			col.New(5).Add(
+				text.New(fmt.Sprintf("Recibo por Consumo del %s al %s", formatDateShort(reading.PeriodStart), formatDateShort(reading.PeriodEnd)), props.Text{Right: 3, Top: 2, Size: fontSmall, Align: align.Right}),
+				
+				text.New("Consumo (kWh x Tarifa):", props.Text{Top: 8, Size: fontSmall}),
+				text.New(fmt.Sprintf("%.2f", reading.Consumption*settings.TarifaKWh), props.Text{Right: 3, Top: 8, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				
+				text.New("Cargo Fijo:", props.Text{Top: 11, Size: fontSmall}),
+				text.New(fmt.Sprintf("%.2f", reading.CargoFijo), props.Text{Right: 3, Top: 11, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				
+				text.New("Alumbrado Público:", props.Text{Top: 14, Size: fontSmall}),
+				text.New(fmt.Sprintf("%.2f", reading.AlumbradoPublico), props.Text{Right: 3, Top: 14, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				
+				text.New("Mantenimiento:", props.Text{Top: 17, Size: fontSmall}),
+				text.New(fmt.Sprintf("%.2f", settings.Mantenimiento), props.Text{Right: 3, Top: 17, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				
+				text.New("SUBTOTAL:", props.Text{Top: 21, Size: fontSmall, Style: fontstyle.Bold}),
+				text.New(fmt.Sprintf("%.2f", reading.Subtotal), props.Text{Right: 3, Top: 21, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				
+				text.New("Saldo Anterior:", props.Text{Top: 27, Size: fontSmall}),
+				text.New(fmt.Sprintf("%.2f", reading.PreviousBalance), props.Text{Right: 3, Top: 27, Size: fontSmall, Align: align.Right}),
+				
+				text.New("Recibos Vencidos:", props.Text{Top: 30, Size: fontSmall}),
+				text.New(fmt.Sprintf("%.2f", reading.OverdueTotal), props.Text{Right: 3, Top: 30, Size: fontSmall, Align: align.Right}),
+				
+				text.New("TOTAL RECIBO:", props.Text{Top: 37, Size: fontNormal, Style: fontstyle.Bold}),
+				text.New(fmt.Sprintf("S/ %.2f", reading.TotalToPay), props.Text{Right: 3, Top: 37, Size: fontNormal, Align: align.Right, Style: fontstyle.Bold}),
+			).WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick}),
+		),
+	)
+
+	m.AddRows(row.New(3).Add(col.New(12).WithStyle(&props.Cell{BorderType: border.Left | border.Right, BorderThickness: borderThick})))
+
+	// ===== WARNING BOX =====
+	m.AddRows(
+		row.New(10).Add(
+			col.New(1).WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick}),
+			col.New(10).Add(
+				text.New("Si paga hasta la fecha de vencimiento evitará cortes y gastos innecesarios.", props.Text{Top: 3, Size: fontSmall, Align: align.Center, Style: fontstyle.Italic}),
+			).WithStyle(&props.Cell{BorderType: border.Full, BorderThickness: 0.6}),
+			col.New(1).WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick}),
+		),
+	)
+
+	m.AddRows(row.New(3).Add(col.New(12).WithStyle(&props.Cell{BorderType: border.Left | border.Right, BorderThickness: borderThick})))
+
+	// ===== TOTAL SECTION =====
 	m.AddRows(
 		row.New(12).Add(
-			col.New(3).Add(
-				text.New("Suministro:", props.Text{Top: 1, Size: fontSmall}),
-				text.New("Cliente:", props.Text{Top: 4, Size: fontSmall}),
-				text.New("Dirección:", props.Text{Top: 7, Size: fontSmall}),
-				text.New("Medidor N°:", props.Text{Top: 10, Size: fontSmall}),
-			),
-			col.New(6).Add(
-				text.New(customer.Code, props.Text{Top: 1, Size: fontNormal, Style: fontstyle.Bold}),
-				text.New(customer.Name, props.Text{Top: 4, Size: fontNormal, Style: fontstyle.Bold}),
-				text.New(customer.Address, props.Text{Top: 7, Size: fontNormal}),
-				text.New(customer.MeterNumber, props.Text{Top: 10, Size: fontNormal}),
-			),
-			col.New(3).Add(
-				text.New("Vencimiento:", props.Text{Top: 1, Size: fontSmall, Align: align.Right}),
-				text.New("Período:", props.Text{Top: 7, Size: fontSmall, Align: align.Right}),
-			),
-			col.New(3).Add(
-				text.New(formatDate(reading.ExpirationDate), props.Text{Top: 1, Size: fontNormal, Style: fontstyle.Bold, Align: align.Right}),
-				text.New(fmt.Sprintf("%s a %s", formatDateShort(reading.PeriodStart), formatDateShort(reading.PeriodEnd)), props.Text{Top: 7, Size: fontSmall, Align: align.Right}),
-			),
-		),
-	)
-
-	// ===== CONSUMPTION TABLE =====
-	m.AddRows(
-		row.New(6).Add(
 			col.New(12).Add(
-				text.New("DETALLE DE CONSUMO", props.Text{Top: 1, Size: fontNormal, Style: fontstyle.Bold}),
-			),
+				text.New(fmt.Sprintf("TOTAL A PAGAR: S/ %.2f", reading.TotalToPay), props.Text{Right: 3, Top: 4, Size: fontLarge, Align: align.Right, Style: fontstyle.Bold}),
+			).WithStyle(&props.Cell{BorderType: border.Left | border.Right, BorderThickness: borderThick}),
 		),
 	)
 
-	// Table header
+	// Final divider and Vencimiento
 	m.AddRows(
-		row.New(5).Add(
-			col.New(4).Add(text.New("CONCEPTO", props.Text{Top: 1, Size: fontSmall, Style: fontstyle.Bold})),
-			col.New(2).Add(text.New("RUBRO", props.Text{Top: 1, Size: fontSmall, Style: fontstyle.Bold, Align: align.Center})),
-			col.New(2).Add(text.New("CANT.", props.Text{Top: 1, Size: fontSmall, Style: fontstyle.Bold, Align: align.Center})),
-			col.New(2).Add(text.New("P.UNIT", props.Text{Top: 1, Size: fontSmall, Style: fontstyle.Bold, Align: align.Right})),
-			col.New(2).Add(text.New("IMPORTE", props.Text{Top: 1, Size: fontSmall, Style: fontstyle.Bold, Align: align.Right})),
-		),
-	)
-
-	// Consumption row
-	m.AddRows(
-		row.New(5).Add(
-			col.New(4).Add(text.New("Energía Activa", props.Text{Top: 1, Size: fontSmall})),
-			col.New(2).Add(text.New("001", props.Text{Top: 1, Size: fontSmall, Align: align.Center})),
-			col.New(2).Add(text.New(fmt.Sprintf("%.0f", reading.Consumption), props.Text{Top: 1, Size: fontSmall, Align: align.Center})),
-			col.New(2).Add(text.New(fmt.Sprintf("%.4f", customer.Tariff), props.Text{Top: 1, Size: fontSmall, Align: align.Right})),
-			col.New(2).Add(text.New(fmt.Sprintf("%.2f", reading.Subtotal), props.Text{Top: 1, Size: fontSmall, Align: align.Right})),
-		),
-	)
-
-	// Cargo Fijo row
-	m.AddRows(
-		row.New(5).Add(
-			col.New(4).Add(text.New("Cargo Fijo", props.Text{Top: 1, Size: fontSmall})),
-			col.New(2).Add(text.New("002", props.Text{Top: 1, Size: fontSmall, Align: align.Center})),
-			col.New(2).Add(text.New("1", props.Text{Top: 1, Size: fontSmall, Align: align.Center})),
-			col.New(2).Add(text.New(fmt.Sprintf("%.2f", reading.CargoFijo), props.Text{Top: 1, Size: fontSmall, Align: align.Right})),
-			col.New(2).Add(text.New(fmt.Sprintf("%.2f", reading.CargoFijo), props.Text{Top: 1, Size: fontSmall, Align: align.Right})),
-		),
-	)
-
-	// Alumbrado Público row
-	m.AddRows(
-		row.New(5).Add(
-			col.New(4).Add(text.New("Alumbrado Público", props.Text{Top: 1, Size: fontSmall})),
-			col.New(2).Add(text.New("003", props.Text{Top: 1, Size: fontSmall, Align: align.Center})),
-			col.New(2).Add(text.New("1", props.Text{Top: 1, Size: fontSmall, Align: align.Center})),
-			col.New(2).Add(text.New(fmt.Sprintf("%.2f", reading.AlumbradoPublico), props.Text{Top: 1, Size: fontSmall, Align: align.Right})),
-			col.New(2).Add(text.New(fmt.Sprintf("%.2f", reading.AlumbradoPublico), props.Text{Top: 1, Size: fontSmall, Align: align.Right})),
-		),
-	)
-
-	// ===== TOTALS =====
-	subtotalBase := reading.Subtotal + reading.CargoFijo + reading.AlumbradoPublico
-	m.AddRows(
-		row.New(6).Add(
-			col.New(8).Add(text.New("", props.Text{Top: 1, Size: fontSmall})),
-			col.New(2).Add(text.New("SUBTOTAL:", props.Text{Top: 1, Size: fontSmall, Align: align.Right})),
-			col.New(2).Add(text.New(fmt.Sprintf("%.2f", subtotalBase), props.Text{Top: 1, Size: fontSmall, Align: align.Right})),
-		),
-	)
-
-	m.AddRows(
-		row.New(6).Add(
-			col.New(8).Add(text.New("", props.Text{Top: 1, Size: fontSmall})),
-			col.New(2).Add(text.New("TOTAL A PAGAR:", props.Text{Top: 2, Size: 12, Style: fontstyle.Bold, Align: align.Right})),
-			col.New(2).Add(text.New(fmt.Sprintf("S/ %.2f", reading.TotalToPay), props.Text{Top: 2, Size: 12, Style: fontstyle.Bold, Align: align.Right})),
-		),
-	)
-
-	// ===== READINGS =====
-	m.AddRows(
-		row.New(8).Add(
+		row.New(0.5).Add(col.New(12).WithStyle(&props.Cell{BorderType: border.Left | border.Right | border.Bottom, BorderThickness: borderThick})),
+		row.New(12).Add(
 			col.New(12).Add(
-				text.New("LECTURAS", props.Text{Top: 1, Size: fontNormal, Style: fontstyle.Bold}),
-				text.New(fmt.Sprintf("Anterior: %.2f  |  Actual: %.2f  |  Consumo: %.0f kWh",
-					reading.PreviousValue, reading.CurrentValue, reading.Consumption), props.Text{Top: 4, Size: fontSmall}),
-			),
-		),
-	)
-
-	// ===== FOOTER =====
-	m.AddRows(
-		row.New(6).Add(
-			col.New(12).Add(
-				text.New("Gracias por su pago", props.Text{Top: 1, Size: fontSmall, Align: align.Center, Style: fontstyle.Italic}),
-			),
+				text.New(fmt.Sprintf("FECHA DE VENCIMIENTO: %s", formatDate(reading.ExpirationDate)), props.Text{Top: 3, Size: fontNormal, Align: align.Center, Style: fontstyle.Bold}),
+			).WithStyle(&props.Cell{BorderType: border.Left | border.Right | border.Bottom, BorderThickness: borderThick}),
 		),
 	)
 }
@@ -198,7 +217,7 @@ func (g *MarotoGenerator) applyWatermark(pdfData []byte) ([]byte, error) {
 	rs := bytes.NewReader(pdfData)
 	var out bytes.Buffer
 
-	wm, err := api.TextWatermark("DEMO", "rot:45, scale:0.8, op:0.2, color:0.5 0.5 0.5", true, false, types.POINTS)
+	wm, err := api.TextWatermark("DEMO", "rot:45, scale:0.8, op:0.1, color:0.5 0.5 0.5", true, false, types.POINTS)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create watermark: %w", err)
 	}
@@ -222,5 +241,5 @@ func formatDateShort(t time.Time) string {
 	if t.IsZero() {
 		return "-"
 	}
-	return t.Format("02/01")
+	return t.Format("02/01/2006")
 }

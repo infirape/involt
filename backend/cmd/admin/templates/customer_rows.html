@@ -13,12 +13,12 @@
     </td>
     <td class="px-6 py-4">
         <div class="flex gap-2">
-            <button class="p-2 hover:bg-gray-700 rounded-lg text-cyan transition" title="Ver detalle"
-                hx-get="/admin/customers/detail/{{.Code}}" hx-target="body" hx-swap="beforeend">
+            <button class="p-2 hover:bg-gray-700 rounded-lg text-cyan transition" title="Ver recibo"
+                hx-get="/admin/customers/receipt/{{.Code}}" hx-target="#modal-container" hx-swap="innerHTML">
                 👁️
             </button>
             <button class="p-2 hover:bg-gray-700 rounded-lg text-green transition" title="Editar"
-                hx-get="/admin/customers/edit/{{.Code}}" hx-target="body" hx-swap="beforeend">
+                hx-get="/admin/customers/edit/{{.Code}}" hx-target="#modal-container" hx-swap="innerHTML">
                 ✏️
             </button>
         </div>

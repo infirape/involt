@@ -128,21 +128,53 @@ func (h *SyncHandler) PushReadings(
 	req *connect.Request[involtv1.PushReadingsRequest],
 ) (*connect.Response[involtv1.PushReadingsResponse], error) {
 	syncedCount := 0
+	settings, _ := h.metaRepo.GetSettings(ctx)
+	if settings == nil {
+		settings = &domain.Settings{}
+	}
+
 	for _, r := range req.Msg.Readings {
+		customer, _ := h.customerRepo.GetByID(ctx, r.CustomerId)
+		
+		prevVal := r.PreviousValue
+		if prevVal == 0 && customer != nil && customer.InitialReading > 0 {
+			prevVal = customer.InitialReading
+		}
+
+		consumption := r.CurrentValue - prevVal
+		if consumption < 0 {
+			consumption = 0
+		}
+
+		cargoFijo := r.CargoFijo
+		if cargoFijo == 0 {
+			cargoFijo = settings.CargoFijo
+		}
+
+		alumbrado := r.AlumbradoPublico
+		if alumbrado == 0 {
+			alumbrado = settings.Alumbrado
+		}
+
+		subtotal := (consumption * settings.TarifaKWh) + cargoFijo + alumbrado + settings.Mantenimiento
+		
+		// For now, simple total. In future we can add IGV if configured.
+		total := subtotal + r.SaldoRedondeo
+
 		reading := &domain.Reading{
 			ID:               r.Id,
 			CustomerID:       r.CustomerId,
-			PreviousValue:    r.PreviousValue,
+			PreviousValue:    prevVal,
 			CurrentValue:     r.CurrentValue,
-			Consumption:      r.ConsumptionKwh,
+			Consumption:      consumption,
 			PhotoURL:         r.PhotoUrl,
 			Timestamp:        time.Unix(r.Timestamp, 0),
 			Latitude:         r.Latitude,
 			Longitude:        r.Longitude,
-			CargoFijo:        r.CargoFijo,
-			AlumbradoPublico: r.AlumbradoPublico,
+			CargoFijo:        cargoFijo,
+			AlumbradoPublico: alumbrado,
 			SaldoRedondeo:    r.SaldoRedondeo,
-			TotalToPay:       r.TotalToPay,
+			TotalToPay:       total,
 		}
 		if err := h.readingRepo.Save(ctx, reading); err != nil {
 			log.Printf("⚠️ Error saving reading %s: %v", r.Id, err)
@@ -189,7 +221,30 @@ func (h *SyncHandler) DownloadReceipt(
 		return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("customer %s not found: %w", reading.CustomerID, err))
 	}
 
-	pdfData, err := h.pdfGen.Generate(ctx, reading, customer)
+	settings, _ := h.metaRepo.GetSettings(ctx)
+	if settings == nil {
+		settings = &domain.Settings{}
+	}
+
+	communities, _ := h.metaRepo.ListCommunities(ctx)
+	commName := ""
+	for _, c := range communities {
+		if c.ID == customer.CommunityID {
+			commName = c.Name
+			break
+		}
+	}
+
+	sectors, _ := h.metaRepo.ListSectors(ctx)
+	sectName := ""
+	for _, s := range sectors {
+		if s.ID == customer.SectorID {
+			sectName = s.Name
+			break
+		}
+	}
+
+	pdfData, err := h.pdfGen.Generate(ctx, reading, customer, settings, commName, sectName)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to generate PDF: %w", err))
 	}

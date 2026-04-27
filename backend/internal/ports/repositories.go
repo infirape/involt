@@ -13,6 +13,8 @@ type ReadingRepository interface {
 	ListByCustomer(ctx context.Context, customerID string) ([]domain.Reading, error)
 	GetLatestByCustomer(ctx context.Context, customerID string) (*domain.Reading, error)
 	ListBySectorAndPeriod(ctx context.Context, sectorID string, start, end string) ([]domain.Reading, error)
+	CountCurrentMonth(ctx context.Context) (int, error)
+	CountPendingCurrentMonth(ctx context.Context) (int, error)
 }
 
 // CustomerRepository defines operations for customer data.
