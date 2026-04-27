@@ -1,5 +1,25 @@
-<nav class="flex gap-2">
-    <a href="/admin" class="px-4 py-2 rounded-lg font-medium transition {{if eq .ActivePage "dashboard"}}text-magenta bg-gray-800{{else}}text-gray-400 hover:text-white hover:bg-gray-800{{end}}">Dashboard</a>
-    <a href="/admin/customers" class="px-4 py-2 rounded-lg font-medium transition {{if eq .ActivePage "customers"}}text-magenta bg-gray-800{{else}}text-gray-400 hover:text-white hover:bg-gray-800{{end}}">Clientes</a>
-    <a href="/admin/settings" class="px-4 py-2 rounded-lg font-medium transition {{if eq .ActivePage "settings"}}text-magenta bg-gray-800{{else}}text-gray-400 hover:text-white hover:bg-gray-800{{end}}">Configuración</a>
+<nav class="flex items-center gap-6">
+    <div class="flex gap-2">
+        <a href="/admin" class="px-4 py-2 rounded-lg font-medium transition {{if eq .ActivePage "dashboard"}}text-magenta bg-gray-800{{else}}text-gray-400 hover:text-white hover:bg-gray-800{{end}}">Dashboard</a>
+        <a href="/admin/customers" class="px-4 py-2 rounded-lg font-medium transition {{if eq .ActivePage "customers"}}text-magenta bg-gray-800{{else}}text-gray-400 hover:text-white hover:bg-gray-800{{end}}">Clientes</a>
+        <a href="/admin/settings" class="px-4 py-2 rounded-lg font-medium transition {{if eq .ActivePage "settings"}}text-magenta bg-gray-800{{else}}text-gray-400 hover:text-white hover:bg-gray-800{{end}}">Configuración</a>
+    </div>
+
+    <div class="border-l border-gray-800 h-8"></div>
+
+    <div class="flex items-center gap-3">
+        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Periodo Activo</span>
+        <select name="period" 
+            class="bg-dark border border-gray-700 rounded-lg px-4 py-2 text-sm font-semibold focus:border-magenta focus:outline-none transition text-cyan cursor-pointer hover:border-gray-600 shadow-lg"
+            hx-get="/admin/set-period"
+            hx-target="body">
+            {{range .Periods}}
+                <option value="{{.}}" {{if eq . $.Filter.Period}}selected{{else if eq . $.Period}}selected{{end}}>
+                    {{formatPeriod .}}
+                </option>
+            {{else}}
+                <option value="" disabled selected>Sin periodos</option>
+            {{end}}
+        </select>
+    </div>
 </nav>

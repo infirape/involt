@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/infira/involt/backend/internal/adapters/repositories"
 	"github.com/infira/involt/backend/internal/domain"
@@ -33,6 +34,19 @@ func NewAdminHandler(
 	templates := template.New("admin").Funcs(template.FuncMap{
 		"multiply": func(a, b float64) float64 {
 			return a * b
+		},
+		"formatPeriod": func(p string) string {
+			if len(p) != 7 {
+				return p
+			}
+			year := p[:4]
+			month := p[5:]
+			months := map[string]string{
+				"01": "Enero", "02": "Febrero", "03": "Marzo", "04": "Abril",
+				"05": "Mayo", "06": "Junio", "07": "Julio", "08": "Agosto",
+				"09": "Septiembre", "10": "Octubre", "11": "Noviembre", "12": "Diciembre",
+			}
+			return fmt.Sprintf("%s %s", months[month], year)
 		},
 	})
 	
@@ -76,6 +90,8 @@ func (h *AdminHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.CustomerReceipt(w, r)
 	case strings.HasPrefix(path, "/admin/customers/edit/"):
 		h.CustomerEdit(w, r)
+	case path == "/admin/set-period":
+		h.SetPeriod(w, r)
 	case path == "/admin/customers/save":
 		h.SaveCustomer(w, r)
 	case path == "/admin/settings/save":
@@ -92,6 +108,9 @@ type PageData struct {
 	Settings   domain.Settings
 	Stats      StatsData
 	ActivePage string
+	Periods    []string
+	Period     string
+	Filter     Filter
 }
 
 type StatsData struct {
@@ -108,6 +127,7 @@ type ListData struct {
 	Page        PageInfo
 	Filter      Filter
 	ActivePage  string
+	Periods     []string
 }
 
 type CustomerRow struct {
@@ -158,14 +178,51 @@ func (h *AdminHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	customers, _ := h.customerRepo.ListAll(ctx)
+	periods, _ := h.readingRepo.ListPeriods(ctx)
+	currentPeriod := r.URL.Query().Get("period")
+	if currentPeriod == "" {
+		if len(periods) > 0 {
+			currentPeriod = periods[0]
+		} else {
+			currentPeriod = time.Now().Format("2006-01")
+		}
+	}
 
 	data := PageData{
 		Settings:   *settings,
 		Stats:      StatsData{Customers: len(customers), Readings: 0, Pending: 0},
 		ActivePage: "dashboard",
+		Periods:    periods,
+		Period:     currentPeriod,
+		Filter:     Filter{Period: currentPeriod},
 	}
 
 	h.templates.ExecuteTemplate(w, "index.html", data)
+}
+
+func (h *AdminHandler) SetPeriod(w http.ResponseWriter, r *http.Request) {
+	period := r.URL.Query().Get("period")
+	referer := r.Header.Get("Referer")
+	
+	// Add or update period in referer URL
+	if strings.Contains(referer, "?") {
+		if strings.Contains(referer, "period=") {
+			// Replace existing period
+			parts := strings.Split(referer, "period=")
+			suffix := ""
+			if strings.Contains(parts[1], "&") {
+				suffix = parts[1][strings.Index(parts[1], "&"):]
+			}
+			referer = parts[0] + "period=" + period + suffix
+		} else {
+			referer += "&period=" + period
+		}
+	} else {
+		referer += "?period=" + period
+	}
+
+	w.Header().Set("HX-Redirect", referer)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h *AdminHandler) Customers(w http.ResponseWriter, r *http.Request) {
@@ -267,14 +324,25 @@ func (h *AdminHandler) Customers(w http.ResponseWriter, r *http.Request) {
 		rows[i] = row
 	}
 
+	periods, _ := h.readingRepo.ListPeriods(ctx)
+	currentPeriod := r.URL.Query().Get("period")
+	if currentPeriod == "" {
+		if len(periods) > 0 {
+			currentPeriod = periods[0]
+		} else {
+			currentPeriod = time.Now().Format("2006-01")
+		}
+	}
+
 	listData := ListData{
 		Customers:   rows,
 		Communities: communities,
 		Sectors:     sectors,
 		Stats:       CustomerStats{Total: len(customers), ByCommunity: len(communities), BySector: len(sectors), WithReadings: withReadings},
 		Page:        PageInfo{Start: 1, End: len(customers), Total: len(customers)},
-		Filter:      Filter{},
+		Filter:      Filter{Period: currentPeriod},
 		ActivePage:  "customers",
+		Periods:     periods,
 	}
 
 	if r.Header.Get("HX-Request") == "true" {
@@ -297,9 +365,22 @@ func (h *AdminHandler) Settings(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	periods, _ := h.readingRepo.ListPeriods(ctx)
+	currentPeriod := r.URL.Query().Get("period")
+	if currentPeriod == "" {
+		if len(periods) > 0 {
+			currentPeriod = periods[0]
+		} else {
+			currentPeriod = time.Now().Format("2006-01")
+		}
+	}
+
 	data := PageData{
 		Settings:   *settings,
 		ActivePage: "settings",
+		Periods:    periods,
+		Period:     currentPeriod,
+		Filter:     Filter{Period: currentPeriod},
 	}
 	h.templates.ExecuteTemplate(w, "settings.html", data)
 }

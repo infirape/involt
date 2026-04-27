@@ -18,6 +18,15 @@
             color: #666;
             cursor: not-allowed;
         }
+        /* Fix for browser autofill background */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #1a1a1a inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
     </style>
     <div class="bg-dark-card border border-gray-700 rounded-xl max-w-4xl w-full max-h-[95vh] overflow-y-auto shadow-2xl">
         <form hx-post="/admin/customers/save" hx-target="#modal-container" hx-swap="delete" class="p-6">

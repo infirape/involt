@@ -85,3 +85,15 @@ func (r *PostgresReadingRepository) CountPendingCurrentMonth(ctx context.Context
 	err := r.db.GetContext(ctx, &count, query)
 	return count, err
 }
+
+func (r *PostgresReadingRepository) ListPeriods(ctx context.Context) ([]string, error) {
+	var periods []string
+	query := `SELECT DISTINCT to_char(timestamp, 'YYYY-MM') as period 
+	          FROM readings 
+	          ORDER BY period DESC`
+	err := r.db.SelectContext(ctx, &periods, query)
+	if err != nil {
+		return nil, fmt.Errorf("error listing periods: %w", err)
+	}
+	return periods, nil
+}

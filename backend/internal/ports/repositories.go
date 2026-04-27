@@ -15,6 +15,7 @@ type ReadingRepository interface {
 	ListBySectorAndPeriod(ctx context.Context, sectorID string, start, end string) ([]domain.Reading, error)
 	CountCurrentMonth(ctx context.Context) (int, error)
 	CountPendingCurrentMonth(ctx context.Context) (int, error)
+	ListPeriods(ctx context.Context) ([]string, error)
 }
 
 // CustomerRepository defines operations for customer data.
