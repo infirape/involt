@@ -14,7 +14,10 @@ import (
 )
 
 func main() {
-	connStr := "postgres://involt_user:involt_password@localhost:5432/involt_db?sslmode=disable"
+	connStr := os.Getenv("DATABASE_URL")
+	if connStr == "" {
+		connStr = "postgres://involt_user:involt_password@db:5432/involt_db?sslmode=disable"
+	}
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)

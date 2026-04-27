@@ -1,4 +1,4 @@
-FROM golang:1.26-alpine AS builder
+FROM golang:1.23-alpine AS builder
 
 WORKDIR /src/backend
 
@@ -6,7 +6,7 @@ COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 
 COPY backend/ ./
-RUN CGO_ENABLED=0 GOOS=linux go build -o /out/involt-server ./cmd/server
+RUN go mod tidy && CGO_ENABLED=0 GOOS=linux go build -o /out/involt-server ./cmd/server
 
 FROM alpine:3.20
 
