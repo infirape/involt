@@ -49,26 +49,13 @@ func (r *PostgresMetadataRepository) SaveSectors(ctx context.Context, sectors []
 }
 
 func (r *PostgresMetadataRepository) GetAppConfig(ctx context.Context) (*domain.AppConfig, error) {
-	var configs []struct {
-		Key   string `db:"key"`
-		Value string `db:"value"`
-	}
-	query := "SELECT key, value FROM app_configs"
-	err := r.db.SelectContext(ctx, &configs, query)
+	var config domain.AppConfig
+	query := "SELECT id, map_url_template, map_user_agent FROM app_configs LIMIT 1"
+	err := r.db.GetContext(ctx, &config, query)
 	if err != nil {
 		return nil, fmt.Errorf("error getting app config: %w", err)
 	}
-
-	config := &domain.AppConfig{}
-	for _, c := range configs {
-		switch c.Key {
-		case "map_url_template":
-			config.MapURLTemplate = c.Value
-		case "map_user_agent":
-			config.MapUserAgent = c.Value
-		}
-	}
-	return config, nil
+	return &config, nil
 }
 
 func (r *PostgresMetadataRepository) GetSettings(ctx context.Context) (*domain.Settings, error) {
