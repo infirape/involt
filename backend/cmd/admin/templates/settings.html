@@ -22,20 +22,36 @@
             }
         }
     }
-    const preloaderStartedAt = Date.now();
-    const PRELOADER_MIN_MS = 1200;
-    window.addEventListener('DOMContentLoaded', () => {
-        document.body.classList.add('is-loading');
-    });
-    window.addEventListener('load', () => {
-        const elapsed = Date.now() - preloaderStartedAt;
-        const waitMs = Math.max(PRELOADER_MIN_MS - elapsed, 0);
-        window.setTimeout(() => {
+    ;(() => {
+        if (window.__involtPreloaderBound) return;
+        window.__involtPreloaderBound = true;
+
+        const hidePreloader = () => {
             const preloader = document.getElementById('app-preloader');
             if (preloader) preloader.classList.add('hidden');
             document.body.classList.remove('is-loading');
-        }, waitMs);
-    });
+        };
+        const showPreloader = () => {
+            const preloader = document.getElementById('app-preloader');
+            if (preloader) preloader.classList.remove('hidden');
+            document.body.classList.add('is-loading');
+        };
+
+        window.addEventListener('DOMContentLoaded', showPreloader);
+        window.addEventListener('load', hidePreloader);
+
+        document.addEventListener('htmx:beforeRequest', (event) => {
+            if (event?.detail?.requestConfig?.boosted) showPreloader();
+        });
+        document.addEventListener('htmx:afterRequest', (event) => {
+            if (event?.detail?.requestConfig?.boosted) hidePreloader();
+        });
+        document.addEventListener('htmx:afterSwap', hidePreloader);
+        document.addEventListener('htmx:afterSettle', hidePreloader);
+        document.addEventListener('htmx:responseError', (event) => {
+            if (event?.detail?.requestConfig?.boosted) hidePreloader();
+        });
+    })();
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -108,13 +124,16 @@
 </style>
 </head>
 <body class="bg-dark text-gray-100 min-h-screen">
-    <div id="app-preloader" class="app-preloader">
+    <div id="app-preloader" class="app-preloader hidden">
         <div class="preloader-logo" role="img" aria-label="InVolt"></div>
     </div>
     
     <header class="glass border-b border-gray-800 sticky top-0 z-50 px-8 py-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div class="text-2xl font-bold gradient-text">{{.Settings.Empresa}}</div>
+            <div class="flex items-center gap-4">
+                <img src="/assets/logo.png" alt="Logo" class="h-10 w-auto filter drop-shadow-[0_0_10px_rgba(255,230,0,0.3)]">
+                <div class="text-2xl font-bold gradient-text">{{.Settings.Empresa}}</div>
+            </div>
             {{template "nav.html" .}}
         </div>
     </header>

@@ -28,14 +28,18 @@
             {{end}}
         </div>
         <div class="flex gap-2">
-            <a href="/admin/customers?page={{.Page.Prev}}&size={{.Page.Size}}&search={{urlquery .Filter.Search}}&sector={{urlquery .Filter.SectorID}}"
-                class="px-4 py-2 rounded-lg {{if .Page.HasPrev}}bg-gray-800 text-gray-400 hover:text-white{{else}}bg-gray-900 text-gray-600 pointer-events-none{{end}}">
+            <button hx-get="/admin/customers?page={{.Page.Prev}}&size={{.Page.Size}}&search={{urlquery .Filter.Search}}&sector={{urlquery .Filter.SectorID}}"
+                hx-target="#customers-table-container"
+                hx-push-url="true"
+                class="px-4 py-2 rounded-lg {{if .Page.HasPrev}}bg-gray-800 text-gray-400 hover:text-white cursor-pointer{{else}}bg-gray-900 text-gray-600 pointer-events-none{{end}}">
                 Anterior
-            </a>
-            <a href="/admin/customers?page={{.Page.Next}}&size={{.Page.Size}}&search={{urlquery .Filter.Search}}&sector={{urlquery .Filter.SectorID}}"
-                class="px-4 py-2 rounded-lg {{if .Page.HasNext}}bg-gray-800 text-gray-400 hover:text-white{{else}}bg-gray-900 text-gray-600 pointer-events-none{{end}}">
+            </button>
+            <button hx-get="/admin/customers?page={{.Page.Next}}&size={{.Page.Size}}&search={{urlquery .Filter.Search}}&sector={{urlquery .Filter.SectorID}}"
+                hx-target="#customers-table-container"
+                hx-push-url="true"
+                class="px-4 py-2 rounded-lg {{if .Page.HasNext}}bg-gray-800 text-gray-400 hover:text-white cursor-pointer{{else}}bg-gray-900 text-gray-600 pointer-events-none{{end}}">
                 Siguiente
-            </a>
+            </button>
         </div>
     </div>
 </div>

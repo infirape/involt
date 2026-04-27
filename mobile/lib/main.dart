@@ -33,11 +33,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Hidroeléctrica Qarwaqiru',
+      title: 'Registro Electrico',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: AppColors.magenta,
+        primaryColor: AppColors.volt,
         scaffoldBackgroundColor: AppColors.onyx,
         fontFamily: 'Inter',
         useMaterial3: true,
