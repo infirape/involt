@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:drift/drift.dart' as drift;
 import '../../data/database.dart';
 import '../../data/repositories/drift_reading_repository.dart';
 import '../theme/app_colors.dart';
@@ -28,19 +27,12 @@ class ReadingScreen extends StatefulWidget {
 class _ReadingScreenState extends State<ReadingScreen> {
   final TextEditingController _kwhController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  final GlobalKey _inputKey = GlobalKey();
-
+  
   File? _image;
   Position? _currentPosition;
-  Reading? _existingReading;
-  double _previousValue = 0;
   bool _isSaving = false;
-
-  // Business Logic Constants
-  final double _cargoFijo = 4.50;
-  final double _alumbrado = 2.10;
-  final double _pricePerKwh = 0.85;
+  double _previousValue = 0;
+  bool _isAlreadyRegistered = false;
 
   @override
   void initState() {
@@ -49,53 +41,25 @@ class _ReadingScreenState extends State<ReadingScreen> {
   }
 
   Future<void> _loadInitialData() async {
-    final selectedPeriod = context.read<AppStateProvider>().selectedPeriod;
-    
-    // 1. Get previous reading to calculate consumption
-    final lastReadings = await (widget.db.select(widget.db.readings)
-          ..where((r) => r.customerId.equals(widget.customer.id))
-          ..orderBy([(t) => drift.OrderingTerm.desc(t.timestamp)])
-          ..limit(1))
-        .get();
-
-    if (lastReadings.isNotEmpty) {
-      _previousValue = lastReadings.first.currentValue;
-    } else {
-      _previousValue = widget.customer.lastReadingValue;
-    }
-
-    // 2. Check if there's already a reading for the CURRENT period
-    final existing = await (widget.db.select(widget.db.readings)
-          ..where((r) => r.customerId.equals(widget.customer.id))
-          ..where((r) => r.period.equals(selectedPeriod))
-          ..limit(1))
-        .getSingleOrNull();
-
-    if (existing != null && mounted) {
-      setState(() {
-        _existingReading = existing;
-        _kwhController.text = existing.currentValue.toString();
-        // Set previous from the record if it exists
-        _previousValue = existing.previousValue;
-        if (existing.photoUrl != null && existing.photoUrl!.isNotEmpty) {
-          _image = File(existing.photoUrl!);
-        }
-      });
-    }
-
+    _previousValue = widget.customer.lastReadingValue;
     _determinePosition();
+    
+    // Proactive duplicate check
+    final selectedPeriod = context.read<AppStateProvider>().selectedPeriod;
+    final repo = DriftReadingRepository(widget.db);
+    final readings = await repo.getReadingsForCustomer(widget.customer.id);
+    
+    if (readings.any((r) => r.period == selectedPeriod)) {
+      if (mounted) setState(() => _isAlreadyRegistered = true);
+    }
   }
 
   Future<void> _determinePosition() async {
     try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
       final position = await Geolocator.getCurrentPosition();
       if (mounted) setState(() => _currentPosition = position);
     } catch (e) {
-      debugPrint('Error location: $e');
+      debugPrint('GPS Error: $e');
     }
   }
 
@@ -107,16 +71,43 @@ class _ReadingScreenState extends State<ReadingScreen> {
 
   double get _currentValue => double.tryParse(_kwhController.text) ?? 0;
   double get _consumption => _currentValue > _previousValue ? _currentValue - _previousValue : 0;
-  double get _totalToPay => _cargoFijo + _alumbrado + (_consumption * _pricePerKwh);
 
   Future<void> _saveReading() async {
-    if (_image == null) {
-      _showError('La foto de evidencia es obligatoria');
+    if (_kwhController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ingrese la lectura')));
       return;
     }
-    if (_currentValue <= 0) {
-      _showError('Ingrese una lectura válida');
-      return;
+
+    if (_currentValue < _previousValue) {
+      final confirmLower = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: AppColors.onyx,
+          title: const Text('Lectura Menor', style: TextStyle(color: Colors.white)),
+          content: const Text('La lectura ingresada es menor a la anterior. ¿Está seguro de que es correcta?', style: TextStyle(color: Colors.white70)),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('CORREGIR')),
+            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('SÍ, ES CORRECTA', style: TextStyle(color: AppColors.magenta))),
+          ],
+        ),
+      );
+      if (confirmLower != true) return;
+    }
+
+    if (_isAlreadyRegistered) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: AppColors.onyx,
+          title: const Text('Sobrescribir Registro', style: TextStyle(color: Colors.white)),
+          content: const Text('Ya existe una lectura para este período. ¿Desea actualizarla?', style: TextStyle(color: Colors.white70)),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('CANCELAR')),
+            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('ACTUALIZAR', style: TextStyle(color: AppColors.magenta))),
+          ],
+        ),
+      );
+      if (confirm != true) return;
     }
 
     setState(() => _isSaving = true);
@@ -125,7 +116,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
     try {
       final repo = DriftReadingRepository(widget.db);
       final reading = Reading(
-        id: _existingReading?.id ?? 'read-${widget.customer.id}-${DateTime.now().millisecondsSinceEpoch}',
+        id: 'read-${widget.customer.id}-${DateTime.now().millisecondsSinceEpoch}',
         customerId: widget.customer.id,
         period: selectedPeriod,
         previousValue: _previousValue,
@@ -135,28 +126,21 @@ class _ReadingScreenState extends State<ReadingScreen> {
         timestamp: DateTime.now(),
         latitude: _currentPosition?.latitude ?? 0,
         longitude: _currentPosition?.longitude ?? 0,
-        cargoFijo: _cargoFijo,
-        alumbradoPublico: _alumbrado,
+        cargoFijo: 0,
+        alumbradoPublico: 0,
         saldoRedondeo: 0,
-        totalToPay: _totalToPay,
+        totalToPay: 0,
         isSynced: false,
+        comment: _commentController.text,
       );
 
       await repo.saveReading(reading);
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Lectura guardada')));
-        Navigator.pop(context);
-      }
+      if (mounted) Navigator.pop(context);
     } catch (e) {
-      _showError('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
-  }
-
-  void _showError(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   @override
@@ -164,149 +148,169 @@ class _ReadingScreenState extends State<ReadingScreen> {
     return Scaffold(
       backgroundColor: AppColors.onyx,
       appBar: AppBar(
-        title: const Text('Registro de Lectura', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(widget.customer.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: Column(
         children: [
+          // PROACTIVE WARNING BADGE
+          if (_isAlreadyRegistered)
+            Container(
+              width: double.infinity,
+              color: Colors.amber.withOpacity(0.1),
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Colors.amber, size: 16),
+                  SizedBox(width: 8),
+                  Text(
+                    'ATENCIÓN: YA EXISTE UN REGISTRO PARA ESTE PERÍODO',
+                    style: TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+            
           Expanded(
             child: SingleChildScrollView(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  _buildCustomerInfo(),
                   const SizedBox(height: 20),
-                  _buildCalculationsCard(),
-                  const SizedBox(height: 20),
-                  _buildPhotoSection(),
-                  const SizedBox(height: 20),
+                  _buildPreviousReadingLabel(),
+                  const SizedBox(height: 10),
                   _buildReadingInput(),
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 15),
+                  _buildDifferenceLabel(),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
           ),
-          _buildKeypadSection(),
+          _buildActionArea(),
         ],
       ),
     );
   }
 
-  Widget _buildCustomerInfo() {
-    return GlassCard(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          const Icon(Icons.person, color: AppColors.cyan),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(widget.customer.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-                Text('Suministro: ${widget.customer.code}', style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCalculationsCard() {
-    return GlassCard(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          _buildCalcRow('Lectura Anterior', '${_previousValue.toStringAsFixed(1)} kWh', Colors.white38),
-          const Divider(color: Colors.white10),
-          _buildCalcRow('Consumo Actual', '${_consumption.toStringAsFixed(1)} kWh', AppColors.cyan, isBold: true),
-          _buildCalcRow('Cargo Fijo', 'S/ ${_cargoFijo.toStringAsFixed(2)}', Colors.white70),
-          _buildCalcRow('Alumbrado', 'S/ ${_alumbrado.toStringAsFixed(2)}', Colors.white70),
-          const Divider(color: Colors.white10),
-          _buildCalcRow('TOTAL ESTIMADO', 'S/ ${_totalToPay.toStringAsFixed(2)}', AppColors.magenta, isBold: true, fontSize: 20),
-          if (_currentPosition != null)
-             Text('GPS: ${_currentPosition!.latitude.toStringAsFixed(4)}, ${_currentPosition!.longitude.toStringAsFixed(4)}',
-                  style: const TextStyle(color: Colors.green, fontSize: 10)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCalcRow(String label, String value, Color color, {bool isBold = false, double fontSize = 14}) {
+  Widget _buildPreviousReadingLabel() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 14)),
-        Text(value, style: TextStyle(color: color, fontWeight: isBold ? FontWeight.bold : FontWeight.normal, fontSize: fontSize)),
-      ],
-    );
-  }
-
-  Widget _buildPhotoSection() {
-    return GestureDetector(
-      onTap: _takePhoto,
-      child: GlassCard(
-        padding: EdgeInsets.zero,
-        child: Container(
-          height: 150, width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            image: _image != null ? DecorationImage(image: FileImage(_image!), fit: BoxFit.cover) : null,
-          ),
-          child: _image == null
-              ? const Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Icon(Icons.camera_alt, color: AppColors.magenta, size: 40),
-                  Text('Capturar Foto del Medidor', style: TextStyle(color: AppColors.magenta, fontWeight: FontWeight.bold)),
-                ])
-              : null,
+        const Icon(Icons.history, color: Colors.white24, size: 14),
+        const SizedBox(width: 6),
+        Text(
+          'LECTURA ANTERIOR: ${_previousValue.toStringAsFixed(1)} kWh',
+          style: const TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.bold),
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildReadingInput() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Lectura Actual (kWh)', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 10),
-        GlassCard(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: TextField(
-            controller: _kwhController,
-            readOnly: true,
-            style: const TextStyle(color: AppColors.cyan, fontSize: 32, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-            decoration: const InputDecoration(border: InputBorder.none, hintText: '0.0'),
-          ),
+    return GlassCard(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: Text(
+          _kwhController.text.isEmpty ? '0.0' : _kwhController.text,
+          style: const TextStyle(color: AppColors.cyan, fontSize: 54, fontWeight: FontWeight.bold, letterSpacing: 4),
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildKeypadSection() {
+  Widget _buildDifferenceLabel() {
     return Container(
-      padding: const EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(color: Colors.black.withOpacity(0.8), borderRadius: const BorderRadius.vertical(top: Radius.circular(30))),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          NumericKeypad(controller: _kwhController, onChanged: () => setState(() {})),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SizedBox(
-              width: double.infinity, height: 50,
-              child: ElevatedButton(
-                onPressed: _isSaving ? null : _saveReading,
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.magenta, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                child: _isSaving ? const CircularProgressIndicator(color: Colors.white) : const Text('REGISTRAR', style: TextStyle(fontWeight: FontWeight.bold)),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.cyan.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        'CONSUMO: ${_consumption.toStringAsFixed(1)} kWh',
+        style: const TextStyle(color: AppColors.cyan, fontSize: 13, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildActionArea() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.8),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            NumericKeypad(
+              controller: _kwhController,
+              onChanged: () => setState(() {}),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: _buildPhotoThumbnail(),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+              child: TextField(
+                controller: _commentController,
+                style: const TextStyle(color: Colors.white70, fontSize: 13),
+                decoration: InputDecoration(
+                  hintText: 'Observaciones (opcional)...',
+                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
+                  border: InputBorder.none,
+                  icon: const Icon(Icons.edit, color: Colors.white12, size: 16),
+                ),
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _isSaving ? null : _saveReading,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.magenta,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: _isSaving
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Text(_isAlreadyRegistered ? 'ACTUALIZAR LECTURA' : 'GUARDAR LECTURA', style: const TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhotoThumbnail() {
+    return GestureDetector(
+      onTap: _takePhoto,
+      child: Container(
+        height: 60,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          image: _image != null ? DecorationImage(image: FileImage(_image!), fit: BoxFit.cover) : null,
+        ),
+        child: _image == null
+            ? const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.camera_alt, color: AppColors.magenta, size: 20),
+                  SizedBox(width: 10),
+                  Text('AÑADIR FOTO (OPCIONAL)', style: TextStyle(color: AppColors.magenta, fontSize: 12, fontWeight: FontWeight.bold)),
+                ],
+              )
+            : null,
       ),
     );
   }

@@ -39,6 +39,11 @@ const (
 	// SyncServicePullMetadataProcedure is the fully-qualified name of the SyncService's PullMetadata
 	// RPC.
 	SyncServicePullMetadataProcedure = "/involt.v1.SyncService/PullMetadata"
+	// SyncServiceUploadPhotoProcedure is the fully-qualified name of the SyncService's UploadPhoto RPC.
+	SyncServiceUploadPhotoProcedure = "/involt.v1.SyncService/UploadPhoto"
+	// SyncServiceDownloadReceiptProcedure is the fully-qualified name of the SyncService's
+	// DownloadReceipt RPC.
+	SyncServiceDownloadReceiptProcedure = "/involt.v1.SyncService/DownloadReceipt"
 )
 
 // SyncServiceClient is a client for the involt.v1.SyncService service.
@@ -47,6 +52,10 @@ type SyncServiceClient interface {
 	PushReadings(context.Context, *connect.Request[v1.PushReadingsRequest]) (*connect.Response[v1.PushReadingsResponse], error)
 	// PullMetadata retrieves the latest master data (Customers, Communities, Sectors).
 	PullMetadata(context.Context, *connect.Request[v1.PullMetadataRequest]) (*connect.Response[v1.PullMetadataResponse], error)
+	// UploadPhoto uploads a single image file (JPG/PNG) and returns the public URL.
+	UploadPhoto(context.Context, *connect.Request[v1.UploadPhotoRequest]) (*connect.Response[v1.UploadPhotoResponse], error)
+	// DownloadReceipt generates and returns the PDF receipt for a specific reading.
+	DownloadReceipt(context.Context, *connect.Request[v1.DownloadReceiptRequest]) (*connect.Response[v1.DownloadReceiptResponse], error)
 }
 
 // NewSyncServiceClient constructs a client for the involt.v1.SyncService service. By default, it
@@ -72,13 +81,27 @@ func NewSyncServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(syncServiceMethods.ByName("PullMetadata")),
 			connect.WithClientOptions(opts...),
 		),
+		uploadPhoto: connect.NewClient[v1.UploadPhotoRequest, v1.UploadPhotoResponse](
+			httpClient,
+			baseURL+SyncServiceUploadPhotoProcedure,
+			connect.WithSchema(syncServiceMethods.ByName("UploadPhoto")),
+			connect.WithClientOptions(opts...),
+		),
+		downloadReceipt: connect.NewClient[v1.DownloadReceiptRequest, v1.DownloadReceiptResponse](
+			httpClient,
+			baseURL+SyncServiceDownloadReceiptProcedure,
+			connect.WithSchema(syncServiceMethods.ByName("DownloadReceipt")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // syncServiceClient implements SyncServiceClient.
 type syncServiceClient struct {
-	pushReadings *connect.Client[v1.PushReadingsRequest, v1.PushReadingsResponse]
-	pullMetadata *connect.Client[v1.PullMetadataRequest, v1.PullMetadataResponse]
+	pushReadings    *connect.Client[v1.PushReadingsRequest, v1.PushReadingsResponse]
+	pullMetadata    *connect.Client[v1.PullMetadataRequest, v1.PullMetadataResponse]
+	uploadPhoto     *connect.Client[v1.UploadPhotoRequest, v1.UploadPhotoResponse]
+	downloadReceipt *connect.Client[v1.DownloadReceiptRequest, v1.DownloadReceiptResponse]
 }
 
 // PushReadings calls involt.v1.SyncService.PushReadings.
@@ -91,12 +114,26 @@ func (c *syncServiceClient) PullMetadata(ctx context.Context, req *connect.Reque
 	return c.pullMetadata.CallUnary(ctx, req)
 }
 
+// UploadPhoto calls involt.v1.SyncService.UploadPhoto.
+func (c *syncServiceClient) UploadPhoto(ctx context.Context, req *connect.Request[v1.UploadPhotoRequest]) (*connect.Response[v1.UploadPhotoResponse], error) {
+	return c.uploadPhoto.CallUnary(ctx, req)
+}
+
+// DownloadReceipt calls involt.v1.SyncService.DownloadReceipt.
+func (c *syncServiceClient) DownloadReceipt(ctx context.Context, req *connect.Request[v1.DownloadReceiptRequest]) (*connect.Response[v1.DownloadReceiptResponse], error) {
+	return c.downloadReceipt.CallUnary(ctx, req)
+}
+
 // SyncServiceHandler is an implementation of the involt.v1.SyncService service.
 type SyncServiceHandler interface {
 	// PushReadings uploads multiple readings from the mobile device.
 	PushReadings(context.Context, *connect.Request[v1.PushReadingsRequest]) (*connect.Response[v1.PushReadingsResponse], error)
 	// PullMetadata retrieves the latest master data (Customers, Communities, Sectors).
 	PullMetadata(context.Context, *connect.Request[v1.PullMetadataRequest]) (*connect.Response[v1.PullMetadataResponse], error)
+	// UploadPhoto uploads a single image file (JPG/PNG) and returns the public URL.
+	UploadPhoto(context.Context, *connect.Request[v1.UploadPhotoRequest]) (*connect.Response[v1.UploadPhotoResponse], error)
+	// DownloadReceipt generates and returns the PDF receipt for a specific reading.
+	DownloadReceipt(context.Context, *connect.Request[v1.DownloadReceiptRequest]) (*connect.Response[v1.DownloadReceiptResponse], error)
 }
 
 // NewSyncServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -118,12 +155,28 @@ func NewSyncServiceHandler(svc SyncServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(syncServiceMethods.ByName("PullMetadata")),
 		connect.WithHandlerOptions(opts...),
 	)
+	syncServiceUploadPhotoHandler := connect.NewUnaryHandler(
+		SyncServiceUploadPhotoProcedure,
+		svc.UploadPhoto,
+		connect.WithSchema(syncServiceMethods.ByName("UploadPhoto")),
+		connect.WithHandlerOptions(opts...),
+	)
+	syncServiceDownloadReceiptHandler := connect.NewUnaryHandler(
+		SyncServiceDownloadReceiptProcedure,
+		svc.DownloadReceipt,
+		connect.WithSchema(syncServiceMethods.ByName("DownloadReceipt")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/involt.v1.SyncService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case SyncServicePushReadingsProcedure:
 			syncServicePushReadingsHandler.ServeHTTP(w, r)
 		case SyncServicePullMetadataProcedure:
 			syncServicePullMetadataHandler.ServeHTTP(w, r)
+		case SyncServiceUploadPhotoProcedure:
+			syncServiceUploadPhotoHandler.ServeHTTP(w, r)
+		case SyncServiceDownloadReceiptProcedure:
+			syncServiceDownloadReceiptHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -139,4 +192,12 @@ func (UnimplementedSyncServiceHandler) PushReadings(context.Context, *connect.Re
 
 func (UnimplementedSyncServiceHandler) PullMetadata(context.Context, *connect.Request[v1.PullMetadataRequest]) (*connect.Response[v1.PullMetadataResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.SyncService.PullMetadata is not implemented"))
+}
+
+func (UnimplementedSyncServiceHandler) UploadPhoto(context.Context, *connect.Request[v1.UploadPhotoRequest]) (*connect.Response[v1.UploadPhotoResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.SyncService.UploadPhoto is not implemented"))
+}
+
+func (UnimplementedSyncServiceHandler) DownloadReceipt(context.Context, *connect.Request[v1.DownloadReceiptRequest]) (*connect.Response[v1.DownloadReceiptResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.SyncService.DownloadReceipt is not implemented"))
 }

@@ -33,6 +33,9 @@ type Customer struct {
 	ConnectionType ConnectionType
 	Tariff         float64
 	MeterNumber    string
+	Latitude       float64
+	Longitude      float64
+	LastReadingValue float64
 }
 
 // Reading represents a captured meter value.
@@ -52,4 +55,10 @@ type Reading struct {
 	AlumbradoPublico float64
 	SaldoRedondeo    float64
 	TotalToPay       float64
+}
+
+// AppConfig contains remote configuration.
+type AppConfig struct {
+	MapURLTemplate string
+	MapUserAgent   string
 }

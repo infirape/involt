@@ -26,4 +26,5 @@ type MetadataRepository interface {
 	ListSectors(ctx context.Context) ([]domain.Sector, error)
 	SaveCommunities(ctx context.Context, communities []domain.Community) error
 	SaveSectors(ctx context.Context, sectors []domain.Sector) error
+	GetAppConfig(ctx context.Context) (*domain.AppConfig, error)
 }

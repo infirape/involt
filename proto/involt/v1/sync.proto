@@ -13,6 +13,12 @@ service SyncService {
   
   // PullMetadata retrieves the latest master data (Customers, Communities, Sectors).
   rpc PullMetadata(PullMetadataRequest) returns (PullMetadataResponse);
+
+  // UploadPhoto uploads a single image file (JPG/PNG) and returns the public URL.
+  rpc UploadPhoto(UploadPhotoRequest) returns (UploadPhotoResponse);
+
+  // DownloadReceipt generates and returns the PDF receipt for a specific reading.
+  rpc DownloadReceipt(DownloadReceiptRequest) returns (DownloadReceiptResponse);
 }
 
 message PushReadingsRequest {
@@ -32,4 +38,22 @@ message PullMetadataResponse {
   repeated Community communities = 1;
   repeated Sector sectors = 2;
   repeated Customer customers = 3;
+  AppConfig config = 4;
+}
+
+message UploadPhotoRequest {
+  string file_name = 1;
+  bytes data = 2;
+}
+
+message UploadPhotoResponse {
+  string url = 1;
+}
+
+message DownloadReceiptRequest {
+  string reading_id = 1;
+}
+
+message DownloadReceiptResponse {
+  bytes pdf_data = 1;
 }

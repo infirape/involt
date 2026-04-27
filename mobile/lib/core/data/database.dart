@@ -58,6 +58,8 @@ class Readings extends Table {
   
   BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
 
+  TextColumn get comment => text().nullable()();
+  
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -75,7 +77,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.withExecutor(QueryExecutor e) : super(e);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -97,6 +99,9 @@ class AppDatabase extends _$AppDatabase {
       if (from < 5) {
         // Use raw SQL to ensure NOT NULL column has a DEFAULT value during migration
         await this.customStatement('ALTER TABLE readings ADD COLUMN period TEXT NOT NULL DEFAULT ""');
+      }
+      if (from < 6) {
+        await m.addColumn(readings, readings.comment);
       }
     },
     beforeOpen: (details) async {

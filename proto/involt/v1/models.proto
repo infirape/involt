@@ -34,6 +34,9 @@ message Customer {
   ConnectionType connection_type = 6;
   double tariff = 7;
   string meter_number = 8;
+  double latitude = 9;
+  double longitude = 10;
+  double last_reading_value = 11;
 }
 
 // Reading represents a captured meter value at a point in time.
@@ -57,4 +60,9 @@ message Reading {
   double alumbrado_publico = 11;
   double saldo_redondeo = 12;
   double total_to_pay = 13;
+}
+// AppConfig contains remote configuration for the mobile application.
+message AppConfig {
+  string map_url_template = 1;
+  string map_user_agent = 2;
 }

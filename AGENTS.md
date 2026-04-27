@@ -26,6 +26,9 @@ Este documento centraliza las reglas de arquitectura y desarrollo para InVolt. T
 |-------|-------------|---------|
 | `jira-integration` | Gestión de tareas en Jira | Sincronizar tasks con Jira board |
 
+## Credenciales y Acceso
+- **Jira**: Acceso vía API habilitado. Las credenciales (`JIRA_API_TOKEN`, `JIRA_USER_EMAIL`) se encuentran en el archivo `.env` del root. **USAR SIEMPRE LA API** (curl/rest) en lugar del navegador para actualizaciones de tareas.
+
 ## Archivos de Referencia
 - [README.md](./README.md) - Visión general del proyecto
 - [.atl/skill-registry.md](./.atl/skill-registry.md) - Catálogo de skills de IA

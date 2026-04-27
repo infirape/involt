@@ -1315,6 +1315,17 @@ class $ReadingsTable extends Readings with TableInfo<$ReadingsTable, Reading> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _commentMeta = const VerificationMeta(
+    'comment',
+  );
+  @override
+  late final GeneratedColumn<String> comment = GeneratedColumn<String>(
+    'comment',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1332,6 +1343,7 @@ class $ReadingsTable extends Readings with TableInfo<$ReadingsTable, Reading> {
     saldoRedondeo,
     totalToPay,
     isSynced,
+    comment,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1474,6 +1486,12 @@ class $ReadingsTable extends Readings with TableInfo<$ReadingsTable, Reading> {
         isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
       );
     }
+    if (data.containsKey('comment')) {
+      context.handle(
+        _commentMeta,
+        comment.isAcceptableOrUnknown(data['comment']!, _commentMeta),
+      );
+    }
     return context;
   }
 
@@ -1543,6 +1561,10 @@ class $ReadingsTable extends Readings with TableInfo<$ReadingsTable, Reading> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_synced'],
       )!,
+      comment: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}comment'],
+      ),
     );
   }
 
@@ -1568,6 +1590,7 @@ class Reading extends DataClass implements Insertable<Reading> {
   final double saldoRedondeo;
   final double totalToPay;
   final bool isSynced;
+  final String? comment;
   const Reading({
     required this.id,
     required this.customerId,
@@ -1584,6 +1607,7 @@ class Reading extends DataClass implements Insertable<Reading> {
     required this.saldoRedondeo,
     required this.totalToPay,
     required this.isSynced,
+    this.comment,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1605,6 +1629,9 @@ class Reading extends DataClass implements Insertable<Reading> {
     map['saldo_redondeo'] = Variable<double>(saldoRedondeo);
     map['total_to_pay'] = Variable<double>(totalToPay);
     map['is_synced'] = Variable<bool>(isSynced);
+    if (!nullToAbsent || comment != null) {
+      map['comment'] = Variable<String>(comment);
+    }
     return map;
   }
 
@@ -1627,6 +1654,9 @@ class Reading extends DataClass implements Insertable<Reading> {
       saldoRedondeo: Value(saldoRedondeo),
       totalToPay: Value(totalToPay),
       isSynced: Value(isSynced),
+      comment: comment == null && nullToAbsent
+          ? const Value.absent()
+          : Value(comment),
     );
   }
 
@@ -1651,6 +1681,7 @@ class Reading extends DataClass implements Insertable<Reading> {
       saldoRedondeo: serializer.fromJson<double>(json['saldoRedondeo']),
       totalToPay: serializer.fromJson<double>(json['totalToPay']),
       isSynced: serializer.fromJson<bool>(json['isSynced']),
+      comment: serializer.fromJson<String?>(json['comment']),
     );
   }
   @override
@@ -1672,6 +1703,7 @@ class Reading extends DataClass implements Insertable<Reading> {
       'saldoRedondeo': serializer.toJson<double>(saldoRedondeo),
       'totalToPay': serializer.toJson<double>(totalToPay),
       'isSynced': serializer.toJson<bool>(isSynced),
+      'comment': serializer.toJson<String?>(comment),
     };
   }
 
@@ -1691,6 +1723,7 @@ class Reading extends DataClass implements Insertable<Reading> {
     double? saldoRedondeo,
     double? totalToPay,
     bool? isSynced,
+    Value<String?> comment = const Value.absent(),
   }) => Reading(
     id: id ?? this.id,
     customerId: customerId ?? this.customerId,
@@ -1707,6 +1740,7 @@ class Reading extends DataClass implements Insertable<Reading> {
     saldoRedondeo: saldoRedondeo ?? this.saldoRedondeo,
     totalToPay: totalToPay ?? this.totalToPay,
     isSynced: isSynced ?? this.isSynced,
+    comment: comment.present ? comment.value : this.comment,
   );
   Reading copyWithCompanion(ReadingsCompanion data) {
     return Reading(
@@ -1739,6 +1773,7 @@ class Reading extends DataClass implements Insertable<Reading> {
           ? data.totalToPay.value
           : this.totalToPay,
       isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
+      comment: data.comment.present ? data.comment.value : this.comment,
     );
   }
 
@@ -1759,7 +1794,8 @@ class Reading extends DataClass implements Insertable<Reading> {
           ..write('alumbradoPublico: $alumbradoPublico, ')
           ..write('saldoRedondeo: $saldoRedondeo, ')
           ..write('totalToPay: $totalToPay, ')
-          ..write('isSynced: $isSynced')
+          ..write('isSynced: $isSynced, ')
+          ..write('comment: $comment')
           ..write(')'))
         .toString();
   }
@@ -1781,6 +1817,7 @@ class Reading extends DataClass implements Insertable<Reading> {
     saldoRedondeo,
     totalToPay,
     isSynced,
+    comment,
   );
   @override
   bool operator ==(Object other) =>
@@ -1800,7 +1837,8 @@ class Reading extends DataClass implements Insertable<Reading> {
           other.alumbradoPublico == this.alumbradoPublico &&
           other.saldoRedondeo == this.saldoRedondeo &&
           other.totalToPay == this.totalToPay &&
-          other.isSynced == this.isSynced);
+          other.isSynced == this.isSynced &&
+          other.comment == this.comment);
 }
 
 class ReadingsCompanion extends UpdateCompanion<Reading> {
@@ -1819,6 +1857,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
   final Value<double> saldoRedondeo;
   final Value<double> totalToPay;
   final Value<bool> isSynced;
+  final Value<String?> comment;
   final Value<int> rowid;
   const ReadingsCompanion({
     this.id = const Value.absent(),
@@ -1836,6 +1875,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
     this.saldoRedondeo = const Value.absent(),
     this.totalToPay = const Value.absent(),
     this.isSynced = const Value.absent(),
+    this.comment = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ReadingsCompanion.insert({
@@ -1854,6 +1894,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
     required double saldoRedondeo,
     required double totalToPay,
     this.isSynced = const Value.absent(),
+    this.comment = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        customerId = Value(customerId),
@@ -1883,6 +1924,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
     Expression<double>? saldoRedondeo,
     Expression<double>? totalToPay,
     Expression<bool>? isSynced,
+    Expression<String>? comment,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1901,6 +1943,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
       if (saldoRedondeo != null) 'saldo_redondeo': saldoRedondeo,
       if (totalToPay != null) 'total_to_pay': totalToPay,
       if (isSynced != null) 'is_synced': isSynced,
+      if (comment != null) 'comment': comment,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1921,6 +1964,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
     Value<double>? saldoRedondeo,
     Value<double>? totalToPay,
     Value<bool>? isSynced,
+    Value<String?>? comment,
     Value<int>? rowid,
   }) {
     return ReadingsCompanion(
@@ -1939,6 +1983,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
       saldoRedondeo: saldoRedondeo ?? this.saldoRedondeo,
       totalToPay: totalToPay ?? this.totalToPay,
       isSynced: isSynced ?? this.isSynced,
+      comment: comment ?? this.comment,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1991,6 +2036,9 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
     if (isSynced.present) {
       map['is_synced'] = Variable<bool>(isSynced.value);
     }
+    if (comment.present) {
+      map['comment'] = Variable<String>(comment.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2015,6 +2063,7 @@ class ReadingsCompanion extends UpdateCompanion<Reading> {
           ..write('saldoRedondeo: $saldoRedondeo, ')
           ..write('totalToPay: $totalToPay, ')
           ..write('isSynced: $isSynced, ')
+          ..write('comment: $comment, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3597,6 +3646,7 @@ typedef $$ReadingsTableCreateCompanionBuilder =
       required double saldoRedondeo,
       required double totalToPay,
       Value<bool> isSynced,
+      Value<String?> comment,
       Value<int> rowid,
     });
 typedef $$ReadingsTableUpdateCompanionBuilder =
@@ -3616,6 +3666,7 @@ typedef $$ReadingsTableUpdateCompanionBuilder =
       Value<double> saldoRedondeo,
       Value<double> totalToPay,
       Value<bool> isSynced,
+      Value<String?> comment,
       Value<int> rowid,
     });
 
@@ -3722,6 +3773,11 @@ class $$ReadingsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get comment => $composableBuilder(
+    column: $table.comment,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$CustomersTableFilterComposer get customerId {
     final $$CustomersTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -3825,6 +3881,11 @@ class $$ReadingsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get comment => $composableBuilder(
+    column: $table.comment,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$CustomersTableOrderingComposer get customerId {
     final $$CustomersTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -3912,6 +3973,9 @@ class $$ReadingsTableAnnotationComposer
   GeneratedColumn<bool> get isSynced =>
       $composableBuilder(column: $table.isSynced, builder: (column) => column);
 
+  GeneratedColumn<String> get comment =>
+      $composableBuilder(column: $table.comment, builder: (column) => column);
+
   $$CustomersTableAnnotationComposer get customerId {
     final $$CustomersTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -3979,6 +4043,7 @@ class $$ReadingsTableTableManager
                 Value<double> saldoRedondeo = const Value.absent(),
                 Value<double> totalToPay = const Value.absent(),
                 Value<bool> isSynced = const Value.absent(),
+                Value<String?> comment = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ReadingsCompanion(
                 id: id,
@@ -3996,6 +4061,7 @@ class $$ReadingsTableTableManager
                 saldoRedondeo: saldoRedondeo,
                 totalToPay: totalToPay,
                 isSynced: isSynced,
+                comment: comment,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -4015,6 +4081,7 @@ class $$ReadingsTableTableManager
                 required double saldoRedondeo,
                 required double totalToPay,
                 Value<bool> isSynced = const Value.absent(),
+                Value<String?> comment = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ReadingsCompanion.insert(
                 id: id,
@@ -4032,6 +4099,7 @@ class $$ReadingsTableTableManager
                 saldoRedondeo: saldoRedondeo,
                 totalToPay: totalToPay,
                 isSynced: isSynced,
+                comment: comment,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

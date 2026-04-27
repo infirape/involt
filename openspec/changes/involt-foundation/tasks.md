@@ -26,3 +26,20 @@
 - [x] 4.1 Write Go tests for domain mappers in `backend/internal/domain/mappers_test.go`. [INVOL-13]
 - [x] 4.2 Write Drift integration tests in `mobile/test/core/data/database_test.dart`. [INVOL-14]
 - [x] 4.3 Verify end-to-end type safety between proto, backend domain, and mobile DB. [INVOL-15]
+
+## Phase 5: Field Operations UI (Search & Sync)
+
+- [x] 5.1 Implement Premium Search with map centering and floating results list. [INVOL-21]
+- [x] 5.2 Integrate QR/Barcode Scanner (mobile_scanner) with neon overlay and automatic search. [INVOL-22]
+- [x] 5.3 Implement bidirectional synchronization loop (Push Readings / Pull Metadata) via ConnectRPC. [INVOL-23]
+- [x] 5.4 Unify navigation: Auto-switch from sectors list to map with proactive centering. [INVOL-24]
+- [x] 5.5 Enhance Reading registration UX with custom numeric keypad and auto-scrolling input. [INVOL-25]
+
+## Phase 6: Full Integration (End-to-End)
+
+- [x] 6.1 Implement PostgreSQL persistence in Backend (Hexagonal Adapters). [INVOL-26]
+- [x] 6.2 Implement `PullMetadata` in Backend to serve real database entities. [INVOL-27]
+- [x] 6.3 Implement `PullMetadata` logic in Mobile `SyncService` to update Drift DB. [INVOL-28]
+- [x] 6.4 Implement Photo Evidence upload and storage (S3/Local) in Backend. [INVOL-29]
+- [x] 6.5 Implement Go-based PDF Generation Engine for reading receipts. [INVOL-30]
+- [ ] 6.6 Final end-to-end sync verification: From mobile scan to backend PDF. [INVOL-31]
