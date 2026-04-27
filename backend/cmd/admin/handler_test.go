@@ -102,3 +102,78 @@ func TestStatsSectors(t *testing.T) {
 		t.Errorf("expected status 200, got %d", rr.Code)
 	}
 }
+
+func TestBuildPageInfo(t *testing.T) {
+	tests := []struct {
+		name     string
+		total    int
+		page     int
+		size     int
+		expected PageInfo
+	}{
+		{
+			name:  "first page with next",
+			total: 45,
+			page:  1,
+			size:  20,
+			expected: PageInfo{
+				Start: 1, End: 20, Total: 45,
+				Current: 1, Size: 20, TotalPages: 3,
+				Prev: 1, Next: 2, HasPrev: false, HasNext: true,
+			},
+		},
+		{
+			name:  "middle page",
+			total: 45,
+			page:  2,
+			size:  20,
+			expected: PageInfo{
+				Start: 21, End: 40, Total: 45,
+				Current: 2, Size: 20, TotalPages: 3,
+				Prev: 1, Next: 3, HasPrev: true, HasNext: true,
+			},
+		},
+		{
+			name:  "last page",
+			total: 45,
+			page:  3,
+			size:  20,
+			expected: PageInfo{
+				Start: 41, End: 45, Total: 45,
+				Current: 3, Size: 20, TotalPages: 3,
+				Prev: 2, Next: 3, HasPrev: true, HasNext: false,
+			},
+		},
+		{
+			name:  "empty result",
+			total: 0,
+			page:  1,
+			size:  20,
+			expected: PageInfo{
+				Start: 0, End: 0, Total: 0,
+				Current: 1, Size: 20, TotalPages: 0,
+				Prev: 1, Next: 1, HasPrev: false, HasNext: false,
+			},
+		},
+		{
+			name:  "page overflow clamps to last page",
+			total: 12,
+			page:  9,
+			size:  10,
+			expected: PageInfo{
+				Start: 11, End: 12, Total: 12,
+				Current: 2, Size: 10, TotalPages: 2,
+				Prev: 1, Next: 2, HasPrev: true, HasNext: false,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := buildPageInfo(tt.total, tt.page, tt.size)
+			if got != tt.expected {
+				t.Fatalf("unexpected page info: got=%+v expected=%+v", got, tt.expected)
+			}
+		})
+	}
+}

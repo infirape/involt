@@ -140,23 +140,26 @@
                     🔍
                 </div>
                 <input type="text" name="search" placeholder="Buscar por nombre, código o medidor..." 
+                    value="{{.Filter.Search}}"
                     class="w-full pl-10 pr-4 py-3 bg-dark-card border border-gray-800 rounded-xl focus:border-volt focus:outline-none transition"
                     hx-get="/admin/customers" 
-                    hx-target="#customers-table-body" 
+                    hx-target="#customers-table-container" 
                     hx-trigger="keyup changed delay:500ms, search"
                     hx-push-url="true"
-                    hx-include="[name='sector']">
+                    hx-vals='{"page":"1"}'
+                    hx-include="[name='sector'],[name='size']">
             </div>
 
             <!-- Compact Selectors & Actions -->
             <div class="flex gap-2">
-                <select name="sector" hx-get="/admin/customers" hx-target="#customers-table-body" hx-include="[name='search']"
+                <select name="sector" hx-get="/admin/customers" hx-target="#customers-table-container" hx-include="[name='search'],[name='size']" hx-vals='{"page":"1"}'
                     class="px-4 py-3 bg-dark-card border border-gray-800 rounded-xl text-gray-400 focus:border-volt focus:outline-none transition cursor-pointer">
                     <option value="">Sector: Todos</option>
                     {{range .Sectors}}
-                    <option value="{{.ID}}">{{.Name}}</option>
+                    <option value="{{.ID}}" {{if eq .ID $.Filter.SectorID}}selected{{end}}>{{.Name}}</option>
                     {{end}}
                 </select>
+                <input type="hidden" name="size" value="{{.Page.Size}}">
                 <button onclick="openModal('add')" class="gradient-bg px-6 py-3 rounded-xl font-bold text-dark hover:scale-[1.02] transition glow flex items-center gap-2 whitespace-nowrap">
                     <span class="text-xl">+</span> Nuevo Cliente
                 </button>
@@ -183,42 +186,8 @@
             </div>
         </div>
 
-        <!-- Customers Table -->
-        <div class="bg-dark-card border border-gray-800 rounded-xl overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full" id="customers-table">
-                    <thead class="bg-gray-900">
-                        <tr class="text-gray-500 text-xs uppercase tracking-wider text-left">
-                            <th class="px-6 py-4">Código</th>
-                            <th class="px-6 py-4">Nombre</th>
-                            <th class="px-6 py-4">Comunidad</th>
-                            <th class="px-6 py-4">Sector</th>
-                            <th class="px-6 py-4">Medidor</th>
-                            <th class="px-6 py-4">Última Lectura</th>
-                            <th class="px-6 py-4">Acción</th>
-                            <th class="px-6 py-4">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-800" id="customers-table-body">
-                        {{template "customer_rows.html" .}}
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Pagination -->
-            <div class="px-6 py-4 border-t border-gray-800 flex justify-between items-center">
-                <div class="text-gray-500 text-sm">
-                    Mostrando {{.Page.Start}} - {{.Page.End}} de {{.Page.Total}}
-                </div>
-                <div class="flex gap-2">
-                    <button class="px-4 py-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white disabled:opacity-50" disabled>
-                        Anterior
-                    </button>
-                    <button class="px-4 py-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white disabled:opacity-50" disabled>
-                        Siguiente
-                    </button>
-                </div>
-            </div>
+        <div id="customers-table-container">
+            {{template "customers_table.html" .}}
         </div>
 
     </main>

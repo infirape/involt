@@ -171,12 +171,79 @@ type PageInfo struct {
 	Start int
 	End   int
 	Total int
+	Current   int
+	Size      int
+	TotalPages int
+	Prev      int
+	Next      int
+	HasPrev   bool
+	HasNext   bool
 }
 
 type Filter struct {
 	CommunityID string
 	SectorID    string
 	Period      string
+	Search      string
+}
+
+const defaultCustomersPageSize = 20
+
+func parsePositiveInt(raw string, fallback int) int {
+	value, err := strconv.Atoi(raw)
+	if err != nil || value <= 0 {
+		return fallback
+	}
+	return value
+}
+
+func buildPageInfo(total, page, size int) PageInfo {
+	if size <= 0 {
+		size = defaultCustomersPageSize
+	}
+	if page <= 0 {
+		page = 1
+	}
+	if total == 0 {
+		return PageInfo{
+			Start: 0, End: 0, Total: 0,
+			Current: page, Size: size, TotalPages: 0,
+			Prev: page, Next: page, HasPrev: false, HasNext: false,
+		}
+	}
+
+	totalPages := (total + size - 1) / size
+	if page > totalPages {
+		page = totalPages
+	}
+
+	start := (page-1)*size + 1
+	end := start + size - 1
+	if end > total {
+		end = total
+	}
+
+	prev := page - 1
+	if prev < 1 {
+		prev = 1
+	}
+	next := page + 1
+	if next > totalPages {
+		next = totalPages
+	}
+
+	return PageInfo{
+		Start: start,
+		End: end,
+		Total: total,
+		Current: page,
+		Size: size,
+		TotalPages: totalPages,
+		Prev: prev,
+		Next: next,
+		HasPrev: page > 1,
+		HasNext: page < totalPages,
+	}
 }
 
 func (h *AdminHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
@@ -263,6 +330,11 @@ func (h *AdminHandler) Customers(w http.ResponseWriter, r *http.Request) {
 	// Filter logic
 	search := r.URL.Query().Get("search")
 	sectorID := r.URL.Query().Get("sector")
+	page := parsePositiveInt(r.URL.Query().Get("page"), 1)
+	size := parsePositiveInt(r.URL.Query().Get("size"), defaultCustomersPageSize)
+	if size > 100 {
+		size = 100
+	}
 
 	var filtered []domain.Customer
 	for _, c := range customers {
@@ -287,10 +359,6 @@ func (h *AdminHandler) Customers(w http.ResponseWriter, r *http.Request) {
 		codeJ := strings.ToLower(strings.TrimSpace(customers[j].Code))
 		return codeI < codeJ
 	})
-
-	if len(customers) > 0 {
-		log.Printf("Sorted first 3: %s, %s, %s", customers[0].Code, customers[1].Code, (func() string { if len(customers) > 2 { return customers[2].Code }; return "" })())
-	}
 
 	// Build community name map
 	commMap := make(map[string]string)
@@ -339,6 +407,14 @@ func (h *AdminHandler) Customers(w http.ResponseWriter, r *http.Request) {
 		rows[i] = row
 	}
 
+	pageInfo := buildPageInfo(len(rows), page, size)
+	pagedRows := rows
+	if pageInfo.Total > 0 {
+		startIdx := pageInfo.Start - 1
+		endIdx := pageInfo.End
+		pagedRows = rows[startIdx:endIdx]
+	}
+
 	periods, _ := h.readingRepo.ListPeriods(ctx)
 	currentPeriod := r.URL.Query().Get("period")
 	if currentPeriod == "" {
@@ -360,12 +436,12 @@ func (h *AdminHandler) Customers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	listData := ListData{
-		Customers:   rows,
+		Customers:   pagedRows,
 		Communities: communities,
 		Sectors:     sectors,
 		Stats:       CustomerStats{Total: len(customers), ByCommunity: len(communities), BySector: len(sectors), WithReadings: withReadings},
-		Page:        PageInfo{Start: 1, End: len(customers), Total: len(customers)},
-		Filter:      Filter{Period: currentPeriod},
+		Page:        pageInfo,
+		Filter:      Filter{Period: currentPeriod, SectorID: sectorID, Search: search},
 		ActivePage:  "customers",
 		Periods:     periods,
 		Settings:    *settings,
@@ -373,7 +449,7 @@ func (h *AdminHandler) Customers(w http.ResponseWriter, r *http.Request) {
 
 	// Only return fragment if it's a targeted HTMX request (not a boosted navigation)
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
-		h.templates.ExecuteTemplate(w, "customer_rows.html", listData)
+		h.templates.ExecuteTemplate(w, "customers_table.html", listData)
 		return
 	}
 
