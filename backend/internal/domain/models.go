@@ -44,22 +44,22 @@ type Sector struct {
 
 // Customer contains the master data.
 type Customer struct {
-	ID               string
-	Code             string // e.g., ACH001
-	Name             string
-	CommunityID      string
-	CommunityName    string // e.g., Chetilla
-	SectorID         string
-	SectorName       string // e.g., TANTA CUEVA JOSE SILVERIO
-	Address          string // e.g., CASERIO TAMBILLO ALTO
-	ConnectionType   ConnectionType
-	Tariff           float64
-	MeterNumber      string
-	Latitude         float64
-	Longitude        float64
-	LastReadingValue float64
-	InitialReading   float64   `db:"initial_reading"`
-	ContractStart    time.Time // Inicio Contrato
+	ID               string         `db:"id"`
+	Code             string         `db:"code"`
+	Name             string         `db:"name"`
+	CommunityID      string         `db:"community_id"`
+	CommunityName    string         `db:"community_name"`
+	SectorID         string         `db:"sector_id"`
+	SectorName       string         `db:"sector_name"`
+	Address          string         `db:"address"`
+	ConnectionType   ConnectionType `db:"connection_type"`
+	Tariff           float64        `db:"tariff"`
+	MeterNumber      string         `db:"meter_number"`
+	Latitude         float64        `db:"latitude"`
+	Longitude        float64        `db:"longitude"`
+	LastReadingValue float64        `db:"last_reading_value"`
+	InitialReading   float64        `db:"initial_reading"`
+	ContractStart    time.Time      `db:"contract_start"`
 }
 
 // Reading represents a captured meter value.
