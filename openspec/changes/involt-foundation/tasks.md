@@ -42,4 +42,4 @@
 - [x] 6.3 Implement `PullMetadata` logic in Mobile `SyncService` to update Drift DB. [INVOL-28]
 - [x] 6.4 Implement Photo Evidence upload and storage (S3/Local) in Backend. [INVOL-29]
 - [x] 6.5 Implement Go-based PDF Generation Engine for reading receipts. [INVOL-30]
-- [ ] 6.6 Final end-to-end sync verification: From mobile scan to backend PDF. [INVOL-31]
+- [x] 6.6 Final end-to-end sync verification: From mobile scan to backend PDF. [INVOL-31]

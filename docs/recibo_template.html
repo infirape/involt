@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Recibo de Energía Eléctrica</title>
+<style>
+    @page {
+        size: A5;
+        margin: 10px;
+    }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 11px;
+        background: #fff;
+        width: 148mm;
+        min-height: 210mm;
+        padding: 8px;
+    }
+    .recibo {
+        width: 100%;
+        border: 2px solid #000;
+        padding: 8px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+    }
+    td {
+        padding: 3px 4px;
+        vertical-align: top;
+    }
+    .header {
+        border-bottom: 2px solid #000;
+        padding-bottom: 6px;
+        margin-bottom: 8px;
+    }
+    .header table td {
+        vertical-align: top;
+    }
+    .header-left {
+        width: 40%;
+        text-align: left;
+    }
+    .header-center {
+        width: 25%;
+        text-align: center;
+    }
+    .header-right {
+        width: 35%;
+        text-align: right;
+    }
+    .section {
+        border-top: 2px solid #000;
+        margin-top: 8px;
+        padding-top: 4px;
+    }
+    .section-title {
+        font-weight: bold;
+        font-size: 12px;
+    }
+    .col-left {
+        width: 50%;
+        vertical-align: top;
+    }
+    .col-right {
+        width: 50%;
+        vertical-align: top;
+    }
+    .box {
+        border: 1px solid #000;
+        padding: 8px;
+        margin-top: 8px;
+        text-align: center;
+        font-style: italic;
+    }
+    .footer {
+        border-top: 2px solid #000;
+        margin-top: 8px;
+        padding-top: 4px;
+        text-align: center;
+    }
+    .bold {
+        font-weight: bold;
+    }
+    .right {
+        text-align: right;
+    }
+    .center {
+        text-align: center;
+    }
+    .spacer {
+        height: 8px;
+    }
+    @media print {
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="recibo">
+
+    <div class="header">
+        <table>
+            <tr>
+                <td class="header-left">
+                    Chetilla<br>
+                    Para consulta su código es:<br>
+                    <span class="bold">TANTA CUEVA JOSE SILVERIO</span><br>
+                    CASERIO TAMBILLO ALTO
+                </td>
+                <td class="header-center">
+                    <span class="bold">TAMBILLO A</span><br>
+                    TAMA020
+                </td>
+                <td class="header-right">
+                    MUNICIPALIDAD DISTRITAL DE CHETILLA<br>
+                    HIDROELECTRICA QARWAQIRU
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">DATOS DEL SUMINISTRO Y CONSUMO</div>
+
+        <table>
+            <tr>
+                <td class="col-left">
+                    <table>
+                        <tr>
+                            <td>Tipo de Conexión:</td>
+                            <td class="bold">MONOFASICA</td>
+                        </tr>
+                        <tr>
+                            <td>Tarifa:</td>
+                            <td class="bold">0.2500</td>
+                        </tr>
+                        <tr>
+                            <td>Medidor N°:</td>
+                            <td class="bold">10000001</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>Lectura Anterior:</td>
+                            <td class="bold">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Lectura Actual:</td>
+                            <td class="bold">0.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>Consumo:</td>
+                            <td class="bold">3 kWh</td>
+                        </tr>
+                        <tr>
+                            <td>Inicio Contrato:</td>
+                            <td class="bold">25-08-2012</td>
+                        </tr>
+                        <tr>
+                            <td>Término Contrato:</td>
+                            <td class="bold">Indefinido</td>
+                        </tr>
+                        <tr>
+                            <td>Fecha de Emisión:</td>
+                            <td class="bold">08/04/2026</td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="col-right">
+                    <table>
+                        <tr>
+                            <td colspan="2">Recibo por Consumo del 2026-01-20 al 2026-02-20</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>Cargo Fijo:</td>
+                            <td class="bold right">6.00</td>
+                        </tr>
+                        <tr>
+                            <td>Alumbrado Público:</td>
+                            <td class="bold right">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Ajuste Tarifario:</td>
+                            <td class="bold right">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">SUBTOTAL:</td>
+                            <td class="bold right">6.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>Saldo por Redondeo:</td>
+                            <td class="bold right">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Diferencia de redondeo:</td>
+                            <td class="bold right">0.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">TOTAL RECIBO ENERO-MARZO-2026:</td>
+                            <td class="bold right">6.00</td>
+                        </tr>
+                        <tr>
+                            <td>TOTAL RECIBOS VENCIDOS:</td>
+                            <td class="bold right">3.00</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <div class="box">
+            Si paga hasta la fecha de vencimiento evitará cortes y gastos innecesarios.
+        </div>
+
+        <div class="spacer"></div>
+
+        <div class="right">
+            <span class="bold" style="font-size: 14px;">TOTAL A PAGAR: S/ 18.00</span>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span class="bold">FECHA DE VENCIMIENTO: 25/04/2026</span>
+    </div>
+
+</div>
+
+</body>
+</html>

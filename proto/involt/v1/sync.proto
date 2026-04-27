@@ -39,6 +39,7 @@ message PullMetadataResponse {
   repeated Sector sectors = 2;
   repeated Customer customers = 3;
   AppConfig config = 4;
+  Settings settings = 5;
 }
 
 message UploadPhotoRequest {

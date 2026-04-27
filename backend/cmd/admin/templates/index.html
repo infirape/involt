@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InVolt Admin</title>
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    magenta: '#FF00FF',
+                    'magenta-dark': '#B300B3',
+                    cyan: '#00FFFF',
+                    'cyan-dark': '#00B3B3',
+                    dark: '#0a0a0a',
+                    'dark-card': '#1a1a1a',
+                },
+                fontFamily: {
+                    sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+                }
+            }
+        }
+    }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Space Grotesk', sans-serif;
+    }
+    .glass {
+        background: rgba(26, 26, 26, 0.8);
+        backdrop-filter: blur(20px);
+    }
+    .gradient-text {
+        background: linear-gradient(135deg, #FF00FF, #00FFFF);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .gradient-bg {
+        background: linear-gradient(135deg, #FF00FF, #B300B3);
+    }
+    .glow:hover {
+        box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+    }
+</style>
+</head>
+<body class="bg-dark text-gray-100 min-h-screen" hx-boost="true">
+    <!-- Header -->
+    <header class="glass border-b border-gray-800 sticky top-0 z-50 px-8 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold">InVolt <span class="gradient-text">Admin</span></div>
+            {{template "nav.html" .}}
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-8 py-8">
+        <!-- Title -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold gradient-text mb-2">Dashboard</h1>
+            <p class="text-gray-500">Panel de administración - InVolt</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-magenta transition-all duration-300 hover:scale-[1.02]">
+                <div class="text-5xl font-bold gradient-text" hx-get="/admin/stats/customers" hx-trigger="load">{{.Stats.Customers}}</div>
+                <div class="text-gray-500 text-sm uppercase tracking-wider mt-2">Total Clientes</div>
+            </div>
+            <div class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-cyan transition-all duration-300 hover:scale-[1.02]">
+                <div class="text-5xl font-bold text-cyan" hx-get="/admin/stats/readings" hx-trigger="load">{{.Stats.Readings}}</div>
+                <div class="text-gray-500 text-sm uppercase tracking-wider mt-2">Lecturas del Mes</div>
+            </div>
+            <div class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-magenta transition-all duration-300 hover:scale-[1.02]">
+                <div class="text-5xl font-bold gradient-text" hx-get="/admin/stats/pending" hx-trigger="load">{{.Stats.Pending}}</div>
+                <div class="text-gray-500 text-sm uppercase tracking-wider mt-2">Pendientes</div>
+            </div>
+        </div>
+
+        <!-- Settings Form -->
+        <div class="bg-dark-card border border-gray-800 rounded-xl p-8">
+            <div class="flex justify-between items-center mb-6 pb-6 border-b border-gray-800">
+                <h2 class="text-xl font-semibold text-cyan">Configuración</h2>
+            </div>
+            
+            <form hx-put="/api/settings" hx-swap="outerHTML" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-gray-500 text-sm mb-2">Municipalidad</label>
+                    <input type="text" name="municipalidad" value="{{.Settings.Municipalidad}}" 
+                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-gray-500 text-sm mb-2">Empresa</label>
+                    <input type="text" name="empresa" value="{{.Settings.Empresa}}" 
+                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-gray-500 text-sm mb-2">RUC</label>
+                    <input type="text" name="ruc" value="{{.Settings.RUC}}" 
+                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-gray-500 text-sm mb-2">Dirección</label>
+                    <input type="text" name="direccion" value="{{.Settings.Direccion}}" 
+                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-gray-500 text-sm mb-2">Teléfono</label>
+                    <input type="text" name="telefono" value="{{.Settings.Telefono}}" 
+                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-gray-500 text-sm mb-2">Email</label>
+                    <input type="email" name="email" value="{{.Settings.Email}}" 
+                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-gray-500 text-sm mb-2">Días de Vencimiento</label>
+                    <input type="number" name="dias_vencimiento" value="{{.Settings.DiasVencimiento}}" min="1" max="90" 
+                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="gradient-bg px-8 py-3 rounded-lg font-semibold text-dark hover:scale-[1.02] transition glow">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            <a href="/admin/customers" class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-cyan transition">
+                <div class="text-cyan text-3xl mb-2">👥</div>
+                <div class="font-semibold">Gestionar Clientes</div>
+                <div class="text-gray-500 text-sm">CRUD de clientes y medidores</div>
+            </a>
+            <a href="/admin/settings" class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-green transition">
+                <div class="text-green text-3xl mb-2">⚙️</div>
+                <div class="font-semibold">Configuración</div>
+                <div class="text-gray-500 text-sm">Ajustes del sistema</div>
+            </a>
+        </div>
+    </main>
+</body>
+</html>

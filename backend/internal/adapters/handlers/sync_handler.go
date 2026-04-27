@@ -57,7 +57,13 @@ func (h *SyncHandler) PullMetadata(
 	config, err := h.metaRepo.GetAppConfig(ctx)
 	if err != nil {
 		log.Printf("⚠️ Error getting app config: %v", err)
-		config = &domain.AppConfig{} // Fallback to empty if table doesn't exist yet or other error
+		config = &domain.AppConfig{}
+	}
+
+	settings, err := h.metaRepo.GetSettings(ctx)
+	if err != nil {
+		log.Printf("⚠️ Error getting settings: %v", err)
+		settings = &domain.Settings{}
 	}
 
 	resp := &involtv1.PullMetadataResponse{
@@ -67,6 +73,20 @@ func (h *SyncHandler) PullMetadata(
 		Config: &involtv1.AppConfig{
 			MapUrlTemplate: config.MapURLTemplate,
 			MapUserAgent:   config.MapUserAgent,
+		},
+		Settings: &involtv1.Settings{
+			Municipalidad:   settings.Municipalidad,
+			Empresa:         settings.Empresa,
+			Ruc:             settings.RUC,
+			Direccion:       settings.Direccion,
+			Telefono:        settings.Telefono,
+			Email:           settings.Email,
+			DiasVencimiento: int32(settings.DiasVencimiento),
+			TarifaKwh:       settings.TarifaKWh,
+			CargoFijo:       settings.CargoFijo,
+			Alumbrado:       settings.Alumbrado,
+			Mantenimiento:   settings.Mantenimiento,
+			Igv:             settings.IGV,
 		},
 	}
 
@@ -96,6 +116,7 @@ func (h *SyncHandler) PullMetadata(
 			Latitude:       c.Latitude,
 			Longitude:      c.Longitude,
 			LastReadingValue: c.LastReadingValue,
+			InitialReading: c.InitialReading,
 		}
 	}
 
@@ -158,23 +179,17 @@ func (h *SyncHandler) DownloadReceipt(
 	ctx context.Context,
 	req *connect.Request[involtv1.DownloadReceiptRequest],
 ) (*connect.Response[involtv1.DownloadReceiptResponse], error) {
-	// 1. Check readings (we don't have GetByID yet, so we search by customer or list)
-	// Actually, I should add GetByID to ReadingRepository. 
-	// For now, let's assume we can get it.
-	
-	// TODO: Implement ReadingRepository.GetByID
-	readings, err := h.readingRepo.ListByCustomer(ctx, "ANY") // Mock logic for now
-	if err != nil || len(readings) == 0 {
-		return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("reading not found"))
-	}
-	reading := readings[0]
-
-	customer, err := h.customerRepo.GetByCode(ctx, "MOCK") // Mock logic for now
+	reading, err := h.readingRepo.GetByID(ctx, req.Msg.ReadingId)
 	if err != nil {
-		return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("customer not found"))
+		return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("reading %s not found: %w", req.Msg.ReadingId, err))
 	}
 
-	pdfData, err := h.pdfGen.Generate(ctx, &reading, customer)
+	customer, err := h.customerRepo.GetByID(ctx, reading.CustomerID)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("customer %s not found: %w", reading.CustomerID, err))
+	}
+
+	pdfData, err := h.pdfGen.Generate(ctx, reading, customer)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to generate PDF: %w", err))
 	}

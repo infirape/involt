@@ -9,7 +9,7 @@
 | When building web components, pages, artifacts, posters, or applications | frontend-design | /Users/hbs/.gemini/antigravity/skills/frontend-design/SKILL.md |
 | When creating a pull request, opening a PR, or preparing changes for review | branch-pr | /Users/hbs/.gemini/antigravity/skills/branch-pr/SKILL.md |
 | When writing Go tests, using teatest, or adding test coverage | go-testing | /Users/hbs/.gemini/antigravity/skills/go-testing/SKILL.md |
-| When syncing tasks with Jira or connecting to a Jira board | jira-integration | /Users/hbs/.gemini/antigravity/skills/jira-integration/SKILL.md |
+| When syncing tasks with Jira or connecting to a Jira board | jira-mcp | /Users/hbs/.agents/skills/jira-mcp/SKILL.md |
 
 ## Compact Rules
 

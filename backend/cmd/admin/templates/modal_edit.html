@@ -1,0 +1,152 @@
+<div id="modal-container" class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+    <style>
+        .input-field {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+        }
+        .input-field:focus {
+            border-color: #FF00FF;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.2);
+        }
+        .input-field[readonly] {
+            background-color: #111;
+            color: #666;
+            cursor: not-allowed;
+        }
+    </style>
+    <div class="bg-dark-card border border-gray-700 rounded-xl max-w-4xl w-full max-h-[95vh] overflow-y-auto shadow-2xl">
+        <form hx-post="/admin/customers/save" hx-target="#modal-container" hx-swap="delete" class="p-6">
+            <input type="hidden" name="id" value="{{.Customer.ID}}">
+            <input type="hidden" name="latitude" id="edit-lat" value="{{.Customer.Latitude}}">
+            <input type="hidden" name="longitude" id="edit-lng" value="{{.Customer.Longitude}}">
+
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-2xl font-bold text-green">Editar Cliente</h3>
+                    <p class="text-gray-400 font-mono text-sm">{{.Customer.Code}} | {{.Customer.Name}}</p>
+                </div>
+                <button type="button" onclick="document.getElementById('modal-container').remove()" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Personal Data -->
+                <div class="space-y-4">
+                    <h4 class="text-lg font-semibold text-gray-300 border-b border-gray-800 pb-2">Datos Generales</h4>
+                    <div>
+                        <label class="block text-gray-500 text-xs uppercase mb-1">Nombre Completo</label>
+                        <input type="text" name="name" value="{{.Customer.Name}}" class="input-field w-full">
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 text-xs uppercase mb-1">Código de Usuario</label>
+                        <input type="text" name="code" value="{{.Customer.Code}}" class="input-field w-full" readonly>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-500 text-xs uppercase mb-1">Sector</label>
+                            <select name="sector_id" class="input-field w-full">
+                                {{range .Sectors}}
+                                <option value="{{.ID}}" {{if eq .ID $.Customer.SectorID}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-500 text-xs uppercase mb-1">Medidor N°</label>
+                            <input type="text" name="meter_number" value="{{.Customer.MeterNumber}}" class="input-field w-full">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-500 text-xs uppercase mb-1">Tipo Conexión</label>
+                            <select name="connection_type" class="input-field w-full">
+                                <option value="MONOFASICA" {{if eq .Customer.ConnectionType "MONOFASICA"}}selected{{end}}>Monofásica</option>
+                                <option value="TRIFASICA" {{if eq .Customer.ConnectionType "TRIFASICA"}}selected{{end}}>Trifásica</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-500 text-xs uppercase mb-1">Lectura Inicial (kWh)</label>
+                            <input type="number" step="0.01" name="initial_reading" value="{{.Customer.InitialReading}}" class="input-field w-full border-magenta focus:border-magenta" placeholder="0.00">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location / Map -->
+                <div class="space-y-4">
+                    <h4 class="text-lg font-semibold text-gray-300 border-b border-gray-800 pb-2">Ubicación Geográfica</h4>
+                    <div id="edit-map" class="h-[300px] rounded-lg border border-gray-800 bg-dark overflow-hidden"></div>
+                    <p class="text-xs text-gray-500 italic">Haz clic en el mapa para actualizar la ubicación del medidor.</p>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end gap-3">
+                <button type="button" onclick="document.getElementById('modal-container').remove()" class="bg-gray-800 px-6 py-2 rounded-lg font-semibold hover:bg-gray-700 transition">
+                    Cancelar
+                </button>
+                <button type="submit" class="gradient-bg px-8 py-2 rounded-lg font-bold text-dark hover:scale-105 transition">
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        (function() {
+            function initMap() {
+                if (typeof L === 'undefined') {
+                    console.log('Waiting for Leaflet...');
+                    setTimeout(initMap, 100);
+                    return;
+                }
+                
+                const hasLocation = {{if .Customer.Latitude}}true{{else}}false{{end}};
+                const initialLat = hasLocation ? {{.Customer.Latitude}} : -7.1611;
+                const initialLng = hasLocation ? {{.Customer.Longitude}} : -78.5122;
+                
+                const map = L.map('edit-map').setView([initialLat, initialLng], hasLocation ? 18 : 14);
+                
+                L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                    attribution: '&copy; Google Maps'
+                }).addTo(map);
+
+                let marker;
+                if (hasLocation) {
+                    marker = L.marker([initialLat, initialLng], {draggable: true}).addTo(map);
+                }
+
+                function updateInputs(lat, lng) {
+                    document.getElementById('edit-lat').value = lat;
+                    document.getElementById('edit-lng').value = lng;
+                }
+
+                map.on('click', function(e) {
+                    if (!marker) {
+                        marker = L.marker(e.latlng, {draggable: true}).addTo(map);
+                        map.setView(e.latlng, 18); // Zoom in when first clicked
+                    } else {
+                        marker.setLatLng(e.latlng);
+                    }
+                    updateInputs(e.latlng.lat, e.latlng.lng);
+                    
+                    marker.on('dragend', function(e) {
+                        updateInputs(e.target.getLatLng().lat, e.target.getLatLng().lng);
+                    });
+                });
+
+                if (marker) {
+                    marker.on('dragend', function(e) {
+                        updateInputs(e.target.getLatLng().lat, e.target.getLatLng().lng);
+                    });
+                }
+
+                // Re-invalidate size because of modal reveal
+                setTimeout(() => map.invalidateSize(), 100);
+            }
+
+            initMap();
+        })();
+    </script>
+</div>

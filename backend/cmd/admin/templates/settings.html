@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuración - InVolt Admin</title>
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    magenta: '#FF00FF',
+                    cyan: '#00FFFF',
+                    dark: '#0a0a0a',
+                    'dark-card': '#1a1a1a',
+                }
+            }
+        }
+    }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body { font-family: 'Space Grotesk', sans-serif; }
+    .glass { background: rgba(26, 26, 26, 0.8); backdrop-filter: blur(20px); }
+    .gradient-text {
+        background: linear-gradient(135deg, #FF00FF, #00FFFF);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .gradient-bg { background: linear-gradient(135deg, #FF00FF, #B300B3); }
+    .input-field {
+        background: #0a0a0a;
+        border: 1px solid #333;
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        width: 100%;
+        transition: border-color 0.2s;
+    }
+    .input-field:focus {
+        border-color: #FF00FF;
+        outline: none;
+    }
+</style>
+</head>
+<body class="bg-dark text-gray-100 min-h-screen">
+    
+    <header class="glass border-b border-gray-800 sticky top-0 z-50 px-8 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold">InVolt <span class="gradient-text">Admin</span></div>
+            {{template "nav.html" .}}
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-8 py-8">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold gradient-text mb-2">Configuración</h1>
+            <p class="text-gray-500">Ajustes generales del sistema y parámetros de facturación</p>
+        </div>
+
+        <div class="bg-dark-card border border-gray-800 rounded-xl p-8">
+            <form hx-post="/admin/settings/save" hx-target="#save-feedback" hx-swap="innerHTML" class="space-y-6">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">Nombre de la Municipalidad</label>
+                        <input type="text" name="municipalidad" value="{{.Settings.Municipalidad}}" class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">Empresa Operadora</label>
+                        <input type="text" name="empresa" value="{{.Settings.Empresa}}" class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">RUC</label>
+                        <input type="text" name="ruc" value="{{.Settings.RUC}}" class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-2">Días para Vencimiento</label>
+                        <input type="number" name="dias_vencimiento" value="{{.Settings.DiasVencimiento}}" class="input-field">
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 pt-6">
+                    <h3 class="text-lg font-semibold mb-4 text-magenta">Parámetros de Facturación</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-2">Tarifa Base (S/ por kWh)</label>
+                            <input type="number" step="0.0001" name="tarifa_kwh" value="{{.Settings.TarifaKWh}}" class="input-field">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-2">Cargo Fijo Mensual (S/)</label>
+                            <input type="number" step="0.01" name="cargo_fijo" value="{{.Settings.CargoFijo}}" class="input-field">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-2">Alumbrado Público (S/)</label>
+                            <input type="number" step="0.01" name="alumbrado" value="{{.Settings.Alumbrado}}" class="input-field">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-2">Mantenimiento (S/)</label>
+                            <input type="number" step="0.01" name="mantenimiento" value="{{.Settings.Mantenimiento}}" class="input-field">
+                        </div>
+                        <div class="flex items-center pt-8">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" name="igv" class="sr-only peer" {{if .Settings.IGV}}checked{{end}}>
+                                <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-magenta"></div>
+                                <span class="ml-3 text-sm font-medium text-gray-400">Aplicar IGV (18%)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 pt-6">
+                    <h3 class="text-lg font-semibold mb-4 text-cyan">Datos de Contacto</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2">
+                            <label class="block text-gray-400 text-sm mb-2">Dirección</label>
+                            <input type="text" name="direccion" value="{{.Settings.Direccion}}" class="input-field">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-2">Teléfono</label>
+                            <input type="text" name="telefono" value="{{.Settings.Telefono}}" class="input-field">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-2">Email</label>
+                            <input type="email" name="email" value="{{.Settings.Email}}" class="input-field">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-6">
+                    <div id="save-feedback"></div>
+                    <button type="submit" class="gradient-bg px-8 py-3 rounded-lg font-bold text-dark hover:scale-[1.02] active:scale-[0.98] transition">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 bg-dark-card border border-gray-800 rounded-lg text-center">
+                <div class="text-magenta text-2xl mb-1">📅</div>
+                <div class="text-sm font-semibold">Cierre de Mes</div>
+                <button class="mt-2 text-xs text-gray-500 hover:text-white transition underline">Ejecutar Proceso</button>
+            </div>
+            <div class="p-4 bg-dark-card border border-gray-800 rounded-lg text-center">
+                <div class="text-cyan text-2xl mb-1">💾</div>
+                <div class="text-sm font-semibold">Backup DB</div>
+                <button class="mt-2 text-xs text-gray-500 hover:text-white transition underline">Descargar SQL</button>
+            </div>
+            <div class="p-4 bg-dark-card border border-gray-800 rounded-lg text-center">
+                <div class="text-yellow-500 text-2xl mb-1">⚙️</div>
+                <div class="text-sm font-semibold">Sistema</div>
+                <div class="mt-2 text-xs text-gray-500">v1.0.4-beta</div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

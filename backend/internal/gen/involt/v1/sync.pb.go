@@ -167,6 +167,7 @@ type PullMetadataResponse struct {
 	Sectors       []*Sector              `protobuf:"bytes,2,rep,name=sectors,proto3" json:"sectors,omitempty"`
 	Customers     []*Customer            `protobuf:"bytes,3,rep,name=customers,proto3" json:"customers,omitempty"`
 	Config        *AppConfig             `protobuf:"bytes,4,opt,name=config,proto3" json:"config,omitempty"`
+	Settings      *Settings              `protobuf:"bytes,5,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -225,6 +226,13 @@ func (x *PullMetadataResponse) GetCustomers() []*Customer {
 func (x *PullMetadataResponse) GetConfig() *AppConfig {
 	if x != nil {
 		return x.Config
+	}
+	return nil
+}
+
+func (x *PullMetadataResponse) GetSettings() *Settings {
+	if x != nil {
+		return x.Settings
 	}
 	return nil
 }
@@ -424,12 +432,13 @@ const file_involt_v1_sync_proto_rawDesc = "" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12!\n" +
 	"\fsynced_count\x18\x02 \x01(\x05R\vsyncedCount\"E\n" +
 	"\x13PullMetadataRequest\x12.\n" +
-	"\x13last_sync_timestamp\x18\x01 \x01(\x03R\x11lastSyncTimestamp\"\xdc\x01\n" +
+	"\x13last_sync_timestamp\x18\x01 \x01(\x03R\x11lastSyncTimestamp\"\x8d\x02\n" +
 	"\x14PullMetadataResponse\x126\n" +
 	"\vcommunities\x18\x01 \x03(\v2\x14.involt.v1.CommunityR\vcommunities\x12+\n" +
 	"\asectors\x18\x02 \x03(\v2\x11.involt.v1.SectorR\asectors\x121\n" +
 	"\tcustomers\x18\x03 \x03(\v2\x13.involt.v1.CustomerR\tcustomers\x12,\n" +
-	"\x06config\x18\x04 \x01(\v2\x14.involt.v1.AppConfigR\x06config\"E\n" +
+	"\x06config\x18\x04 \x01(\v2\x14.involt.v1.AppConfigR\x06config\x12/\n" +
+	"\bsettings\x18\x05 \x01(\v2\x13.involt.v1.SettingsR\bsettings\"E\n" +
 	"\x12UploadPhotoRequest\x12\x1b\n" +
 	"\tfile_name\x18\x01 \x01(\tR\bfileName\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\fR\x04data\"'\n" +
@@ -473,6 +482,7 @@ var file_involt_v1_sync_proto_goTypes = []any{
 	(*Sector)(nil),                  // 10: involt.v1.Sector
 	(*Customer)(nil),                // 11: involt.v1.Customer
 	(*AppConfig)(nil),               // 12: involt.v1.AppConfig
+	(*Settings)(nil),                // 13: involt.v1.Settings
 }
 var file_involt_v1_sync_proto_depIdxs = []int32{
 	8,  // 0: involt.v1.PushReadingsRequest.readings:type_name -> involt.v1.Reading
@@ -480,19 +490,20 @@ var file_involt_v1_sync_proto_depIdxs = []int32{
 	10, // 2: involt.v1.PullMetadataResponse.sectors:type_name -> involt.v1.Sector
 	11, // 3: involt.v1.PullMetadataResponse.customers:type_name -> involt.v1.Customer
 	12, // 4: involt.v1.PullMetadataResponse.config:type_name -> involt.v1.AppConfig
-	0,  // 5: involt.v1.SyncService.PushReadings:input_type -> involt.v1.PushReadingsRequest
-	2,  // 6: involt.v1.SyncService.PullMetadata:input_type -> involt.v1.PullMetadataRequest
-	4,  // 7: involt.v1.SyncService.UploadPhoto:input_type -> involt.v1.UploadPhotoRequest
-	6,  // 8: involt.v1.SyncService.DownloadReceipt:input_type -> involt.v1.DownloadReceiptRequest
-	1,  // 9: involt.v1.SyncService.PushReadings:output_type -> involt.v1.PushReadingsResponse
-	3,  // 10: involt.v1.SyncService.PullMetadata:output_type -> involt.v1.PullMetadataResponse
-	5,  // 11: involt.v1.SyncService.UploadPhoto:output_type -> involt.v1.UploadPhotoResponse
-	7,  // 12: involt.v1.SyncService.DownloadReceipt:output_type -> involt.v1.DownloadReceiptResponse
-	9,  // [9:13] is the sub-list for method output_type
-	5,  // [5:9] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	13, // 5: involt.v1.PullMetadataResponse.settings:type_name -> involt.v1.Settings
+	0,  // 6: involt.v1.SyncService.PushReadings:input_type -> involt.v1.PushReadingsRequest
+	2,  // 7: involt.v1.SyncService.PullMetadata:input_type -> involt.v1.PullMetadataRequest
+	4,  // 8: involt.v1.SyncService.UploadPhoto:input_type -> involt.v1.UploadPhotoRequest
+	6,  // 9: involt.v1.SyncService.DownloadReceipt:input_type -> involt.v1.DownloadReceiptRequest
+	1,  // 10: involt.v1.SyncService.PushReadings:output_type -> involt.v1.PushReadingsResponse
+	3,  // 11: involt.v1.SyncService.PullMetadata:output_type -> involt.v1.PullMetadataResponse
+	5,  // 12: involt.v1.SyncService.UploadPhoto:output_type -> involt.v1.UploadPhotoResponse
+	7,  // 13: involt.v1.SyncService.DownloadReceipt:output_type -> involt.v1.DownloadReceiptResponse
+	10, // [10:14] is the sub-list for method output_type
+	6,  // [6:10] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_involt_v1_sync_proto_init() }

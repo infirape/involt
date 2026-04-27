@@ -72,6 +72,7 @@ const Customer$json = {
     {'1': 'latitude', '3': 9, '4': 1, '5': 1, '10': 'latitude'},
     {'1': 'longitude', '3': 10, '4': 1, '5': 1, '10': 'longitude'},
     {'1': 'last_reading_value', '3': 11, '4': 1, '5': 1, '10': 'lastReadingValue'},
+    {'1': 'initial_reading', '3': 12, '4': 1, '5': 1, '10': 'initialReading'},
   ],
 };
 
@@ -83,7 +84,8 @@ final $typed_data.Uint8List customerDescriptor = $convert.base64Decode(
     'EuQ29ubmVjdGlvblR5cGVSDmNvbm5lY3Rpb25UeXBlEhYKBnRhcmlmZhgHIAEoAVIGdGFyaWZm'
     'EiEKDG1ldGVyX251bWJlchgIIAEoCVILbWV0ZXJOdW1iZXISGgoIbGF0aXR1ZGUYCSABKAFSCG'
     'xhdGl0dWRlEhwKCWxvbmdpdHVkZRgKIAEoAVIJbG9uZ2l0dWRlEiwKEmxhc3RfcmVhZGluZ192'
-    'YWx1ZRgLIAEoAVIQbGFzdFJlYWRpbmdWYWx1ZQ==');
+    'YWx1ZRgLIAEoAVIQbGFzdFJlYWRpbmdWYWx1ZRInCg9pbml0aWFsX3JlYWRpbmcYDCABKAFSDm'
+    'luaXRpYWxSZWFkaW5n');
 
 @$core.Deprecated('Use readingDescriptor instead')
 const Reading$json = {
@@ -129,4 +131,33 @@ const AppConfig$json = {
 final $typed_data.Uint8List appConfigDescriptor = $convert.base64Decode(
     'CglBcHBDb25maWcSKAoQbWFwX3VybF90ZW1wbGF0ZRgBIAEoCVIObWFwVXJsVGVtcGxhdGUSJA'
     'oObWFwX3VzZXJfYWdlbnQYAiABKAlSDG1hcFVzZXJBZ2VudA==');
+
+@$core.Deprecated('Use settingsDescriptor instead')
+const Settings$json = {
+  '1': 'Settings',
+  '2': [
+    {'1': 'municipalidad', '3': 1, '4': 1, '5': 9, '10': 'municipalidad'},
+    {'1': 'empresa', '3': 2, '4': 1, '5': 9, '10': 'empresa'},
+    {'1': 'ruc', '3': 3, '4': 1, '5': 9, '10': 'ruc'},
+    {'1': 'direccion', '3': 4, '4': 1, '5': 9, '10': 'direccion'},
+    {'1': 'telefono', '3': 5, '4': 1, '5': 9, '10': 'telefono'},
+    {'1': 'email', '3': 6, '4': 1, '5': 9, '10': 'email'},
+    {'1': 'dias_vencimiento', '3': 7, '4': 1, '5': 5, '10': 'diasVencimiento'},
+    {'1': 'tarifa_kwh', '3': 8, '4': 1, '5': 1, '10': 'tarifaKwh'},
+    {'1': 'cargo_fijo', '3': 9, '4': 1, '5': 1, '10': 'cargoFijo'},
+    {'1': 'alumbrado', '3': 10, '4': 1, '5': 1, '10': 'alumbrado'},
+    {'1': 'mantenimiento', '3': 11, '4': 1, '5': 1, '10': 'mantenimiento'},
+    {'1': 'igv', '3': 12, '4': 1, '5': 8, '10': 'igv'},
+  ],
+};
+
+/// Descriptor for `Settings`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List settingsDescriptor = $convert.base64Decode(
+    'CghTZXR0aW5ncxIkCg1tdW5pY2lwYWxpZGFkGAEgASgJUg1tdW5pY2lwYWxpZGFkEhgKB2VtcH'
+    'Jlc2EYAiABKAlSB2VtcHJlc2ESEAoDcnVjGAMgASgJUgNydWMSHAoJZGlyZWNjaW9uGAQgASgJ'
+    'UglkaXJlY2Npb24SGgoIdGVsZWZvbm8YBSABKAlSCHRlbGVmb25vEhQKBWVtYWlsGAYgASgJUg'
+    'VlbWFpbBIpChBkaWFzX3ZlbmNpbWllbnRvGAcgASgFUg9kaWFzVmVuY2ltaWVudG8SHQoKdGFy'
+    'aWZhX2t3aBgIIAEoAVIJdGFyaWZhS3doEh0KCmNhcmdvX2Zpam8YCSABKAFSCWNhcmdvRmlqbx'
+    'IcCglhbHVtYnJhZG8YCiABKAFSCWFsdW1icmFkbxIkCg1tYW50ZW5pbWllbnRvGAsgASgBUg1t'
+    'YW50ZW5pbWllbnRvEhAKA2lndhgMIAEoCFIDaWd2');
 
