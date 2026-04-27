@@ -62,8 +62,9 @@ const PullMetadataResponse$json = {
     {'1': 'communities', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.Community', '10': 'communities'},
     {'1': 'sectors', '3': 2, '4': 3, '5': 11, '6': '.involt.v1.Sector', '10': 'sectors'},
     {'1': 'customers', '3': 3, '4': 3, '5': 11, '6': '.involt.v1.Customer', '10': 'customers'},
-    {'1': 'config', '3': 4, '4': 1, '5': 11, '6': '.involt.v1.AppConfig', '10': 'config'},
-    {'1': 'settings', '3': 5, '4': 1, '5': 11, '6': '.involt.v1.Settings', '10': 'settings'},
+    {'1': 'readings', '3': 4, '4': 3, '5': 11, '6': '.involt.v1.Reading', '10': 'readings'},
+    {'1': 'config', '3': 5, '4': 1, '5': 11, '6': '.involt.v1.AppConfig', '10': 'config'},
+    {'1': 'settings', '3': 6, '4': 1, '5': 11, '6': '.involt.v1.Settings', '10': 'settings'},
   ],
 };
 
@@ -72,8 +73,9 @@ final $typed_data.Uint8List pullMetadataResponseDescriptor = $convert.base64Deco
     'ChRQdWxsTWV0YWRhdGFSZXNwb25zZRI2Cgtjb21tdW5pdGllcxgBIAMoCzIULmludm9sdC52MS'
     '5Db21tdW5pdHlSC2NvbW11bml0aWVzEisKB3NlY3RvcnMYAiADKAsyES5pbnZvbHQudjEuU2Vj'
     'dG9yUgdzZWN0b3JzEjEKCWN1c3RvbWVycxgDIAMoCzITLmludm9sdC52MS5DdXN0b21lclIJY3'
-    'VzdG9tZXJzEiwKBmNvbmZpZxgEIAEoCzIULmludm9sdC52MS5BcHBDb25maWdSBmNvbmZpZxIv'
-    'CghzZXR0aW5ncxgFIAEoCzITLmludm9sdC52MS5TZXR0aW5nc1IIc2V0dGluZ3M=');
+    'VzdG9tZXJzEi4KCHJlYWRpbmdzGAQgAygLMhIuaW52b2x0LnYxLlJlYWRpbmdSCHJlYWRpbmdz'
+    'EiwKBmNvbmZpZxgFIAEoCzIULmludm9sdC52MS5BcHBDb25maWdSBmNvbmZpZxIvCghzZXR0aW'
+    '5ncxgGIAEoCzITLmludm9sdC52MS5TZXR0aW5nc1IIc2V0dGluZ3M=');
 
 @$core.Deprecated('Use uploadPhotoRequestDescriptor instead')
 const UploadPhotoRequest$json = {

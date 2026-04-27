@@ -61,6 +61,7 @@ message Reading {
   double alumbrado_publico = 11;
   double saldo_redondeo = 12;
   double total_to_pay = 13;
+  string period = 14; // e.g., "2026-04"
 }
 // AppConfig contains remote configuration for the mobile application.
 message AppConfig {

@@ -146,3 +146,9 @@ func (r *PostgresReadingRepository) SumConsumptionBySectorAndPeriod(ctx context.
 	err := r.db.GetContext(ctx, &sum, query, sectorID, period)
 	return sum, err
 }
+func (r *PostgresReadingRepository) ListAll(ctx context.Context) ([]domain.Reading, error) {
+	var readings []domain.Reading
+	query := `SELECT * FROM readings ORDER BY timestamp DESC`
+	err := r.db.SelectContext(ctx, &readings, query)
+	return readings, err
+}

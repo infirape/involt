@@ -180,6 +180,7 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     $core.Iterable<$0.Community>? communities,
     $core.Iterable<$0.Sector>? sectors,
     $core.Iterable<$0.Customer>? customers,
+    $core.Iterable<$0.Reading>? readings,
     $0.AppConfig? config,
     $0.Settings? settings,
   }) {
@@ -192,6 +193,9 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     }
     if (customers != null) {
       $result.customers.addAll(customers);
+    }
+    if (readings != null) {
+      $result.readings.addAll(readings);
     }
     if (config != null) {
       $result.config = config;
@@ -209,8 +213,9 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     ..pc<$0.Community>(1, _omitFieldNames ? '' : 'communities', $pb.PbFieldType.PM, subBuilder: $0.Community.create)
     ..pc<$0.Sector>(2, _omitFieldNames ? '' : 'sectors', $pb.PbFieldType.PM, subBuilder: $0.Sector.create)
     ..pc<$0.Customer>(3, _omitFieldNames ? '' : 'customers', $pb.PbFieldType.PM, subBuilder: $0.Customer.create)
-    ..aOM<$0.AppConfig>(4, _omitFieldNames ? '' : 'config', subBuilder: $0.AppConfig.create)
-    ..aOM<$0.Settings>(5, _omitFieldNames ? '' : 'settings', subBuilder: $0.Settings.create)
+    ..pc<$0.Reading>(4, _omitFieldNames ? '' : 'readings', $pb.PbFieldType.PM, subBuilder: $0.Reading.create)
+    ..aOM<$0.AppConfig>(5, _omitFieldNames ? '' : 'config', subBuilder: $0.AppConfig.create)
+    ..aOM<$0.Settings>(6, _omitFieldNames ? '' : 'settings', subBuilder: $0.Settings.create)
     ..hasRequiredFields = false
   ;
 
@@ -245,26 +250,29 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
   $core.List<$0.Customer> get customers => $_getList(2);
 
   @$pb.TagNumber(4)
-  $0.AppConfig get config => $_getN(3);
-  @$pb.TagNumber(4)
-  set config($0.AppConfig v) { setField(4, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasConfig() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearConfig() => clearField(4);
-  @$pb.TagNumber(4)
-  $0.AppConfig ensureConfig() => $_ensure(3);
+  $core.List<$0.Reading> get readings => $_getList(3);
 
   @$pb.TagNumber(5)
-  $0.Settings get settings => $_getN(4);
+  $0.AppConfig get config => $_getN(4);
   @$pb.TagNumber(5)
-  set settings($0.Settings v) { setField(5, v); }
+  set config($0.AppConfig v) { setField(5, v); }
   @$pb.TagNumber(5)
-  $core.bool hasSettings() => $_has(4);
+  $core.bool hasConfig() => $_has(4);
   @$pb.TagNumber(5)
-  void clearSettings() => clearField(5);
+  void clearConfig() => clearField(5);
   @$pb.TagNumber(5)
-  $0.Settings ensureSettings() => $_ensure(4);
+  $0.AppConfig ensureConfig() => $_ensure(4);
+
+  @$pb.TagNumber(6)
+  $0.Settings get settings => $_getN(5);
+  @$pb.TagNumber(6)
+  set settings($0.Settings v) { setField(6, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasSettings() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearSettings() => clearField(6);
+  @$pb.TagNumber(6)
+  $0.Settings ensureSettings() => $_ensure(5);
 }
 
 class UploadPhotoRequest extends $pb.GeneratedMessage {

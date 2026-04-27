@@ -383,6 +383,7 @@ class Reading extends $pb.GeneratedMessage {
     $core.double? alumbradoPublico,
     $core.double? saldoRedondeo,
     $core.double? totalToPay,
+    $core.String? period,
   }) {
     final $result = create();
     if (id != null) {
@@ -424,6 +425,9 @@ class Reading extends $pb.GeneratedMessage {
     if (totalToPay != null) {
       $result.totalToPay = totalToPay;
     }
+    if (period != null) {
+      $result.period = period;
+    }
     return $result;
   }
   Reading._() : super();
@@ -444,6 +448,7 @@ class Reading extends $pb.GeneratedMessage {
     ..a<$core.double>(11, _omitFieldNames ? '' : 'alumbradoPublico', $pb.PbFieldType.OD)
     ..a<$core.double>(12, _omitFieldNames ? '' : 'saldoRedondeo', $pb.PbFieldType.OD)
     ..a<$core.double>(13, _omitFieldNames ? '' : 'totalToPay', $pb.PbFieldType.OD)
+    ..aOS(14, _omitFieldNames ? '' : 'period')
     ..hasRequiredFields = false
   ;
 
@@ -587,6 +592,15 @@ class Reading extends $pb.GeneratedMessage {
   $core.bool hasTotalToPay() => $_has(12);
   @$pb.TagNumber(13)
   void clearTotalToPay() => clearField(13);
+
+  @$pb.TagNumber(14)
+  $core.String get period => $_getSZ(13);
+  @$pb.TagNumber(14)
+  set period($core.String v) { $_setString(13, v); }
+  @$pb.TagNumber(14)
+  $core.bool hasPeriod() => $_has(13);
+  @$pb.TagNumber(14)
+  void clearPeriod() => clearField(14);
 }
 
 /// AppConfig contains remote configuration for the mobile application.

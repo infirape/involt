@@ -110,6 +110,31 @@ class SyncService {
             mode: InsertMode.insertOrReplace,
           );
         }
+
+        // 5. Readings (Historical)
+        for (final r in response.message.readings) {
+          batch.insert(
+            db.readings,
+            ReadingsCompanion.insert(
+              id: r.id,
+              customerId: r.customerId,
+              previousValue: r.previousValue,
+              currentValue: r.currentValue,
+              consumptionKwh: r.consumptionKwh,
+              photoUrl: Value(r.photoUrl),
+              timestamp: DateTime.fromMillisecondsSinceEpoch(r.timestamp.toInt() * 1000),
+              latitude: r.latitude,
+              longitude: r.longitude,
+              cargoFijo: r.cargoFijo,
+              alumbradoPublico: r.alumbradoPublico,
+              saldoRedondeo: r.saldoRedondeo,
+              totalToPay: r.totalToPay,
+              isSynced: const Value(true),
+              period: r.period,
+            ),
+            mode: InsertMode.insertOrReplace,
+          );
+        }
       });
       print('✅ Sync: Metadata updated (including config)');
     } catch (e) {

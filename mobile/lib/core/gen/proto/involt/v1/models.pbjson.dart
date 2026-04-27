@@ -104,6 +104,7 @@ const Reading$json = {
     {'1': 'alumbrado_publico', '3': 11, '4': 1, '5': 1, '10': 'alumbradoPublico'},
     {'1': 'saldo_redondeo', '3': 12, '4': 1, '5': 1, '10': 'saldoRedondeo'},
     {'1': 'total_to_pay', '3': 13, '4': 1, '5': 1, '10': 'totalToPay'},
+    {'1': 'period', '3': 14, '4': 1, '5': 9, '10': 'period'},
   ],
 };
 
@@ -116,7 +117,8 @@ final $typed_data.Uint8List readingDescriptor = $convert.base64Decode(
     'A1IJdGltZXN0YW1wEhoKCGxhdGl0dWRlGAggASgBUghsYXRpdHVkZRIcCglsb25naXR1ZGUYCS'
     'ABKAFSCWxvbmdpdHVkZRIdCgpjYXJnb19maWpvGAogASgBUgljYXJnb0Zpam8SKwoRYWx1bWJy'
     'YWRvX3B1YmxpY28YCyABKAFSEGFsdW1icmFkb1B1YmxpY28SJQoOc2FsZG9fcmVkb25kZW8YDC'
-    'ABKAFSDXNhbGRvUmVkb25kZW8SIAoMdG90YWxfdG9fcGF5GA0gASgBUgp0b3RhbFRvUGF5');
+    'ABKAFSDXNhbGRvUmVkb25kZW8SIAoMdG90YWxfdG9fcGF5GA0gASgBUgp0b3RhbFRvUGF5EhYK'
+    'BnBlcmlvZBgOIAEoCVIGcGVyaW9k');
 
 @$core.Deprecated('Use appConfigDescriptor instead')
 const AppConfig$json = {

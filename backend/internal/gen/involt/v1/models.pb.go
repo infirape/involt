@@ -337,6 +337,7 @@ type Reading struct {
 	AlumbradoPublico float64 `protobuf:"fixed64,11,opt,name=alumbrado_publico,json=alumbradoPublico,proto3" json:"alumbrado_publico,omitempty"`
 	SaldoRedondeo    float64 `protobuf:"fixed64,12,opt,name=saldo_redondeo,json=saldoRedondeo,proto3" json:"saldo_redondeo,omitempty"`
 	TotalToPay       float64 `protobuf:"fixed64,13,opt,name=total_to_pay,json=totalToPay,proto3" json:"total_to_pay,omitempty"`
+	Period           string  `protobuf:"bytes,14,opt,name=period,proto3" json:"period,omitempty"` // e.g., "2026-04"
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -460,6 +461,13 @@ func (x *Reading) GetTotalToPay() float64 {
 		return x.TotalToPay
 	}
 	return 0
+}
+
+func (x *Reading) GetPeriod() string {
+	if x != nil {
+		return x.Period
+	}
+	return ""
 }
 
 // AppConfig contains remote configuration for the mobile application.
@@ -672,7 +680,7 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\tlongitude\x18\n" +
 	" \x01(\x01R\tlongitude\x12,\n" +
 	"\x12last_reading_value\x18\v \x01(\x01R\x10lastReadingValue\x12'\n" +
-	"\x0finitial_reading\x18\f \x01(\x01R\x0einitialReading\"\xb9\x03\n" +
+	"\x0finitial_reading\x18\f \x01(\x01R\x0einitialReading\"\xd1\x03\n" +
 	"\aReading\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcustomer_id\x18\x02 \x01(\tR\n" +
@@ -690,7 +698,8 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\x11alumbrado_publico\x18\v \x01(\x01R\x10alumbradoPublico\x12%\n" +
 	"\x0esaldo_redondeo\x18\f \x01(\x01R\rsaldoRedondeo\x12 \n" +
 	"\ftotal_to_pay\x18\r \x01(\x01R\n" +
-	"totalToPay\"[\n" +
+	"totalToPay\x12\x16\n" +
+	"\x06period\x18\x0e \x01(\tR\x06period\"[\n" +
 	"\tAppConfig\x12(\n" +
 	"\x10map_url_template\x18\x01 \x01(\tR\x0emapUrlTemplate\x12$\n" +
 	"\x0emap_user_agent\x18\x02 \x01(\tR\fmapUserAgent\"\xeb\x02\n" +

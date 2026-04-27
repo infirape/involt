@@ -38,8 +38,9 @@ message PullMetadataResponse {
   repeated Community communities = 1;
   repeated Sector sectors = 2;
   repeated Customer customers = 3;
-  AppConfig config = 4;
-  Settings settings = 5;
+  repeated Reading readings = 4;
+  AppConfig config = 5;
+  Settings settings = 6;
 }
 
 message UploadPhotoRequest {

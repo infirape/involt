@@ -120,6 +120,31 @@ func (h *SyncHandler) PullMetadata(
 		}
 	}
 
+	// Fetch and map readings
+	readings, err := h.readingRepo.ListAll(ctx)
+	if err != nil {
+		log.Printf("⚠️ Error getting readings for sync: %v", err)
+	} else {
+		resp.Readings = make([]*involtv1.Reading, len(readings))
+		for i, r := range readings {
+			resp.Readings[i] = &involtv1.Reading{
+				Id:               r.ID,
+				CustomerId:       r.CustomerID,
+				PreviousValue:    r.PreviousValue,
+				CurrentValue:     r.CurrentValue,
+				Consumption:      r.Consumption,
+				PhotoUrl:         r.PhotoURL,
+				Timestamp:        r.Timestamp.Unix(),
+				Latitude:         r.Latitude,
+				Longitude:        r.Longitude,
+				CargoFijo:        r.CargoFijo,
+				AlumbradoPublico: r.AlumbradoPublico,
+				SaldoRedondeo:    r.SaldoRedondeo,
+				Period:           r.Timestamp.Format("2006-01"),
+			}
+		}
+	}
+
 	return connect.NewResponse(resp), nil
 }
 
