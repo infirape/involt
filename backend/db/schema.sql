@@ -5,10 +5,10 @@ CREATE TABLE IF NOT EXISTS settings (
     id TEXT PRIMARY KEY DEFAULT 'main',
     municipalidad TEXT NOT NULL DEFAULT 'MUNICIPALIDAD DISTRITAL DE CHETILLA',
     empresa TEXT NOT NULL DEFAULT 'HIDROELECTRICA QARWAQIRU',
-    ruc TEXT,
-    direccion TEXT,
-    telefono TEXT,
-    email TEXT,
+    ruc TEXT NOT NULL DEFAULT '',
+    direccion TEXT NOT NULL DEFAULT '',
+    telefono TEXT NOT NULL DEFAULT '',
+    email TEXT NOT NULL DEFAULT '',
     dias_vencimiento INTEGER DEFAULT 15,
     tarifa_kwh DOUBLE PRECISION DEFAULT 0.25,
     cargo_fijo DOUBLE PRECISION DEFAULT 6.00,
@@ -18,6 +18,16 @@ CREATE TABLE IF NOT EXISTS settings (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS app_configs (
+    id TEXT PRIMARY KEY DEFAULT 'main',
+    map_url_template TEXT NOT NULL DEFAULT '',
+    map_user_agent TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+INSERT INTO app_configs (id, map_url_template, map_user_agent) VALUES ('main', 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', 'InVolt-App') ON CONFLICT DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS communities (
     id TEXT PRIMARY KEY,

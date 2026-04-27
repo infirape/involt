@@ -93,6 +93,7 @@ type Reading struct {
 
 // AppConfig contains remote configuration.
 type AppConfig struct {
-	MapURLTemplate string
-	MapUserAgent   string
+	ID             string `db:"id"`
+	MapURLTemplate string `db:"map_url_template"`
+	MapUserAgent   string `db:"map_user_agent"`
 }

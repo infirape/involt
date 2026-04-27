@@ -17,8 +17,20 @@ func NewPostgresReadingRepository(db *sqlx.DB) *PostgresReadingRepository {
 }
 
 func (r *PostgresReadingRepository) Save(ctx context.Context, reading *domain.Reading) error {
-	query := `INSERT INTO readings (id, customer_id, previous_value, current_value, consumption, photo_url, timestamp, latitude, longitude, cargo_fijo, alumbrado_publico, saldo_redondeo, total_to_pay) 
-	          VALUES (:id, :customerid, :previousvalue, :currentvalue, :consumption, :photourl, :timestamp, :latitude, :longitude, :cargofijo, :alumbradopublico, :saldoredondeo, :totaltopay) 
+	query := `INSERT INTO readings (
+				id, customer_id, previous_value, current_value, consumption, 
+				photo_url, timestamp, latitude, longitude, period_start, period_end,
+				cargo_fijo, alumbrado_publico, adjustment, subtotal, 
+				saldo_redondeo, round_difference, total_to_pay, previous_balance, 
+				overdue_total, expiration_date
+			  ) 
+	          VALUES (
+				:id, :customer_id, :previous_value, :current_value, :consumption, 
+				:photo_url, :timestamp, :latitude, :longitude, :period_start, :period_end,
+				:cargo_fijo, :alumbrado_publico, :adjustment, :subtotal, 
+				:saldo_redondeo, :round_difference, :total_to_pay, :previous_balance, 
+				:overdue_total, :expiration_date
+			  ) 
 	          ON CONFLICT (id) DO NOTHING`
 	_, err := r.db.NamedExecContext(ctx, query, reading)
 	return err
