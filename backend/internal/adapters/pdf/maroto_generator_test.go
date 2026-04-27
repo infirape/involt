@@ -47,7 +47,14 @@ func TestMarotoGenerator_Generate(t *testing.T) {
 		ExpirationDate:   time.Date(2026, 4, 25, 0, 0, 0, 0, time.UTC),
 	}
 
-	pdfData, err := gen.Generate(ctx, reading, customer)
+	settings := &domain.Settings{
+		TarifaKWh:     0.2500,
+		Municipalidad: "MUNICIPALIDAD DISTRITAL DE CHETILLA",
+		Empresa:       "HIDROELECTRICA QARWAQIRU",
+		Mantenimiento: 0.00,
+	}
+
+	pdfData, err := gen.Generate(ctx, reading, customer, settings, "Chetilla", "TAMBILLO A")
 	if err != nil {
 		t.Fatalf("Failed to generate PDF: %v", err)
 	}
@@ -74,10 +81,17 @@ func TestMarotoGenerator_GenerateBatch(t *testing.T) {
 	}
 
 	customers := map[string]*domain.Customer{
-		"C1": {Name: "Cliente Uno", Code: "C1"},
+		"C1": {Name: "Cliente Uno", Code: "C1", CommunityName: "Chetilla", SectorName: "Centro"},
 	}
 
-	pdfData, err := gen.GenerateBatch(ctx, readings, customers)
+	settings := &domain.Settings{
+		TarifaKWh:     0.2500,
+		Municipalidad: "MUNICIPALIDAD DISTRITAL DE CHETILLA",
+		Empresa:       "HIDROELECTRICA QARWAQIRU",
+		Mantenimiento: 0.00,
+	}
+
+	pdfData, err := gen.GenerateBatch(ctx, readings, customers, settings)
 	if err != nil {
 		t.Fatalf("Failed to generate batch PDF: %v", err)
 	}
