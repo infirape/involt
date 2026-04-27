@@ -338,13 +338,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                       });
                                       _saveSelectedSectors();
                                     },
-                                    selectedColor: AppColors.magenta.withOpacity(0.3),
+                                    selectedColor: AppColors.volt.withOpacity(0.3),
                                     backgroundColor: AppColors.glass,
                                     labelStyle: TextStyle(
-                                      color: isSelected ? AppColors.magenta : AppColors.textMuted,
+                                      color: isSelected ? AppColors.volt : AppColors.textMuted,
                                       fontSize: 12,
                                     ),
-                                    shape: StadiumBorder(side: BorderSide(color: isSelected ? AppColors.magenta : AppColors.glassBorder)),
+                                    shape: StadiumBorder(side: BorderSide(color: isSelected ? AppColors.volt : AppColors.glassBorder)),
                                   ),
                                 );
                               },
@@ -376,10 +376,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                     return ListTile(
                                       contentPadding: EdgeInsets.zero,
                                       leading: CircleAvatar(
-                                        backgroundColor: isRegistered ? AppColors.green.withOpacity(0.2) : AppColors.magenta.withOpacity(0.1),
+                                        backgroundColor: isRegistered ? AppColors.cyan.withOpacity(0.2) : AppColors.volt.withOpacity(0.1),
                                         child: Icon(
                                           isRegistered ? Icons.check_circle_outline : Icons.pending_outlined, 
-                                          color: isRegistered ? AppColors.green : AppColors.magenta, 
+                                          color: isRegistered ? AppColors.cyan : AppColors.volt, 
                                           size: 20
                                         ),
                                       ),
@@ -400,7 +400,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                               );
                                             },
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: AppColors.magenta,
+                                              backgroundColor: AppColors.volt,
                                               padding: const EdgeInsets.symmetric(horizontal: 10),
                                               minimumSize: const Size(60, 30),
                                             ),
@@ -473,7 +473,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     if (mounted) setState(() => _selectedCustomer = null);
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.magenta,
+                                    backgroundColor: AppColors.volt,
                                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                   ),

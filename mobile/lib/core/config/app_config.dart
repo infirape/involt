@@ -1,5 +1,9 @@
 class AppConfig {
-  static const String baseUrl = 'http://192.168.1.61:8080';
+  static const String environment = String.fromEnvironment('APP_ENV', defaultValue: 'prod');
+  static const String baseUrl = String.fromEnvironment(
+    'BACKEND_URL',
+    defaultValue: environment == 'dev' ? 'http://10.0.2.2:8080' : 'https://involt.infira.pe',
+  );
   static const String appName = 'Hidroeléctrica Qarwaqiru';
   static const String brandName = 'InVolt';
   static const String creditsName = 'INFIRA';
