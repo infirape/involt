@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: involt_db
+    restart: always
+    environment:
+      POSTGRES_USER: involt_user
+      POSTGRES_PASSWORD: involt_password
+      POSTGRES_DB: involt_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
