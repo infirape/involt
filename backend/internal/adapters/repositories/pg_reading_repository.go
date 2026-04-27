@@ -67,22 +67,22 @@ func (r *PostgresReadingRepository) ListBySectorAndPeriod(ctx context.Context, s
 	return readings, nil
 }
 
-func (r *PostgresReadingRepository) CountCurrentMonth(ctx context.Context) (int, error) {
+func (r *PostgresReadingRepository) CountByPeriod(ctx context.Context, period string) (int, error) {
 	var count int
-	query := `SELECT COUNT(*) FROM readings WHERE timestamp >= date_trunc('month', now())`
-	err := r.db.GetContext(ctx, &count, query)
+	query := `SELECT COUNT(DISTINCT customer_id) FROM readings WHERE to_char(timestamp, 'YYYY-MM') = $1`
+	err := r.db.GetContext(ctx, &count, query, period)
 	return count, err
 }
 
-func (r *PostgresReadingRepository) CountPendingCurrentMonth(ctx context.Context) (int, error) {
+func (r *PostgresReadingRepository) CountPendingByPeriod(ctx context.Context, period string) (int, error) {
 	var count int
 	query := `SELECT COUNT(*) FROM customers c 
 	          WHERE NOT EXISTS (
 	              SELECT 1 FROM readings r 
 	              WHERE r.customer_id = c.id 
-	              AND r.timestamp >= date_trunc('month', now())
+	              AND to_char(r.timestamp, 'YYYY-MM') = $1
 	          )`
-	err := r.db.GetContext(ctx, &count, query)
+	err := r.db.GetContext(ctx, &count, query, period)
 	return count, err
 }
 
@@ -96,4 +96,21 @@ func (r *PostgresReadingRepository) ListPeriods(ctx context.Context) ([]string, 
 		return nil, fmt.Errorf("error listing periods: %w", err)
 	}
 	return periods, nil
+}
+func (r *PostgresReadingRepository) CountBySectorAndPeriod(ctx context.Context, sectorID, period string) (int, error) {
+	var count int
+	query := `SELECT COUNT(DISTINCT r.customer_id) FROM readings r
+	          JOIN customers c ON r.customer_id = c.id
+	          WHERE c.sector_id = $1 AND to_char(r.timestamp, 'YYYY-MM') = $2`
+	err := r.db.GetContext(ctx, &count, query, sectorID, period)
+	return count, err
+}
+
+func (r *PostgresReadingRepository) SumConsumptionBySectorAndPeriod(ctx context.Context, sectorID, period string) (float64, error) {
+	var sum float64
+	query := `SELECT COALESCE(SUM(r.consumption), 0) FROM readings r
+	          JOIN customers c ON r.customer_id = c.id
+	          WHERE c.sector_id = $1 AND to_char(r.timestamp, 'YYYY-MM') = $2`
+	err := r.db.GetContext(ctx, &sum, query, sectorID, period)
+	return sum, err
 }

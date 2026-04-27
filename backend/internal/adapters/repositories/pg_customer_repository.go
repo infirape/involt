@@ -68,3 +68,9 @@ func (r *PostgresCustomerRepository) SaveBatch(ctx context.Context, customers []
 	_, err := r.db.NamedExecContext(ctx, query, customers)
 	return err
 }
+func (r *PostgresCustomerRepository) CountBySector(ctx context.Context, sectorID string) (int, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM customers WHERE sector_id = $1`
+	err := r.db.GetContext(ctx, &count, query, sectorID)
+	return count, err
+}

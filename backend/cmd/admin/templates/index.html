@@ -48,6 +48,19 @@
     .glow:hover {
         box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
     }
+    .input-field {
+        background: #0a0a0a !important;
+        border: 1px solid #333;
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        width: 100%;
+        transition: border-color 0.2s, background-color 0s;
+    }
+    .input-field:focus {
+        border-color: #FF00FF;
+        outline: none;
+    }
     /* Fix for browser autofill background */
     input:-webkit-autofill,
     input:-webkit-autofill:hover, 
@@ -55,7 +68,7 @@
     input:-webkit-autofill:active {
         -webkit-box-shadow: 0 0 0 30px #0a0a0a inset !important;
         -webkit-text-fill-color: white !important;
-        transition: background-color 5000s ease-in-out 0s;
+        transition: background-color 5000s ease-in-out 0s !important;
     }
 </style>
 </head>
@@ -77,83 +90,72 @@
         </div>
 
         <!-- Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-magenta transition-all duration-300 hover:scale-[1.02]">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-magenta transition-all duration-300 hover:scale-[1.02] glow">
                 <div class="text-5xl font-bold gradient-text" hx-get="/admin/stats/customers" hx-trigger="load">{{.Stats.Customers}}</div>
                 <div class="text-gray-500 text-sm uppercase tracking-wider mt-2">Total Clientes</div>
             </div>
-            <div class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-cyan transition-all duration-300 hover:scale-[1.02]">
-                <div class="text-5xl font-bold text-cyan" hx-get="/admin/stats/readings" hx-trigger="load">{{.Stats.Readings}}</div>
+            <div class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-cyan transition-all duration-300 hover:scale-[1.02] glow">
+                <div class="text-5xl font-bold text-cyan" hx-get="/admin/stats/readings?period={{.Period}}" hx-trigger="load">{{.Stats.Readings}}</div>
                 <div class="text-gray-500 text-sm uppercase tracking-wider mt-2">Lecturas del Mes</div>
             </div>
-            <div class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-magenta transition-all duration-300 hover:scale-[1.02]">
-                <div class="text-5xl font-bold gradient-text" hx-get="/admin/stats/pending" hx-trigger="load">{{.Stats.Pending}}</div>
+            <div class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-magenta transition-all duration-300 hover:scale-[1.02] glow">
+                <div class="text-5xl font-bold gradient-text" hx-get="/admin/stats/pending?period={{.Period}}" hx-trigger="load">{{.Stats.Pending}}</div>
                 <div class="text-gray-500 text-sm uppercase tracking-wider mt-2">Pendientes</div>
             </div>
         </div>
 
-        <!-- Settings Form -->
-        <div class="bg-dark-card border border-gray-800 rounded-xl p-8">
-            <div class="flex justify-between items-center mb-6 pb-6 border-b border-gray-800">
-                <h2 class="text-xl font-semibold text-cyan">Configuración</h2>
+        <!-- Sectors Monitoring Section -->
+        <div class="mb-12">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-cyan">Monitoreo por Sectores</h2>
+                    <p class="text-gray-500 text-sm">Progreso de lecturas y consumo por zona</p>
+                </div>
+                <div class="text-xs text-gray-600 uppercase tracking-widest bg-dark px-3 py-1 rounded-full border border-gray-800">
+                    Periodo Actual: {{formatPeriod .Period}}
+                </div>
             </div>
-            
-            <form hx-put="/api/settings" hx-swap="outerHTML" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-gray-500 text-sm mb-2">Municipalidad</label>
-                    <input type="text" name="municipalidad" value="{{.Settings.Municipalidad}}" 
-                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
+
+            <!-- HTMX Container for Sector Stats -->
+            <div id="sectors-grid" 
+                 hx-get="/admin/stats/sectors?period={{.Period}}" 
+                 hx-trigger="load" 
+                 hx-swap="innerHTML"
+                 class="min-h-[200px] flex items-center justify-center">
+                <div class="flex flex-col items-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan mb-4"></div>
+                    <p class="text-gray-500 animate-pulse">Cargando sectores...</p>
                 </div>
-                <div>
-                    <label class="block text-gray-500 text-sm mb-2">Empresa</label>
-                    <input type="text" name="empresa" value="{{.Settings.Empresa}}" 
-                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
-                </div>
-                <div>
-                    <label class="block text-gray-500 text-sm mb-2">RUC</label>
-                    <input type="text" name="ruc" value="{{.Settings.RUC}}" 
-                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
-                </div>
-                <div>
-                    <label class="block text-gray-500 text-sm mb-2">Dirección</label>
-                    <input type="text" name="direccion" value="{{.Settings.Direccion}}" 
-                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
-                </div>
-                <div>
-                    <label class="block text-gray-500 text-sm mb-2">Teléfono</label>
-                    <input type="text" name="telefono" value="{{.Settings.Telefono}}" 
-                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
-                </div>
-                <div>
-                    <label class="block text-gray-500 text-sm mb-2">Email</label>
-                    <input type="email" name="email" value="{{.Settings.Email}}" 
-                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
-                </div>
-                <div>
-                    <label class="block text-gray-500 text-sm mb-2">Días de Vencimiento</label>
-                    <input type="number" name="dias_vencimiento" value="{{.Settings.DiasVencimiento}}" min="1" max="90" 
-                        class="w-full px-4 py-3 bg-dark border border-gray-700 rounded-lg focus:border-magenta focus:outline-none transition">
-                </div>
-                <div class="flex items-end">
-                    <button type="submit" class="gradient-bg px-8 py-3 rounded-lg font-semibold text-dark hover:scale-[1.02] transition glow">
-                        Guardar Cambios
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
 
         <!-- Quick Actions -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            <a href="/admin/customers" class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-cyan transition">
-                <div class="text-cyan text-3xl mb-2">👥</div>
-                <div class="font-semibold">Gestionar Clientes</div>
-                <div class="text-gray-500 text-sm">CRUD de clientes y medidores</div>
-            </a>
-            <a href="/admin/settings" class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-green transition">
-                <div class="text-green text-3xl mb-2">⚙️</div>
-                <div class="font-semibold">Configuración</div>
-                <div class="text-gray-500 text-sm">Ajustes del sistema</div>
-            </a>
+        <div class="border-t border-gray-800 pt-12">
+            <h2 class="text-xl font-semibold text-gray-400 mb-6">Accesos Rápidos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <a href="/admin/customers" class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-cyan transition-all duration-300 hover:scale-[1.02] flex items-center gap-4">
+                    <div class="text-cyan text-3xl">👥</div>
+                    <div>
+                        <div class="font-semibold text-gray-200">Gestionar Clientes</div>
+                        <div class="text-gray-500 text-xs">CRUD de clientes y medidores</div>
+                    </div>
+                </a>
+                <a href="/admin/settings" class="bg-dark-card border border-gray-800 rounded-xl p-6 hover:border-magenta transition-all duration-300 hover:scale-[1.02] flex items-center gap-4">
+                    <div class="text-magenta text-3xl">⚙️</div>
+                    <div>
+                        <div class="font-semibold text-gray-200">Configuración</div>
+                        <div class="text-gray-500 text-xs">Ajustes del sistema</div>
+                    </div>
+                </a>
+                <div class="bg-dark-card border border-gray-800 rounded-xl p-6 opacity-50 cursor-not-allowed flex items-center gap-4">
+                    <div class="text-gray-400 text-3xl">📊</div>
+                    <div>
+                        <div class="font-semibold text-gray-400 text-sm uppercase">Reportes Avanzados</div>
+                        <div class="text-gray-600 text-xs italic">Próximamente...</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 </body>
