@@ -64,6 +64,9 @@ func main() {
 
 	// Admin dashboard with HTMX
 	mux.Handle("/admin/", adminHandler)
+	assetsDir := resolveAssetsDir()
+	log.Printf("🖼️ Serving assets from %s at /assets/", assetsDir)
+	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir))))
 
 	// 5. Start Server with h2c (HTTP/2 Cleartext)
 	log.Println("🚀 InVolt Backend running on http://localhost:8080")
@@ -74,4 +77,21 @@ func main() {
 	if err != nil {
 		log.Fatalf("❌ Server failed: %v", err)
 	}
+}
+
+func resolveAssetsDir() string {
+	candidates := []string{
+		"../assets",   // running from /backend
+		"assets",      // running from project root
+		"../../assets", // fallback when running from /backend/cmd/server
+	}
+
+	for _, candidate := range candidates {
+		info, err := os.Stat(candidate)
+		if err == nil && info.IsDir() {
+			return candidate
+		}
+	}
+
+	return "../assets"
 }
