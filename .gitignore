@@ -6,3 +6,6 @@ backend/bin/
 *.so
 *.dylib
 backend/.gocache/
+
+# AI Artifacts
+artifacts/
