@@ -31,18 +31,5 @@ services:
     ports:
       - "8080:8080"
 
-  backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    container_name: involt_backend
-    restart: always
-    depends_on:
-      - db
-    environment:
-      DATABASE_URL: postgres://involt_user:involt_password@db:5432/involt_db?sslmode=disable
-    ports:
-      - "8080:8080"
-
 volumes:
   postgres_data:
