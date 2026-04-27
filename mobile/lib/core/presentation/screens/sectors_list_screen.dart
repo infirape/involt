@@ -73,7 +73,7 @@ class _SectorsListScreenState extends State<SectorsListScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text('Registro Electrico',
+            const Text('Hidroeléctrica Qarwaqiru',
                 style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16)),
             GestureDetector(
               onTap: () {
