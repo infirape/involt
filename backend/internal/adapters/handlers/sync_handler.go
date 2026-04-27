@@ -132,7 +132,7 @@ func (h *SyncHandler) PullMetadata(
 				CustomerId:       r.CustomerID,
 				PreviousValue:    r.PreviousValue,
 				CurrentValue:     r.CurrentValue,
-				Consumption:      r.Consumption,
+				ConsumptionKwh:   r.Consumption,
 				PhotoUrl:         r.PhotoURL,
 				Timestamp:        r.Timestamp.Unix(),
 				Latitude:         r.Latitude,
@@ -159,7 +159,6 @@ func (h *SyncHandler) PushReadings(
 	}
 
 	for _, r := range req.Msg.Readings {
-		customer, _ := h.customerRepo.GetByID(ctx, r.CustomerId)
 		
 		// Use the previous value sent by the app to ensure consistency with the UI
 		prevVal := r.PreviousValue
