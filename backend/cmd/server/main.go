@@ -73,10 +73,16 @@ func main() {
 		}
 	})
 
-	// Root redirect
+	// Root redirect — apunta directo a /admin/ para evitar el doble redirect de ServeMux
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			http.Redirect(w, r, "/admin", http.StatusFound)
+			// Respetar el proto que manda Caddy para que el Location sea https:// en prod
+			proto := r.Header.Get("X-Forwarded-Proto")
+			if proto == "" {
+				proto = "http"
+			}
+			target := proto + "://" + r.Host + "/admin/"
+			http.Redirect(w, r, target, http.StatusFound)
 			return
 		}
 		http.NotFound(w, r)
