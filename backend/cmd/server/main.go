@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -24,9 +25,19 @@ func main() {
 		dbURL = "postgres://involt_user:involt_password@localhost:5432/involt_db?sslmode=disable"
 	}
 
-	db, err := sqlx.Connect("postgres", dbURL)
+	var db *sqlx.DB
+	var err error
+	for i := 0; i < 5; i++ {
+		db, err = sqlx.Connect("postgres", dbURL)
+		if err == nil {
+			break
+		}
+		log.Printf("⚠️  Database connection failed (attempt %d/5): %v. Retrying in 2s...", i+1, err)
+		time.Sleep(2 * time.Second)
+	}
+
 	if err != nil {
-		log.Fatalf("❌ Database connection failed: %v", err)
+		log.Fatalf("❌ Database connection failed after 5 attempts: %v", err)
 	}
 	defer db.Close()
 	log.Println("🐘 Connected to PostgreSQL")
