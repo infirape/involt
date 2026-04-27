@@ -548,7 +548,7 @@ func (h *AdminHandler) StatsReadings(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	period := r.URL.Query().Get("period")
 	if period == "" {
-		period = time.Now().Format("2026-04")
+		period = time.Now().Format("2006-01")
 	}
 	count, err := h.readingRepo.CountByPeriod(ctx, period)
 	if err != nil {
@@ -562,7 +562,7 @@ func (h *AdminHandler) StatsPending(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	period := r.URL.Query().Get("period")
 	if period == "" {
-		period = time.Now().Format("2026-04")
+		period = time.Now().Format("2006-01")
 	}
 	count, err := h.readingRepo.CountPendingByPeriod(ctx, period)
 	if err != nil {
@@ -576,7 +576,7 @@ func (h *AdminHandler) StatsSectors(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	period := r.URL.Query().Get("period")
 	if period == "" {
-		period = time.Now().Format("2026-04") // Default or fallback
+		period = time.Now().Format("2006-01") // formato Go: año=2006, mes=01
 	}
 
 	sectors, err := h.metadataRepo.ListSectors(ctx)
