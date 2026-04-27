@@ -14,8 +14,8 @@
         theme: {
             extend: {
                 colors: {
-                    magenta: '#FF00FF',
-                    'magenta-dark': '#B300B3',
+                    volt: '#FFE600',
+                    'volt-dark': '#B300B3',
                     cyan: '#00FFFF',
                     'cyan-dark': '#00B3B3',
                     dark: '#0a0a0a',
@@ -60,14 +60,14 @@
     body { font-family: 'Space Grotesk', sans-serif; }
     .glass { background: rgba(26, 26, 26, 0.8); backdrop-filter: blur(20px); }
     .gradient-text {
-        background: linear-gradient(135deg, #FF00FF, #00FFFF);
+        background: linear-gradient(135deg, #FFE600, #FF9900);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
-    .gradient-bg { background: linear-gradient(135deg, #FF00FF, #B300B3); }
-    .glow:hover { box-shadow: 0 0 30px rgba(255, 0, 255, 0.3); }
-    .table-row:hover { background: rgba(255, 0, 255, 0.05); }
+    .gradient-bg { background: linear-gradient(135deg, #FFE600, #FF9900); }
+    .glow:hover { box-shadow: 0 0 30px rgba(255, 230, 0, 0.3); }
+    .table-row:hover { background: rgba(255, 230, 0, 0.05); }
     .input-field {
         background: #0a0a0a !important;
         border: 1px solid #333;
@@ -119,7 +119,7 @@
     
     <header class="glass border-b border-gray-800 sticky top-0 z-50 px-8 py-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div class="text-2xl font-bold">InVolt <span class="gradient-text">Admin</span></div>
+            <div class="text-2xl font-bold gradient-text">{{.Settings.Empresa}}</div>
             {{template "nav.html" .}}
         </div>
     </header>
@@ -136,11 +136,11 @@
         <div class="flex flex-col md:flex-row gap-4 mb-8">
             <!-- Search Bar -->
             <div class="flex-1 relative group">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 group-focus-within:text-magenta transition">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 group-focus-within:text-volt transition">
                     🔍
                 </div>
                 <input type="text" name="search" placeholder="Buscar por nombre, código o medidor..." 
-                    class="w-full pl-10 pr-4 py-3 bg-dark-card border border-gray-800 rounded-xl focus:border-magenta focus:outline-none transition"
+                    class="w-full pl-10 pr-4 py-3 bg-dark-card border border-gray-800 rounded-xl focus:border-volt focus:outline-none transition"
                     hx-get="/admin/customers" 
                     hx-target="#customers-table-body" 
                     hx-trigger="keyup changed delay:500ms, search"
@@ -148,22 +148,25 @@
                     hx-include="[name='sector']">
             </div>
 
-            <!-- Compact Selectors -->
+            <!-- Compact Selectors & Actions -->
             <div class="flex gap-2">
                 <select name="sector" hx-get="/admin/customers" hx-target="#customers-table-body" hx-include="[name='search']"
-                    class="px-4 py-3 bg-dark-card border border-gray-800 rounded-xl text-gray-400 focus:border-green focus:outline-none transition cursor-pointer">
+                    class="px-4 py-3 bg-dark-card border border-gray-800 rounded-xl text-gray-400 focus:border-volt focus:outline-none transition cursor-pointer">
                     <option value="">Sector: Todos</option>
                     {{range .Sectors}}
                     <option value="{{.ID}}">{{.Name}}</option>
                     {{end}}
                 </select>
+                <button onclick="openModal('add')" class="gradient-bg px-6 py-3 rounded-xl font-bold text-dark hover:scale-[1.02] transition glow flex items-center gap-2 whitespace-nowrap">
+                    <span class="text-xl">+</span> Nuevo Cliente
+                </button>
             </div>
         </div>
 
         <!-- Stats Summary -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-dark-card border border-gray-800 rounded-lg p-4 text-center">
-                <div class="text-2xl font-bold text-magenta">{{.Stats.Total}}</div>
+                <div class="text-2xl font-bold text-volt">{{.Stats.Total}}</div>
                 <div class="text-gray-500 text-sm">Total Clientes</div>
             </div>
             <div class="bg-dark-card border border-gray-800 rounded-lg p-4 text-center">
@@ -171,11 +174,11 @@
                 <div class="text-gray-500 text-sm">Por Comunidad</div>
             </div>
             <div class="bg-dark-card border border-gray-800 rounded-lg p-4 text-center">
-                <div class="text-2xl font-bold text-green">{{.Stats.BySector}}</div>
+                <div class="text-2xl font-bold text-volt">{{.Stats.BySector}}</div>
                 <div class="text-gray-500 text-sm">Por Sector</div>
             </div>
             <div class="bg-dark-card border border-gray-800 rounded-lg p-4 text-center">
-                <div class="text-2xl font-bold text-magenta">{{.Stats.WithReadings}}</div>
+                <div class="text-2xl font-bold text-volt">{{.Stats.WithReadings}}</div>
                 <div class="text-gray-500 text-sm">Con Lecturas</div>
             </div>
         </div>
@@ -219,6 +222,14 @@
         </div>
 
     </main>
+
+    <footer class="max-w-6xl mx-auto px-8 py-12 border-t border-gray-900 flex justify-between items-center text-gray-600 text-xs uppercase tracking-widest">
+        <div>&copy; 2026 {{.Settings.Empresa}}</div>
+        <a href="https://infira.pe" target="_blank" class="flex items-center gap-2 hover:text-volt transition-colors">
+            <span>Powered by</span>
+            <span class="font-bold text-gray-500">INVOLT - INFIRA</span>
+        </a>
+    </footer>
 
     <!-- Dynamic Modal Container for HTMX -->
     <div id="modal-container"></div>

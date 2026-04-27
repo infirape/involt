@@ -142,6 +142,7 @@ type ListData struct {
 	Filter      Filter
 	ActivePage  string
 	Periods     []string
+	Settings    domain.Settings
 }
 
 type CustomerRow struct {
@@ -348,6 +349,16 @@ func (h *AdminHandler) Customers(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	settings, _ := h.settingsRepo.Get(ctx)
+	if settings == nil {
+		settings = &domain.Settings{
+			ID:              "main",
+			Municipalidad:   "MUNICIPALIDAD DISTRITAL DE CHETILLA",
+			Empresa:         "HIDROELECTRICA QARWAQIRU",
+			DiasVencimiento: 15,
+		}
+	}
+
 	listData := ListData{
 		Customers:   rows,
 		Communities: communities,
@@ -357,6 +368,7 @@ func (h *AdminHandler) Customers(w http.ResponseWriter, r *http.Request) {
 		Filter:      Filter{Period: currentPeriod},
 		ActivePage:  "customers",
 		Periods:     periods,
+		Settings:    *settings,
 	}
 
 	// Only return fragment if it's a targeted HTMX request (not a boosted navigation)
