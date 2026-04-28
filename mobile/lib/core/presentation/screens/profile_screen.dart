@@ -55,9 +55,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  const Text('Jaime Landa', 
+                  const Text('Henry Bravo', 
                     style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                  Text('jaime.landa@infira.pe', 
+                  Text('henry.bravo@infira.pe', 
                     style: TextStyle(color: AppColors.textMuted, fontSize: 14)),
                   const SizedBox(height: 5),
                   Container(
