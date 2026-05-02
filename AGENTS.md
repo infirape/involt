@@ -20,6 +20,12 @@ Este documento centraliza las reglas de arquitectura y desarrollo para InVolt. T
 - **Lints**: Seguir las recomendaciones de `analysis_options.yaml` en mobile y `golangci-lint` en backend.
 - **Commits**: Usar Conventional Commits (feat, fix, refactor, docs).
 
+## Consideraciones para la IA (MANDATORIO)
+- **Sincronización de Mocks**: Si modificás una interfaz en `backend/internal/ports`, **DEBÉS** actualizar inmediatamente los mocks en los tests de `backend/cmd/` para evitar errores de compilación.
+- **Sincronización de Base de Datos**: Si modificás el esquema en `mobile/lib/core/data/database.dart`, **DEBÉS** actualizar los constructores en `mobile/test/core/data/database_test.dart`.
+- **Estabilidad de Tests UI**: Evitar tests de widgets que dependan de timers largos (como el de la SplashScreen) o llamadas a red reales. Usar mocks para `SyncService`.
+
+
 ## Skills Activas
 
 | Skill | Descripción | Trigger |
