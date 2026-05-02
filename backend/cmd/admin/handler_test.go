@@ -29,6 +29,8 @@ func (m *mockReadingRepo) CountBySectorAndPeriod(ctx context.Context, sectorID, 
 func (m *mockReadingRepo) SumConsumptionBySectorAndPeriod(ctx context.Context, sectorID, period string) (float64, error) {
 	return m.sumBySector[sectorID], nil
 }
+func (m *mockReadingRepo) ListAll(ctx context.Context) ([]domain.Reading, error) { return nil, nil }
+
 
 type mockCustomerRepo struct {
 	countBySector map[string]int

@@ -42,6 +42,7 @@ void main() {
     final reading = Reading(
       id: 'read-1',
       customerId: 'cust-1',
+      period: '2026-04',
       previousValue: 100.0,
       currentValue: 150.0,
       consumptionKwh: 50.0,

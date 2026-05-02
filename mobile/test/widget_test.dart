@@ -1,33 +1,25 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:involt/main.dart';
 import 'package:involt/core/data/database.dart';
 import 'package:drift/native.dart';
+import 'package:involt/core/presentation/screens/splash_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('App should load and show SplashScreen', (WidgetTester tester) async {
+    // 1. Setup in-memory database
     final db = AppDatabase.withExecutor(NativeDatabase.memory());
+    
+    // 2. Build our app
     await tester.pumpWidget(MyApp(db: db));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // 3. Verify SplashScreen is present
+    expect(find.byType(SplashScreen), findsOneWidget);
+    
+    // 4. Verify brand text is present
+    expect(find.text('InVolt'), findsOneWidget);
+    
+    // Note: We don't pumpAndSettle here because SplashScreen has a 5s loop animation
+    // and an async sync call that would fail/hang in this simple smoke test.
   });
 }
