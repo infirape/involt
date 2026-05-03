@@ -73,6 +73,8 @@ const Customer$json = {
     {'1': 'longitude', '3': 10, '4': 1, '5': 1, '10': 'longitude'},
     {'1': 'last_reading_value', '3': 11, '4': 1, '5': 1, '10': 'lastReadingValue'},
     {'1': 'initial_reading', '3': 12, '4': 1, '5': 1, '10': 'initialReading'},
+    {'1': 'address', '3': 13, '4': 1, '5': 9, '10': 'address'},
+    {'1': 'contract_start', '3': 14, '4': 1, '5': 9, '10': 'contractStart'},
   ],
 };
 
@@ -85,7 +87,8 @@ final $typed_data.Uint8List customerDescriptor = $convert.base64Decode(
     'EiEKDG1ldGVyX251bWJlchgIIAEoCVILbWV0ZXJOdW1iZXISGgoIbGF0aXR1ZGUYCSABKAFSCG'
     'xhdGl0dWRlEhwKCWxvbmdpdHVkZRgKIAEoAVIJbG9uZ2l0dWRlEiwKEmxhc3RfcmVhZGluZ192'
     'YWx1ZRgLIAEoAVIQbGFzdFJlYWRpbmdWYWx1ZRInCg9pbml0aWFsX3JlYWRpbmcYDCABKAFSDm'
-    'luaXRpYWxSZWFkaW5n');
+    'luaXRpYWxSZWFkaW5nEhgKB2FkZHJlc3MYDSABKAlSB2FkZHJlc3MSJQoOY29udHJhY3Rfc3Rh'
+    'cnQYDiABKAlSDWNvbnRyYWN0U3RhcnQ=');
 
 @$core.Deprecated('Use readingDescriptor instead')
 const Reading$json = {
@@ -95,16 +98,24 @@ const Reading$json = {
     {'1': 'customer_id', '3': 2, '4': 1, '5': 9, '10': 'customerId'},
     {'1': 'previous_value', '3': 3, '4': 1, '5': 1, '10': 'previousValue'},
     {'1': 'current_value', '3': 4, '4': 1, '5': 1, '10': 'currentValue'},
-    {'1': 'consumption_kwh', '3': 5, '4': 1, '5': 1, '10': 'consumptionKwh'},
+    {'1': 'consumption', '3': 5, '4': 1, '5': 1, '10': 'consumption'},
     {'1': 'photo_url', '3': 6, '4': 1, '5': 9, '10': 'photoUrl'},
-    {'1': 'timestamp', '3': 7, '4': 1, '5': 3, '10': 'timestamp'},
+    {'1': 'timestamp', '3': 7, '4': 1, '5': 9, '10': 'timestamp'},
     {'1': 'latitude', '3': 8, '4': 1, '5': 1, '10': 'latitude'},
     {'1': 'longitude', '3': 9, '4': 1, '5': 1, '10': 'longitude'},
     {'1': 'cargo_fijo', '3': 10, '4': 1, '5': 1, '10': 'cargoFijo'},
     {'1': 'alumbrado_publico', '3': 11, '4': 1, '5': 1, '10': 'alumbradoPublico'},
     {'1': 'saldo_redondeo', '3': 12, '4': 1, '5': 1, '10': 'saldoRedondeo'},
     {'1': 'total_to_pay', '3': 13, '4': 1, '5': 1, '10': 'totalToPay'},
-    {'1': 'period', '3': 14, '4': 1, '5': 9, '10': 'period'},
+    {'1': 'period_start', '3': 14, '4': 1, '5': 9, '10': 'periodStart'},
+    {'1': 'period_end', '3': 15, '4': 1, '5': 9, '10': 'periodEnd'},
+    {'1': 'mantenimiento', '3': 16, '4': 1, '5': 1, '10': 'mantenimiento'},
+    {'1': 'adjustment', '3': 17, '4': 1, '5': 1, '10': 'adjustment'},
+    {'1': 'subtotal', '3': 18, '4': 1, '5': 1, '10': 'subtotal'},
+    {'1': 'round_difference', '3': 19, '4': 1, '5': 1, '10': 'roundDifference'},
+    {'1': 'previous_balance', '3': 20, '4': 1, '5': 1, '10': 'previousBalance'},
+    {'1': 'overdue_total', '3': 21, '4': 1, '5': 1, '10': 'overdueTotal'},
+    {'1': 'expiration_date', '3': 22, '4': 1, '5': 9, '10': 'expirationDate'},
   ],
 };
 
@@ -112,13 +123,18 @@ const Reading$json = {
 final $typed_data.Uint8List readingDescriptor = $convert.base64Decode(
     'CgdSZWFkaW5nEg4KAmlkGAEgASgJUgJpZBIfCgtjdXN0b21lcl9pZBgCIAEoCVIKY3VzdG9tZX'
     'JJZBIlCg5wcmV2aW91c192YWx1ZRgDIAEoAVINcHJldmlvdXNWYWx1ZRIjCg1jdXJyZW50X3Zh'
-    'bHVlGAQgASgBUgxjdXJyZW50VmFsdWUSJwoPY29uc3VtcHRpb25fa3doGAUgASgBUg5jb25zdW'
-    '1wdGlvbkt3aBIbCglwaG90b191cmwYBiABKAlSCHBob3RvVXJsEhwKCXRpbWVzdGFtcBgHIAEo'
-    'A1IJdGltZXN0YW1wEhoKCGxhdGl0dWRlGAggASgBUghsYXRpdHVkZRIcCglsb25naXR1ZGUYCS'
-    'ABKAFSCWxvbmdpdHVkZRIdCgpjYXJnb19maWpvGAogASgBUgljYXJnb0Zpam8SKwoRYWx1bWJy'
-    'YWRvX3B1YmxpY28YCyABKAFSEGFsdW1icmFkb1B1YmxpY28SJQoOc2FsZG9fcmVkb25kZW8YDC'
-    'ABKAFSDXNhbGRvUmVkb25kZW8SIAoMdG90YWxfdG9fcGF5GA0gASgBUgp0b3RhbFRvUGF5EhYK'
-    'BnBlcmlvZBgOIAEoCVIGcGVyaW9k');
+    'bHVlGAQgASgBUgxjdXJyZW50VmFsdWUSIAoLY29uc3VtcHRpb24YBSABKAFSC2NvbnN1bXB0aW'
+    '9uEhsKCXBob3RvX3VybBgGIAEoCVIIcGhvdG9VcmwSHAoJdGltZXN0YW1wGAcgASgJUgl0aW1l'
+    'c3RhbXASGgoIbGF0aXR1ZGUYCCABKAFSCGxhdGl0dWRlEhwKCWxvbmdpdHVkZRgJIAEoAVIJbG'
+    '9uZ2l0dWRlEh0KCmNhcmdvX2Zpam8YCiABKAFSCWNhcmdvRmlqbxIrChFhbHVtYnJhZG9fcHVi'
+    'bGljbxgLIAEoAVIQYWx1bWJyYWRvUHVibGljbxIlCg5zYWxkb19yZWRvbmRlbxgMIAEoAVINc2'
+    'FsZG9SZWRvbmRlbxIgCgx0b3RhbF90b19wYXkYDSABKAFSCnRvdGFsVG9QYXkSIQoMcGVyaW9k'
+    'X3N0YXJ0GA4gASgJUgtwZXJpb2RTdGFydBIdCgpwZXJpb2RfZW5kGA8gASgJUglwZXJpb2RFbm'
+    'QSJAoNbWFudGVuaW1pZW50bxgQIAEoAVINbWFudGVuaW1pZW50bxIeCgphZGp1c3RtZW50GBEg'
+    'ASgBUgphZGp1c3RtZW50EhoKCHN1YnRvdGFsGBIgASgBUghzdWJ0b3RhbBIpChByb3VuZF9kaW'
+    'ZmZXJlbmNlGBMgASgBUg9yb3VuZERpZmZlcmVuY2USKQoQcHJldmlvdXNfYmFsYW5jZRgUIAEo'
+    'AVIPcHJldmlvdXNCYWxhbmNlEiMKDW92ZXJkdWVfdG90YWwYFSABKAFSDG92ZXJkdWVUb3RhbB'
+    'InCg9leHBpcmF0aW9uX2RhdGUYFiABKAlSDmV4cGlyYXRpb25EYXRl');
 
 @$core.Deprecated('Use appConfigDescriptor instead')
 const AppConfig$json = {

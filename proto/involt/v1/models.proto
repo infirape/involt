@@ -38,6 +38,8 @@ message Customer {
   double longitude = 10;
   double last_reading_value = 11;
   double initial_reading = 12;
+  string address = 13;
+  string contract_start = 14; // ISO 8601 string
 }
 
 // Reading represents a captured meter value at a point in time.
@@ -48,11 +50,11 @@ message Reading {
   // Consumption data
   double previous_value = 3;
   double current_value = 4;
-  double consumption_kwh = 5;
+  double consumption = 5;
   
   // Metadata
   string photo_url = 6;
-  int64 timestamp = 7; // Unix timestamp in seconds
+  string timestamp = 7; // ISO 8601 string
   double latitude = 8;
   double longitude = 9;
   
@@ -61,7 +63,15 @@ message Reading {
   double alumbrado_publico = 11;
   double saldo_redondeo = 12;
   double total_to_pay = 13;
-  string period = 14; // e.g., "2026-04"
+  string period_start = 14; 
+  string period_end = 15;
+  double mantenimiento = 16;
+  double adjustment = 17;
+  double subtotal = 18;
+  double round_difference = 19;
+  double previous_balance = 20;
+  double overdue_total = 21;
+  string expiration_date = 22;
 }
 // AppConfig contains remote configuration for the mobile application.
 message AppConfig {

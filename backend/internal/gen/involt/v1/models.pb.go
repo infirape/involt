@@ -200,6 +200,8 @@ type Customer struct {
 	Longitude        float64                `protobuf:"fixed64,10,opt,name=longitude,proto3" json:"longitude,omitempty"`
 	LastReadingValue float64                `protobuf:"fixed64,11,opt,name=last_reading_value,json=lastReadingValue,proto3" json:"last_reading_value,omitempty"`
 	InitialReading   float64                `protobuf:"fixed64,12,opt,name=initial_reading,json=initialReading,proto3" json:"initial_reading,omitempty"`
+	Address          string                 `protobuf:"bytes,13,opt,name=address,proto3" json:"address,omitempty"`
+	ContractStart    string                 `protobuf:"bytes,14,opt,name=contract_start,json=contractStart,proto3" json:"contract_start,omitempty"` // ISO 8601 string
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -318,18 +320,32 @@ func (x *Customer) GetInitialReading() float64 {
 	return 0
 }
 
+func (x *Customer) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *Customer) GetContractStart() string {
+	if x != nil {
+		return x.ContractStart
+	}
+	return ""
+}
+
 // Reading represents a captured meter value at a point in time.
 type Reading struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	Id         string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	CustomerId string                 `protobuf:"bytes,2,opt,name=customer_id,json=customerId,proto3" json:"customer_id,omitempty"`
 	// Consumption data
-	PreviousValue  float64 `protobuf:"fixed64,3,opt,name=previous_value,json=previousValue,proto3" json:"previous_value,omitempty"`
-	CurrentValue   float64 `protobuf:"fixed64,4,opt,name=current_value,json=currentValue,proto3" json:"current_value,omitempty"`
-	ConsumptionKwh float64 `protobuf:"fixed64,5,opt,name=consumption_kwh,json=consumptionKwh,proto3" json:"consumption_kwh,omitempty"`
+	PreviousValue float64 `protobuf:"fixed64,3,opt,name=previous_value,json=previousValue,proto3" json:"previous_value,omitempty"`
+	CurrentValue  float64 `protobuf:"fixed64,4,opt,name=current_value,json=currentValue,proto3" json:"current_value,omitempty"`
+	Consumption   float64 `protobuf:"fixed64,5,opt,name=consumption,proto3" json:"consumption,omitempty"`
 	// Metadata
 	PhotoUrl  string  `protobuf:"bytes,6,opt,name=photo_url,json=photoUrl,proto3" json:"photo_url,omitempty"`
-	Timestamp int64   `protobuf:"varint,7,opt,name=timestamp,proto3" json:"timestamp,omitempty"` // Unix timestamp in seconds
+	Timestamp string  `protobuf:"bytes,7,opt,name=timestamp,proto3" json:"timestamp,omitempty"` // ISO 8601 string
 	Latitude  float64 `protobuf:"fixed64,8,opt,name=latitude,proto3" json:"latitude,omitempty"`
 	Longitude float64 `protobuf:"fixed64,9,opt,name=longitude,proto3" json:"longitude,omitempty"`
 	// Financial data (captured for receipt generation consistency)
@@ -337,7 +353,15 @@ type Reading struct {
 	AlumbradoPublico float64 `protobuf:"fixed64,11,opt,name=alumbrado_publico,json=alumbradoPublico,proto3" json:"alumbrado_publico,omitempty"`
 	SaldoRedondeo    float64 `protobuf:"fixed64,12,opt,name=saldo_redondeo,json=saldoRedondeo,proto3" json:"saldo_redondeo,omitempty"`
 	TotalToPay       float64 `protobuf:"fixed64,13,opt,name=total_to_pay,json=totalToPay,proto3" json:"total_to_pay,omitempty"`
-	Period           string  `protobuf:"bytes,14,opt,name=period,proto3" json:"period,omitempty"` // e.g., "2026-04"
+	PeriodStart      string  `protobuf:"bytes,14,opt,name=period_start,json=periodStart,proto3" json:"period_start,omitempty"`
+	PeriodEnd        string  `protobuf:"bytes,15,opt,name=period_end,json=periodEnd,proto3" json:"period_end,omitempty"`
+	Mantenimiento    float64 `protobuf:"fixed64,16,opt,name=mantenimiento,proto3" json:"mantenimiento,omitempty"`
+	Adjustment       float64 `protobuf:"fixed64,17,opt,name=adjustment,proto3" json:"adjustment,omitempty"`
+	Subtotal         float64 `protobuf:"fixed64,18,opt,name=subtotal,proto3" json:"subtotal,omitempty"`
+	RoundDifference  float64 `protobuf:"fixed64,19,opt,name=round_difference,json=roundDifference,proto3" json:"round_difference,omitempty"`
+	PreviousBalance  float64 `protobuf:"fixed64,20,opt,name=previous_balance,json=previousBalance,proto3" json:"previous_balance,omitempty"`
+	OverdueTotal     float64 `protobuf:"fixed64,21,opt,name=overdue_total,json=overdueTotal,proto3" json:"overdue_total,omitempty"`
+	ExpirationDate   string  `protobuf:"bytes,22,opt,name=expiration_date,json=expirationDate,proto3" json:"expiration_date,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -400,9 +424,9 @@ func (x *Reading) GetCurrentValue() float64 {
 	return 0
 }
 
-func (x *Reading) GetConsumptionKwh() float64 {
+func (x *Reading) GetConsumption() float64 {
 	if x != nil {
-		return x.ConsumptionKwh
+		return x.Consumption
 	}
 	return 0
 }
@@ -414,11 +438,11 @@ func (x *Reading) GetPhotoUrl() string {
 	return ""
 }
 
-func (x *Reading) GetTimestamp() int64 {
+func (x *Reading) GetTimestamp() string {
 	if x != nil {
 		return x.Timestamp
 	}
-	return 0
+	return ""
 }
 
 func (x *Reading) GetLatitude() float64 {
@@ -463,9 +487,65 @@ func (x *Reading) GetTotalToPay() float64 {
 	return 0
 }
 
-func (x *Reading) GetPeriod() string {
+func (x *Reading) GetPeriodStart() string {
 	if x != nil {
-		return x.Period
+		return x.PeriodStart
+	}
+	return ""
+}
+
+func (x *Reading) GetPeriodEnd() string {
+	if x != nil {
+		return x.PeriodEnd
+	}
+	return ""
+}
+
+func (x *Reading) GetMantenimiento() float64 {
+	if x != nil {
+		return x.Mantenimiento
+	}
+	return 0
+}
+
+func (x *Reading) GetAdjustment() float64 {
+	if x != nil {
+		return x.Adjustment
+	}
+	return 0
+}
+
+func (x *Reading) GetSubtotal() float64 {
+	if x != nil {
+		return x.Subtotal
+	}
+	return 0
+}
+
+func (x *Reading) GetRoundDifference() float64 {
+	if x != nil {
+		return x.RoundDifference
+	}
+	return 0
+}
+
+func (x *Reading) GetPreviousBalance() float64 {
+	if x != nil {
+		return x.PreviousBalance
+	}
+	return 0
+}
+
+func (x *Reading) GetOverdueTotal() float64 {
+	if x != nil {
+		return x.OverdueTotal
+	}
+	return 0
+}
+
+func (x *Reading) GetExpirationDate() string {
+	if x != nil {
+		return x.ExpirationDate
 	}
 	return ""
 }
@@ -666,7 +746,7 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\x06Sector\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\fcommunity_id\x18\x02 \x01(\tR\vcommunityId\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\"\x92\x03\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\"\xd3\x03\n" +
 	"\bCustomer\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
@@ -680,16 +760,18 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\tlongitude\x18\n" +
 	" \x01(\x01R\tlongitude\x12,\n" +
 	"\x12last_reading_value\x18\v \x01(\x01R\x10lastReadingValue\x12'\n" +
-	"\x0finitial_reading\x18\f \x01(\x01R\x0einitialReading\"\xd1\x03\n" +
+	"\x0finitial_reading\x18\f \x01(\x01R\x0einitialReading\x12\x18\n" +
+	"\aaddress\x18\r \x01(\tR\aaddress\x12%\n" +
+	"\x0econtract_start\x18\x0e \x01(\tR\rcontractStart\"\xfa\x05\n" +
 	"\aReading\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcustomer_id\x18\x02 \x01(\tR\n" +
 	"customerId\x12%\n" +
 	"\x0eprevious_value\x18\x03 \x01(\x01R\rpreviousValue\x12#\n" +
-	"\rcurrent_value\x18\x04 \x01(\x01R\fcurrentValue\x12'\n" +
-	"\x0fconsumption_kwh\x18\x05 \x01(\x01R\x0econsumptionKwh\x12\x1b\n" +
+	"\rcurrent_value\x18\x04 \x01(\x01R\fcurrentValue\x12 \n" +
+	"\vconsumption\x18\x05 \x01(\x01R\vconsumption\x12\x1b\n" +
 	"\tphoto_url\x18\x06 \x01(\tR\bphotoUrl\x12\x1c\n" +
-	"\ttimestamp\x18\a \x01(\x03R\ttimestamp\x12\x1a\n" +
+	"\ttimestamp\x18\a \x01(\tR\ttimestamp\x12\x1a\n" +
 	"\blatitude\x18\b \x01(\x01R\blatitude\x12\x1c\n" +
 	"\tlongitude\x18\t \x01(\x01R\tlongitude\x12\x1d\n" +
 	"\n" +
@@ -698,8 +780,19 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\x11alumbrado_publico\x18\v \x01(\x01R\x10alumbradoPublico\x12%\n" +
 	"\x0esaldo_redondeo\x18\f \x01(\x01R\rsaldoRedondeo\x12 \n" +
 	"\ftotal_to_pay\x18\r \x01(\x01R\n" +
-	"totalToPay\x12\x16\n" +
-	"\x06period\x18\x0e \x01(\tR\x06period\"[\n" +
+	"totalToPay\x12!\n" +
+	"\fperiod_start\x18\x0e \x01(\tR\vperiodStart\x12\x1d\n" +
+	"\n" +
+	"period_end\x18\x0f \x01(\tR\tperiodEnd\x12$\n" +
+	"\rmantenimiento\x18\x10 \x01(\x01R\rmantenimiento\x12\x1e\n" +
+	"\n" +
+	"adjustment\x18\x11 \x01(\x01R\n" +
+	"adjustment\x12\x1a\n" +
+	"\bsubtotal\x18\x12 \x01(\x01R\bsubtotal\x12)\n" +
+	"\x10round_difference\x18\x13 \x01(\x01R\x0froundDifference\x12)\n" +
+	"\x10previous_balance\x18\x14 \x01(\x01R\x0fpreviousBalance\x12#\n" +
+	"\roverdue_total\x18\x15 \x01(\x01R\foverdueTotal\x12'\n" +
+	"\x0fexpiration_date\x18\x16 \x01(\tR\x0eexpirationDate\"[\n" +
 	"\tAppConfig\x12(\n" +
 	"\x10map_url_template\x18\x01 \x01(\tR\x0emapUrlTemplate\x12$\n" +
 	"\x0emap_user_agent\x18\x02 \x01(\tR\fmapUserAgent\"\xeb\x02\n" +

@@ -5,6 +5,7 @@ Este documento centraliza las reglas de arquitectura y desarrollo para InVolt. T
 ## Stack Tecnológico
 - **Mobile**: Flutter (SDK estable)
 - **Backend**: Go 1.23+ (ConnectRPC)
+- **Admin UI**: Next.js 15+ (App Router), ConnectRPC, Tailwind CSS 4+, Biome, Shadcn/UI
 - **Database**: 
   - Local: SQLite (Drift) / Isar
   - Remote: PostgreSQL
@@ -13,11 +14,16 @@ Este documento centraliza las reglas de arquitectura y desarrollo para InVolt. T
 ## Arquitectura
 - **Mobile**: Clean Architecture (Data, Domain, Presentation)
 - **Backend**: Hexagonal Architecture
+- **Admin UI**: Modular Clean Architecture (Components, Hooks, Services, Lib)
 - **Sync**: Offline-First. Todas las lecturas se guardan localmente y se sincronizan en segundo plano.
 
 ## Reglas de Código
 - **Tests**: Strict TDD Mode activo. No se escribe lógica sin su correspondiente test.
-- **Lints**: Seguir las recomendaciones de `analysis_options.yaml` en mobile y `golangci-lint` en backend.
+- **Lints**: 
+  - Mobile: `analysis_options.yaml`
+  - Backend: `golangci-lint`
+  - Admin UI: **Biome (Strict)**. Prohibido el uso de `any`. `tsconfig.json` con modo estricto.
+  - **Modularidad**: Ningún archivo debe superar las **300 líneas**. Si un archivo crece más, se debe modularizar (separar componentes, extraer lógica a hooks, etc.).
 - **Commits**: Usar Conventional Commits (feat, fix, refactor, docs).
 
 ## Consideraciones para la IA (MANDATORIO)

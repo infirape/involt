@@ -65,3 +65,27 @@ func (r *PostgresMetadataRepository) GetSettings(ctx context.Context) (*domain.S
 	err := r.db.GetContext(ctx, &settings, query)
 	return &settings, err
 }
+
+func (r *PostgresMetadataRepository) SaveSettings(ctx context.Context, s *domain.Settings) error {
+	query := `
+		INSERT INTO settings (id, municipalidad, empresa, ruc, direccion, telefono, email, dias_vencimiento, tarifa_kwh, cargo_fijo, alumbrado, mantenimiento, igv, updated_at)
+		VALUES ('main', $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())
+		ON CONFLICT (id) DO UPDATE SET
+			municipalidad = $1,
+			empresa = $2,
+			ruc = $3,
+			direccion = $4,
+			telefono = $5,
+			email = $6,
+			dias_vencimiento = $7,
+			tarifa_kwh = $8,
+			cargo_fijo = $9,
+			alumbrado = $10,
+			mantenimiento = $11,
+			igv = $12,
+			updated_at = NOW()`
+	_, err := r.db.ExecContext(ctx, query,
+		s.Municipalidad, s.Empresa, s.RUC, s.Direccion, s.Telefono, s.Email, s.DiasVencimiento,
+		s.TarifaKWh, s.CargoFijo, s.Alumbrado, s.Mantenimiento, s.IGV)
+	return err
+}

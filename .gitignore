@@ -9,3 +9,7 @@ backend/.gocache/
 
 # AI Artifacts
 artifacts/
+scratch/
+
+# Binaries
+backend/server

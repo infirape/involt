@@ -1,0 +1,9 @@
+# buf.gen.yaml
+version: v1
+plugins:
+  - name: go
+    out: backend/internal/gen
+    opt: paths=source_relative
+  - name: connect-go
+    out: backend/internal/gen
+    opt: paths=source_relative

@@ -1,0 +1,395 @@
+//
+//  Generated code. Do not modify.
+//  source: involt/v1/admin.proto
+//
+// @dart = 2.12
+
+// ignore_for_file: annotate_overrides, camel_case_types, comment_references
+// ignore_for_file: constant_identifier_names, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_final_fields
+// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+
+import 'dart:convert' as $convert;
+import 'dart:core' as $core;
+import 'dart:typed_data' as $typed_data;
+
+import 'models.pbjson.dart' as $0;
+
+@$core.Deprecated('Use userRoleDescriptor instead')
+const UserRole$json = {
+  '1': 'UserRole',
+  '2': [
+    {'1': 'USER_ROLE_UNSPECIFIED', '2': 0},
+    {'1': 'USER_ROLE_ADMIN', '2': 1},
+    {'1': 'USER_ROLE_SUPERVISOR', '2': 2},
+    {'1': 'USER_ROLE_READER', '2': 3},
+  ],
+};
+
+/// Descriptor for `UserRole`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List userRoleDescriptor = $convert.base64Decode(
+    'CghVc2VyUm9sZRIZChVVU0VSX1JPTEVfVU5TUEVDSUZJRUQQABITCg9VU0VSX1JPTEVfQURNSU'
+    '4QARIYChRVU0VSX1JPTEVfU1VQRVJWSVNPUhACEhQKEFVTRVJfUk9MRV9SRUFERVIQAw==');
+
+@$core.Deprecated('Use loginRequestDescriptor instead')
+const LoginRequest$json = {
+  '1': 'LoginRequest',
+  '2': [
+    {'1': 'email', '3': 1, '4': 1, '5': 9, '10': 'email'},
+    {'1': 'password', '3': 2, '4': 1, '5': 9, '10': 'password'},
+  ],
+};
+
+/// Descriptor for `LoginRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List loginRequestDescriptor = $convert.base64Decode(
+    'CgxMb2dpblJlcXVlc3QSFAoFZW1haWwYASABKAlSBWVtYWlsEhoKCHBhc3N3b3JkGAIgASgJUg'
+    'hwYXNzd29yZA==');
+
+@$core.Deprecated('Use loginResponseDescriptor instead')
+const LoginResponse$json = {
+  '1': 'LoginResponse',
+  '2': [
+    {'1': 'token', '3': 1, '4': 1, '5': 9, '10': 'token'},
+    {'1': 'user', '3': 2, '4': 1, '5': 11, '6': '.involt.v1.User', '10': 'user'},
+  ],
+};
+
+/// Descriptor for `LoginResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List loginResponseDescriptor = $convert.base64Decode(
+    'Cg1Mb2dpblJlc3BvbnNlEhQKBXRva2VuGAEgASgJUgV0b2tlbhIjCgR1c2VyGAIgASgLMg8uaW'
+    '52b2x0LnYxLlVzZXJSBHVzZXI=');
+
+@$core.Deprecated('Use getUsersRequestDescriptor instead')
+const GetUsersRequest$json = {
+  '1': 'GetUsersRequest',
+};
+
+/// Descriptor for `GetUsersRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getUsersRequestDescriptor = $convert.base64Decode(
+    'Cg9HZXRVc2Vyc1JlcXVlc3Q=');
+
+@$core.Deprecated('Use getUsersResponseDescriptor instead')
+const GetUsersResponse$json = {
+  '1': 'GetUsersResponse',
+  '2': [
+    {'1': 'users', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.User', '10': 'users'},
+  ],
+};
+
+/// Descriptor for `GetUsersResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getUsersResponseDescriptor = $convert.base64Decode(
+    'ChBHZXRVc2Vyc1Jlc3BvbnNlEiUKBXVzZXJzGAEgAygLMg8uaW52b2x0LnYxLlVzZXJSBXVzZX'
+    'Jz');
+
+@$core.Deprecated('Use upsertUserRequestDescriptor instead')
+const UpsertUserRequest$json = {
+  '1': 'UpsertUserRequest',
+  '2': [
+    {'1': 'user', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.User', '10': 'user'},
+    {'1': 'password', '3': 2, '4': 1, '5': 9, '10': 'password'},
+  ],
+};
+
+/// Descriptor for `UpsertUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List upsertUserRequestDescriptor = $convert.base64Decode(
+    'ChFVcHNlcnRVc2VyUmVxdWVzdBIjCgR1c2VyGAEgASgLMg8uaW52b2x0LnYxLlVzZXJSBHVzZX'
+    'ISGgoIcGFzc3dvcmQYAiABKAlSCHBhc3N3b3Jk');
+
+@$core.Deprecated('Use upsertUserResponseDescriptor instead')
+const UpsertUserResponse$json = {
+  '1': 'UpsertUserResponse',
+  '2': [
+    {'1': 'user', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.User', '10': 'user'},
+  ],
+};
+
+/// Descriptor for `UpsertUserResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List upsertUserResponseDescriptor = $convert.base64Decode(
+    'ChJVcHNlcnRVc2VyUmVzcG9uc2USIwoEdXNlchgBIAEoCzIPLmludm9sdC52MS5Vc2VyUgR1c2'
+    'Vy');
+
+@$core.Deprecated('Use getSectorsRequestDescriptor instead')
+const GetSectorsRequest$json = {
+  '1': 'GetSectorsRequest',
+};
+
+/// Descriptor for `GetSectorsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getSectorsRequestDescriptor = $convert.base64Decode(
+    'ChFHZXRTZWN0b3JzUmVxdWVzdA==');
+
+@$core.Deprecated('Use getSectorsResponseDescriptor instead')
+const GetSectorsResponse$json = {
+  '1': 'GetSectorsResponse',
+  '2': [
+    {'1': 'sectors', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.Sector', '10': 'sectors'},
+  ],
+};
+
+/// Descriptor for `GetSectorsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getSectorsResponseDescriptor = $convert.base64Decode(
+    'ChJHZXRTZWN0b3JzUmVzcG9uc2USKwoHc2VjdG9ycxgBIAMoCzIRLmludm9sdC52MS5TZWN0b3'
+    'JSB3NlY3RvcnM=');
+
+@$core.Deprecated('Use getCustomersRequestDescriptor instead')
+const GetCustomersRequest$json = {
+  '1': 'GetCustomersRequest',
+  '2': [
+    {'1': 'sector_id', '3': 1, '4': 1, '5': 9, '10': 'sectorId'},
+    {'1': 'search_query', '3': 2, '4': 1, '5': 9, '10': 'searchQuery'},
+  ],
+};
+
+/// Descriptor for `GetCustomersRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCustomersRequestDescriptor = $convert.base64Decode(
+    'ChNHZXRDdXN0b21lcnNSZXF1ZXN0EhsKCXNlY3Rvcl9pZBgBIAEoCVIIc2VjdG9ySWQSIQoMc2'
+    'VhcmNoX3F1ZXJ5GAIgASgJUgtzZWFyY2hRdWVyeQ==');
+
+@$core.Deprecated('Use getCustomersResponseDescriptor instead')
+const GetCustomersResponse$json = {
+  '1': 'GetCustomersResponse',
+  '2': [
+    {'1': 'customers', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.Customer', '10': 'customers'},
+  ],
+};
+
+/// Descriptor for `GetCustomersResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCustomersResponseDescriptor = $convert.base64Decode(
+    'ChRHZXRDdXN0b21lcnNSZXNwb25zZRIxCgljdXN0b21lcnMYASADKAsyEy5pbnZvbHQudjEuQ3'
+    'VzdG9tZXJSCWN1c3RvbWVycw==');
+
+@$core.Deprecated('Use getReadingsRequestDescriptor instead')
+const GetReadingsRequest$json = {
+  '1': 'GetReadingsRequest',
+  '2': [
+    {'1': 'customer_id', '3': 1, '4': 1, '5': 9, '10': 'customerId'},
+    {'1': 'sector_id', '3': 2, '4': 1, '5': 9, '10': 'sectorId'},
+    {'1': 'period', '3': 3, '4': 1, '5': 9, '10': 'period'},
+  ],
+};
+
+/// Descriptor for `GetReadingsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getReadingsRequestDescriptor = $convert.base64Decode(
+    'ChJHZXRSZWFkaW5nc1JlcXVlc3QSHwoLY3VzdG9tZXJfaWQYASABKAlSCmN1c3RvbWVySWQSGw'
+    'oJc2VjdG9yX2lkGAIgASgJUghzZWN0b3JJZBIWCgZwZXJpb2QYAyABKAlSBnBlcmlvZA==');
+
+@$core.Deprecated('Use getReadingsResponseDescriptor instead')
+const GetReadingsResponse$json = {
+  '1': 'GetReadingsResponse',
+  '2': [
+    {'1': 'readings', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.Reading', '10': 'readings'},
+  ],
+};
+
+/// Descriptor for `GetReadingsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getReadingsResponseDescriptor = $convert.base64Decode(
+    'ChNHZXRSZWFkaW5nc1Jlc3BvbnNlEi4KCHJlYWRpbmdzGAEgAygLMhIuaW52b2x0LnYxLlJlYW'
+    'RpbmdSCHJlYWRpbmdz');
+
+@$core.Deprecated('Use getSettingsRequestDescriptor instead')
+const GetSettingsRequest$json = {
+  '1': 'GetSettingsRequest',
+};
+
+/// Descriptor for `GetSettingsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getSettingsRequestDescriptor = $convert.base64Decode(
+    'ChJHZXRTZXR0aW5nc1JlcXVlc3Q=');
+
+@$core.Deprecated('Use getSettingsResponseDescriptor instead')
+const GetSettingsResponse$json = {
+  '1': 'GetSettingsResponse',
+  '2': [
+    {'1': 'settings', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Settings', '10': 'settings'},
+  ],
+};
+
+/// Descriptor for `GetSettingsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getSettingsResponseDescriptor = $convert.base64Decode(
+    'ChNHZXRTZXR0aW5nc1Jlc3BvbnNlEi8KCHNldHRpbmdzGAEgASgLMhMuaW52b2x0LnYxLlNldH'
+    'RpbmdzUghzZXR0aW5ncw==');
+
+@$core.Deprecated('Use updateSettingsRequestDescriptor instead')
+const UpdateSettingsRequest$json = {
+  '1': 'UpdateSettingsRequest',
+  '2': [
+    {'1': 'settings', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Settings', '10': 'settings'},
+  ],
+};
+
+/// Descriptor for `UpdateSettingsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateSettingsRequestDescriptor = $convert.base64Decode(
+    'ChVVcGRhdGVTZXR0aW5nc1JlcXVlc3QSLwoIc2V0dGluZ3MYASABKAsyEy5pbnZvbHQudjEuU2'
+    'V0dGluZ3NSCHNldHRpbmdz');
+
+@$core.Deprecated('Use updateSettingsResponseDescriptor instead')
+const UpdateSettingsResponse$json = {
+  '1': 'UpdateSettingsResponse',
+  '2': [
+    {'1': 'settings', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Settings', '10': 'settings'},
+  ],
+};
+
+/// Descriptor for `UpdateSettingsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateSettingsResponseDescriptor = $convert.base64Decode(
+    'ChZVcGRhdGVTZXR0aW5nc1Jlc3BvbnNlEi8KCHNldHRpbmdzGAEgASgLMhMuaW52b2x0LnYxLl'
+    'NldHRpbmdzUghzZXR0aW5ncw==');
+
+@$core.Deprecated('Use upsertCustomerRequestDescriptor instead')
+const UpsertCustomerRequest$json = {
+  '1': 'UpsertCustomerRequest',
+  '2': [
+    {'1': 'customer', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Customer', '10': 'customer'},
+  ],
+};
+
+/// Descriptor for `UpsertCustomerRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List upsertCustomerRequestDescriptor = $convert.base64Decode(
+    'ChVVcHNlcnRDdXN0b21lclJlcXVlc3QSLwoIY3VzdG9tZXIYASABKAsyEy5pbnZvbHQudjEuQ3'
+    'VzdG9tZXJSCGN1c3RvbWVy');
+
+@$core.Deprecated('Use upsertCustomerResponseDescriptor instead')
+const UpsertCustomerResponse$json = {
+  '1': 'UpsertCustomerResponse',
+  '2': [
+    {'1': 'customer', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Customer', '10': 'customer'},
+  ],
+};
+
+/// Descriptor for `UpsertCustomerResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List upsertCustomerResponseDescriptor = $convert.base64Decode(
+    'ChZVcHNlcnRDdXN0b21lclJlc3BvbnNlEi8KCGN1c3RvbWVyGAEgASgLMhMuaW52b2x0LnYxLk'
+    'N1c3RvbWVyUghjdXN0b21lcg==');
+
+@$core.Deprecated('Use userDescriptor instead')
+const User$json = {
+  '1': 'User',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'email', '3': 2, '4': 1, '5': 9, '10': 'email'},
+    {'1': 'role', '3': 3, '4': 1, '5': 14, '6': '.involt.v1.UserRole', '10': 'role'},
+    {'1': 'assigned_sector_ids', '3': 4, '4': 3, '5': 9, '10': 'assignedSectorIds'},
+  ],
+};
+
+/// Descriptor for `User`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List userDescriptor = $convert.base64Decode(
+    'CgRVc2VyEg4KAmlkGAEgASgJUgJpZBIUCgVlbWFpbBgCIAEoCVIFZW1haWwSJwoEcm9sZRgDIA'
+    'EoDjITLmludm9sdC52MS5Vc2VyUm9sZVIEcm9sZRIuChNhc3NpZ25lZF9zZWN0b3JfaWRzGAQg'
+    'AygJUhFhc3NpZ25lZFNlY3Rvcklkcw==');
+
+@$core.Deprecated('Use getDashboardStatsRequestDescriptor instead')
+const GetDashboardStatsRequest$json = {
+  '1': 'GetDashboardStatsRequest',
+  '2': [
+    {'1': 'period', '3': 1, '4': 1, '5': 9, '10': 'period'},
+  ],
+};
+
+/// Descriptor for `GetDashboardStatsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getDashboardStatsRequestDescriptor = $convert.base64Decode(
+    'ChhHZXREYXNoYm9hcmRTdGF0c1JlcXVlc3QSFgoGcGVyaW9kGAEgASgJUgZwZXJpb2Q=');
+
+@$core.Deprecated('Use getDashboardStatsResponseDescriptor instead')
+const GetDashboardStatsResponse$json = {
+  '1': 'GetDashboardStatsResponse',
+  '2': [
+    {'1': 'total_customers', '3': 1, '4': 1, '5': 5, '10': 'totalCustomers'},
+    {'1': 'total_users', '3': 2, '4': 1, '5': 5, '10': 'totalUsers'},
+    {'1': 'total_readings_period', '3': 3, '4': 1, '5': 5, '10': 'totalReadingsPeriod'},
+    {'1': 'pending_readings_period', '3': 4, '4': 1, '5': 5, '10': 'pendingReadingsPeriod'},
+    {'1': 'sector_stats', '3': 5, '4': 3, '5': 11, '6': '.involt.v1.SectorStat', '10': 'sectorStats'},
+  ],
+};
+
+/// Descriptor for `GetDashboardStatsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getDashboardStatsResponseDescriptor = $convert.base64Decode(
+    'ChlHZXREYXNoYm9hcmRTdGF0c1Jlc3BvbnNlEicKD3RvdGFsX2N1c3RvbWVycxgBIAEoBVIOdG'
+    '90YWxDdXN0b21lcnMSHwoLdG90YWxfdXNlcnMYAiABKAVSCnRvdGFsVXNlcnMSMgoVdG90YWxf'
+    'cmVhZGluZ3NfcGVyaW9kGAMgASgFUhN0b3RhbFJlYWRpbmdzUGVyaW9kEjYKF3BlbmRpbmdfcm'
+    'VhZGluZ3NfcGVyaW9kGAQgASgFUhVwZW5kaW5nUmVhZGluZ3NQZXJpb2QSOAoMc2VjdG9yX3N0'
+    'YXRzGAUgAygLMhUuaW52b2x0LnYxLlNlY3RvclN0YXRSC3NlY3RvclN0YXRz');
+
+@$core.Deprecated('Use sectorStatDescriptor instead')
+const SectorStat$json = {
+  '1': 'SectorStat',
+  '2': [
+    {'1': 'sector_id', '3': 1, '4': 1, '5': 9, '10': 'sectorId'},
+    {'1': 'sector_name', '3': 2, '4': 1, '5': 9, '10': 'sectorName'},
+    {'1': 'registered_count', '3': 3, '4': 1, '5': 5, '10': 'registeredCount'},
+    {'1': 'total_count', '3': 4, '4': 1, '5': 5, '10': 'totalCount'},
+    {'1': 'progress_percentage', '3': 5, '4': 1, '5': 5, '10': 'progressPercentage'},
+    {'1': 'total_consumption', '3': 6, '4': 1, '5': 1, '10': 'totalConsumption'},
+  ],
+};
+
+/// Descriptor for `SectorStat`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List sectorStatDescriptor = $convert.base64Decode(
+    'CgpTZWN0b3JTdGF0EhsKCXNlY3Rvcl9pZBgBIAEoCVIIc2VjdG9ySWQSHwoLc2VjdG9yX25hbW'
+    'UYAiABKAlSCnNlY3Rvck5hbWUSKQoQcmVnaXN0ZXJlZF9jb3VudBgDIAEoBVIPcmVnaXN0ZXJl'
+    'ZENvdW50Eh8KC3RvdGFsX2NvdW50GAQgASgFUgp0b3RhbENvdW50Ei8KE3Byb2dyZXNzX3Blcm'
+    'NlbnRhZ2UYBSABKAVSEnByb2dyZXNzUGVyY2VudGFnZRIrChF0b3RhbF9jb25zdW1wdGlvbhgG'
+    'IAEoAVIQdG90YWxDb25zdW1wdGlvbg==');
+
+const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
+  '1': 'AdminService',
+  '2': [
+    {'1': 'Login', '2': '.involt.v1.LoginRequest', '3': '.involt.v1.LoginResponse'},
+    {'1': 'GetUsers', '2': '.involt.v1.GetUsersRequest', '3': '.involt.v1.GetUsersResponse'},
+    {'1': 'UpsertUser', '2': '.involt.v1.UpsertUserRequest', '3': '.involt.v1.UpsertUserResponse'},
+    {'1': 'GetSectors', '2': '.involt.v1.GetSectorsRequest', '3': '.involt.v1.GetSectorsResponse'},
+    {'1': 'GetCustomers', '2': '.involt.v1.GetCustomersRequest', '3': '.involt.v1.GetCustomersResponse'},
+    {'1': 'GetReadings', '2': '.involt.v1.GetReadingsRequest', '3': '.involt.v1.GetReadingsResponse'},
+    {'1': 'GetSettings', '2': '.involt.v1.GetSettingsRequest', '3': '.involt.v1.GetSettingsResponse'},
+    {'1': 'UpdateSettings', '2': '.involt.v1.UpdateSettingsRequest', '3': '.involt.v1.UpdateSettingsResponse'},
+    {'1': 'UpsertCustomer', '2': '.involt.v1.UpsertCustomerRequest', '3': '.involt.v1.UpsertCustomerResponse'},
+    {'1': 'GetDashboardStats', '2': '.involt.v1.GetDashboardStatsRequest', '3': '.involt.v1.GetDashboardStatsResponse'},
+  ],
+};
+
+@$core.Deprecated('Use adminServiceDescriptor instead')
+const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServiceBase$messageJson = {
+  '.involt.v1.LoginRequest': LoginRequest$json,
+  '.involt.v1.LoginResponse': LoginResponse$json,
+  '.involt.v1.User': User$json,
+  '.involt.v1.GetUsersRequest': GetUsersRequest$json,
+  '.involt.v1.GetUsersResponse': GetUsersResponse$json,
+  '.involt.v1.UpsertUserRequest': UpsertUserRequest$json,
+  '.involt.v1.UpsertUserResponse': UpsertUserResponse$json,
+  '.involt.v1.GetSectorsRequest': GetSectorsRequest$json,
+  '.involt.v1.GetSectorsResponse': GetSectorsResponse$json,
+  '.involt.v1.Sector': $0.Sector$json,
+  '.involt.v1.GetCustomersRequest': GetCustomersRequest$json,
+  '.involt.v1.GetCustomersResponse': GetCustomersResponse$json,
+  '.involt.v1.Customer': $0.Customer$json,
+  '.involt.v1.GetReadingsRequest': GetReadingsRequest$json,
+  '.involt.v1.GetReadingsResponse': GetReadingsResponse$json,
+  '.involt.v1.Reading': $0.Reading$json,
+  '.involt.v1.GetSettingsRequest': GetSettingsRequest$json,
+  '.involt.v1.GetSettingsResponse': GetSettingsResponse$json,
+  '.involt.v1.Settings': $0.Settings$json,
+  '.involt.v1.UpdateSettingsRequest': UpdateSettingsRequest$json,
+  '.involt.v1.UpdateSettingsResponse': UpdateSettingsResponse$json,
+  '.involt.v1.UpsertCustomerRequest': UpsertCustomerRequest$json,
+  '.involt.v1.UpsertCustomerResponse': UpsertCustomerResponse$json,
+  '.involt.v1.GetDashboardStatsRequest': GetDashboardStatsRequest$json,
+  '.involt.v1.GetDashboardStatsResponse': GetDashboardStatsResponse$json,
+  '.involt.v1.SectorStat': SectorStat$json,
+};
+
+/// Descriptor for `AdminService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
+final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
+    'CgxBZG1pblNlcnZpY2USOgoFTG9naW4SFy5pbnZvbHQudjEuTG9naW5SZXF1ZXN0GhguaW52b2'
+    'x0LnYxLkxvZ2luUmVzcG9uc2USQwoIR2V0VXNlcnMSGi5pbnZvbHQudjEuR2V0VXNlcnNSZXF1'
+    'ZXN0GhsuaW52b2x0LnYxLkdldFVzZXJzUmVzcG9uc2USSQoKVXBzZXJ0VXNlchIcLmludm9sdC'
+    '52MS5VcHNlcnRVc2VyUmVxdWVzdBodLmludm9sdC52MS5VcHNlcnRVc2VyUmVzcG9uc2USSQoK'
+    'R2V0U2VjdG9ycxIcLmludm9sdC52MS5HZXRTZWN0b3JzUmVxdWVzdBodLmludm9sdC52MS5HZX'
+    'RTZWN0b3JzUmVzcG9uc2USTwoMR2V0Q3VzdG9tZXJzEh4uaW52b2x0LnYxLkdldEN1c3RvbWVy'
+    'c1JlcXVlc3QaHy5pbnZvbHQudjEuR2V0Q3VzdG9tZXJzUmVzcG9uc2USTAoLR2V0UmVhZGluZ3'
+    'MSHS5pbnZvbHQudjEuR2V0UmVhZGluZ3NSZXF1ZXN0Gh4uaW52b2x0LnYxLkdldFJlYWRpbmdz'
+    'UmVzcG9uc2USTAoLR2V0U2V0dGluZ3MSHS5pbnZvbHQudjEuR2V0U2V0dGluZ3NSZXF1ZXN0Gh'
+    '4uaW52b2x0LnYxLkdldFNldHRpbmdzUmVzcG9uc2USVQoOVXBkYXRlU2V0dGluZ3MSIC5pbnZv'
+    'bHQudjEuVXBkYXRlU2V0dGluZ3NSZXF1ZXN0GiEuaW52b2x0LnYxLlVwZGF0ZVNldHRpbmdzUm'
+    'VzcG9uc2USVQoOVXBzZXJ0Q3VzdG9tZXISIC5pbnZvbHQudjEuVXBzZXJ0Q3VzdG9tZXJSZXF1'
+    'ZXN0GiEuaW52b2x0LnYxLlVwc2VydEN1c3RvbWVyUmVzcG9uc2USXgoRR2V0RGFzaGJvYXJkU3'
+    'RhdHMSIy5pbnZvbHQudjEuR2V0RGFzaGJvYXJkU3RhdHNSZXF1ZXN0GiQuaW52b2x0LnYxLkdl'
+    'dERhc2hib2FyZFN0YXRzUmVzcG9uc2U=');
+

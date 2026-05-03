@@ -11,7 +11,6 @@
 
 import 'dart:core' as $core;
 
-import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'models.pbenum.dart';
@@ -177,6 +176,8 @@ class Customer extends $pb.GeneratedMessage {
     $core.double? longitude,
     $core.double? lastReadingValue,
     $core.double? initialReading,
+    $core.String? address,
+    $core.String? contractStart,
   }) {
     final $result = create();
     if (id != null) {
@@ -215,6 +216,12 @@ class Customer extends $pb.GeneratedMessage {
     if (initialReading != null) {
       $result.initialReading = initialReading;
     }
+    if (address != null) {
+      $result.address = address;
+    }
+    if (contractStart != null) {
+      $result.contractStart = contractStart;
+    }
     return $result;
   }
   Customer._() : super();
@@ -234,6 +241,8 @@ class Customer extends $pb.GeneratedMessage {
     ..a<$core.double>(10, _omitFieldNames ? '' : 'longitude', $pb.PbFieldType.OD)
     ..a<$core.double>(11, _omitFieldNames ? '' : 'lastReadingValue', $pb.PbFieldType.OD)
     ..a<$core.double>(12, _omitFieldNames ? '' : 'initialReading', $pb.PbFieldType.OD)
+    ..aOS(13, _omitFieldNames ? '' : 'address')
+    ..aOS(14, _omitFieldNames ? '' : 'contractStart')
     ..hasRequiredFields = false
   ;
 
@@ -365,6 +374,24 @@ class Customer extends $pb.GeneratedMessage {
   $core.bool hasInitialReading() => $_has(11);
   @$pb.TagNumber(12)
   void clearInitialReading() => clearField(12);
+
+  @$pb.TagNumber(13)
+  $core.String get address => $_getSZ(12);
+  @$pb.TagNumber(13)
+  set address($core.String v) { $_setString(12, v); }
+  @$pb.TagNumber(13)
+  $core.bool hasAddress() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearAddress() => clearField(13);
+
+  @$pb.TagNumber(14)
+  $core.String get contractStart => $_getSZ(13);
+  @$pb.TagNumber(14)
+  set contractStart($core.String v) { $_setString(13, v); }
+  @$pb.TagNumber(14)
+  $core.bool hasContractStart() => $_has(13);
+  @$pb.TagNumber(14)
+  void clearContractStart() => clearField(14);
 }
 
 /// Reading represents a captured meter value at a point in time.
@@ -374,16 +401,24 @@ class Reading extends $pb.GeneratedMessage {
     $core.String? customerId,
     $core.double? previousValue,
     $core.double? currentValue,
-    $core.double? consumptionKwh,
+    $core.double? consumption,
     $core.String? photoUrl,
-    $fixnum.Int64? timestamp,
+    $core.String? timestamp,
     $core.double? latitude,
     $core.double? longitude,
     $core.double? cargoFijo,
     $core.double? alumbradoPublico,
     $core.double? saldoRedondeo,
     $core.double? totalToPay,
-    $core.String? period,
+    $core.String? periodStart,
+    $core.String? periodEnd,
+    $core.double? mantenimiento,
+    $core.double? adjustment,
+    $core.double? subtotal,
+    $core.double? roundDifference,
+    $core.double? previousBalance,
+    $core.double? overdueTotal,
+    $core.String? expirationDate,
   }) {
     final $result = create();
     if (id != null) {
@@ -398,8 +433,8 @@ class Reading extends $pb.GeneratedMessage {
     if (currentValue != null) {
       $result.currentValue = currentValue;
     }
-    if (consumptionKwh != null) {
-      $result.consumptionKwh = consumptionKwh;
+    if (consumption != null) {
+      $result.consumption = consumption;
     }
     if (photoUrl != null) {
       $result.photoUrl = photoUrl;
@@ -425,8 +460,32 @@ class Reading extends $pb.GeneratedMessage {
     if (totalToPay != null) {
       $result.totalToPay = totalToPay;
     }
-    if (period != null) {
-      $result.period = period;
+    if (periodStart != null) {
+      $result.periodStart = periodStart;
+    }
+    if (periodEnd != null) {
+      $result.periodEnd = periodEnd;
+    }
+    if (mantenimiento != null) {
+      $result.mantenimiento = mantenimiento;
+    }
+    if (adjustment != null) {
+      $result.adjustment = adjustment;
+    }
+    if (subtotal != null) {
+      $result.subtotal = subtotal;
+    }
+    if (roundDifference != null) {
+      $result.roundDifference = roundDifference;
+    }
+    if (previousBalance != null) {
+      $result.previousBalance = previousBalance;
+    }
+    if (overdueTotal != null) {
+      $result.overdueTotal = overdueTotal;
+    }
+    if (expirationDate != null) {
+      $result.expirationDate = expirationDate;
     }
     return $result;
   }
@@ -439,16 +498,24 @@ class Reading extends $pb.GeneratedMessage {
     ..aOS(2, _omitFieldNames ? '' : 'customerId')
     ..a<$core.double>(3, _omitFieldNames ? '' : 'previousValue', $pb.PbFieldType.OD)
     ..a<$core.double>(4, _omitFieldNames ? '' : 'currentValue', $pb.PbFieldType.OD)
-    ..a<$core.double>(5, _omitFieldNames ? '' : 'consumptionKwh', $pb.PbFieldType.OD)
+    ..a<$core.double>(5, _omitFieldNames ? '' : 'consumption', $pb.PbFieldType.OD)
     ..aOS(6, _omitFieldNames ? '' : 'photoUrl')
-    ..aInt64(7, _omitFieldNames ? '' : 'timestamp')
+    ..aOS(7, _omitFieldNames ? '' : 'timestamp')
     ..a<$core.double>(8, _omitFieldNames ? '' : 'latitude', $pb.PbFieldType.OD)
     ..a<$core.double>(9, _omitFieldNames ? '' : 'longitude', $pb.PbFieldType.OD)
     ..a<$core.double>(10, _omitFieldNames ? '' : 'cargoFijo', $pb.PbFieldType.OD)
     ..a<$core.double>(11, _omitFieldNames ? '' : 'alumbradoPublico', $pb.PbFieldType.OD)
     ..a<$core.double>(12, _omitFieldNames ? '' : 'saldoRedondeo', $pb.PbFieldType.OD)
     ..a<$core.double>(13, _omitFieldNames ? '' : 'totalToPay', $pb.PbFieldType.OD)
-    ..aOS(14, _omitFieldNames ? '' : 'period')
+    ..aOS(14, _omitFieldNames ? '' : 'periodStart')
+    ..aOS(15, _omitFieldNames ? '' : 'periodEnd')
+    ..a<$core.double>(16, _omitFieldNames ? '' : 'mantenimiento', $pb.PbFieldType.OD)
+    ..a<$core.double>(17, _omitFieldNames ? '' : 'adjustment', $pb.PbFieldType.OD)
+    ..a<$core.double>(18, _omitFieldNames ? '' : 'subtotal', $pb.PbFieldType.OD)
+    ..a<$core.double>(19, _omitFieldNames ? '' : 'roundDifference', $pb.PbFieldType.OD)
+    ..a<$core.double>(20, _omitFieldNames ? '' : 'previousBalance', $pb.PbFieldType.OD)
+    ..a<$core.double>(21, _omitFieldNames ? '' : 'overdueTotal', $pb.PbFieldType.OD)
+    ..aOS(22, _omitFieldNames ? '' : 'expirationDate')
     ..hasRequiredFields = false
   ;
 
@@ -511,13 +578,13 @@ class Reading extends $pb.GeneratedMessage {
   void clearCurrentValue() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.double get consumptionKwh => $_getN(4);
+  $core.double get consumption => $_getN(4);
   @$pb.TagNumber(5)
-  set consumptionKwh($core.double v) { $_setDouble(4, v); }
+  set consumption($core.double v) { $_setDouble(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasConsumptionKwh() => $_has(4);
+  $core.bool hasConsumption() => $_has(4);
   @$pb.TagNumber(5)
-  void clearConsumptionKwh() => clearField(5);
+  void clearConsumption() => clearField(5);
 
   /// Metadata
   @$pb.TagNumber(6)
@@ -530,9 +597,9 @@ class Reading extends $pb.GeneratedMessage {
   void clearPhotoUrl() => clearField(6);
 
   @$pb.TagNumber(7)
-  $fixnum.Int64 get timestamp => $_getI64(6);
+  $core.String get timestamp => $_getSZ(6);
   @$pb.TagNumber(7)
-  set timestamp($fixnum.Int64 v) { $_setInt64(6, v); }
+  set timestamp($core.String v) { $_setString(6, v); }
   @$pb.TagNumber(7)
   $core.bool hasTimestamp() => $_has(6);
   @$pb.TagNumber(7)
@@ -594,13 +661,85 @@ class Reading extends $pb.GeneratedMessage {
   void clearTotalToPay() => clearField(13);
 
   @$pb.TagNumber(14)
-  $core.String get period => $_getSZ(13);
+  $core.String get periodStart => $_getSZ(13);
   @$pb.TagNumber(14)
-  set period($core.String v) { $_setString(13, v); }
+  set periodStart($core.String v) { $_setString(13, v); }
   @$pb.TagNumber(14)
-  $core.bool hasPeriod() => $_has(13);
+  $core.bool hasPeriodStart() => $_has(13);
   @$pb.TagNumber(14)
-  void clearPeriod() => clearField(14);
+  void clearPeriodStart() => clearField(14);
+
+  @$pb.TagNumber(15)
+  $core.String get periodEnd => $_getSZ(14);
+  @$pb.TagNumber(15)
+  set periodEnd($core.String v) { $_setString(14, v); }
+  @$pb.TagNumber(15)
+  $core.bool hasPeriodEnd() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearPeriodEnd() => clearField(15);
+
+  @$pb.TagNumber(16)
+  $core.double get mantenimiento => $_getN(15);
+  @$pb.TagNumber(16)
+  set mantenimiento($core.double v) { $_setDouble(15, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasMantenimiento() => $_has(15);
+  @$pb.TagNumber(16)
+  void clearMantenimiento() => clearField(16);
+
+  @$pb.TagNumber(17)
+  $core.double get adjustment => $_getN(16);
+  @$pb.TagNumber(17)
+  set adjustment($core.double v) { $_setDouble(16, v); }
+  @$pb.TagNumber(17)
+  $core.bool hasAdjustment() => $_has(16);
+  @$pb.TagNumber(17)
+  void clearAdjustment() => clearField(17);
+
+  @$pb.TagNumber(18)
+  $core.double get subtotal => $_getN(17);
+  @$pb.TagNumber(18)
+  set subtotal($core.double v) { $_setDouble(17, v); }
+  @$pb.TagNumber(18)
+  $core.bool hasSubtotal() => $_has(17);
+  @$pb.TagNumber(18)
+  void clearSubtotal() => clearField(18);
+
+  @$pb.TagNumber(19)
+  $core.double get roundDifference => $_getN(18);
+  @$pb.TagNumber(19)
+  set roundDifference($core.double v) { $_setDouble(18, v); }
+  @$pb.TagNumber(19)
+  $core.bool hasRoundDifference() => $_has(18);
+  @$pb.TagNumber(19)
+  void clearRoundDifference() => clearField(19);
+
+  @$pb.TagNumber(20)
+  $core.double get previousBalance => $_getN(19);
+  @$pb.TagNumber(20)
+  set previousBalance($core.double v) { $_setDouble(19, v); }
+  @$pb.TagNumber(20)
+  $core.bool hasPreviousBalance() => $_has(19);
+  @$pb.TagNumber(20)
+  void clearPreviousBalance() => clearField(20);
+
+  @$pb.TagNumber(21)
+  $core.double get overdueTotal => $_getN(20);
+  @$pb.TagNumber(21)
+  set overdueTotal($core.double v) { $_setDouble(20, v); }
+  @$pb.TagNumber(21)
+  $core.bool hasOverdueTotal() => $_has(20);
+  @$pb.TagNumber(21)
+  void clearOverdueTotal() => clearField(21);
+
+  @$pb.TagNumber(22)
+  $core.String get expirationDate => $_getSZ(21);
+  @$pb.TagNumber(22)
+  set expirationDate($core.String v) { $_setString(21, v); }
+  @$pb.TagNumber(22)
+  $core.bool hasExpirationDate() => $_has(21);
+  @$pb.TagNumber(22)
+  void clearExpirationDate() => clearField(22);
 }
 
 /// AppConfig contains remote configuration for the mobile application.

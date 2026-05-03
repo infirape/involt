@@ -1,0 +1,70 @@
+//
+//  Generated code. Do not modify.
+//  source: involt/v1/admin.proto
+//
+// @dart = 2.12
+
+// ignore_for_file: annotate_overrides, camel_case_types, comment_references
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_final_fields
+// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+
+import 'dart:async' as $async;
+import 'dart:core' as $core;
+
+import 'package:protobuf/protobuf.dart' as $pb;
+
+import 'admin.pb.dart' as $1;
+import 'admin.pbjson.dart';
+
+export 'admin.pb.dart';
+
+abstract class AdminServiceBase extends $pb.GeneratedService {
+  $async.Future<$1.LoginResponse> login($pb.ServerContext ctx, $1.LoginRequest request);
+  $async.Future<$1.GetUsersResponse> getUsers($pb.ServerContext ctx, $1.GetUsersRequest request);
+  $async.Future<$1.UpsertUserResponse> upsertUser($pb.ServerContext ctx, $1.UpsertUserRequest request);
+  $async.Future<$1.GetSectorsResponse> getSectors($pb.ServerContext ctx, $1.GetSectorsRequest request);
+  $async.Future<$1.GetCustomersResponse> getCustomers($pb.ServerContext ctx, $1.GetCustomersRequest request);
+  $async.Future<$1.GetReadingsResponse> getReadings($pb.ServerContext ctx, $1.GetReadingsRequest request);
+  $async.Future<$1.GetSettingsResponse> getSettings($pb.ServerContext ctx, $1.GetSettingsRequest request);
+  $async.Future<$1.UpdateSettingsResponse> updateSettings($pb.ServerContext ctx, $1.UpdateSettingsRequest request);
+  $async.Future<$1.UpsertCustomerResponse> upsertCustomer($pb.ServerContext ctx, $1.UpsertCustomerRequest request);
+  $async.Future<$1.GetDashboardStatsResponse> getDashboardStats($pb.ServerContext ctx, $1.GetDashboardStatsRequest request);
+
+  $pb.GeneratedMessage createRequest($core.String methodName) {
+    switch (methodName) {
+      case 'Login': return $1.LoginRequest();
+      case 'GetUsers': return $1.GetUsersRequest();
+      case 'UpsertUser': return $1.UpsertUserRequest();
+      case 'GetSectors': return $1.GetSectorsRequest();
+      case 'GetCustomers': return $1.GetCustomersRequest();
+      case 'GetReadings': return $1.GetReadingsRequest();
+      case 'GetSettings': return $1.GetSettingsRequest();
+      case 'UpdateSettings': return $1.UpdateSettingsRequest();
+      case 'UpsertCustomer': return $1.UpsertCustomerRequest();
+      case 'GetDashboardStats': return $1.GetDashboardStatsRequest();
+      default: throw $core.ArgumentError('Unknown method: $methodName');
+    }
+  }
+
+  $async.Future<$pb.GeneratedMessage> handleCall($pb.ServerContext ctx, $core.String methodName, $pb.GeneratedMessage request) {
+    switch (methodName) {
+      case 'Login': return this.login(ctx, request as $1.LoginRequest);
+      case 'GetUsers': return this.getUsers(ctx, request as $1.GetUsersRequest);
+      case 'UpsertUser': return this.upsertUser(ctx, request as $1.UpsertUserRequest);
+      case 'GetSectors': return this.getSectors(ctx, request as $1.GetSectorsRequest);
+      case 'GetCustomers': return this.getCustomers(ctx, request as $1.GetCustomersRequest);
+      case 'GetReadings': return this.getReadings(ctx, request as $1.GetReadingsRequest);
+      case 'GetSettings': return this.getSettings(ctx, request as $1.GetSettingsRequest);
+      case 'UpdateSettings': return this.updateSettings(ctx, request as $1.UpdateSettingsRequest);
+      case 'UpsertCustomer': return this.upsertCustomer(ctx, request as $1.UpsertCustomerRequest);
+      case 'GetDashboardStats': return this.getDashboardStats(ctx, request as $1.GetDashboardStatsRequest);
+      default: throw $core.ArgumentError('Unknown method: $methodName');
+    }
+  }
+
+  $core.Map<$core.String, $core.dynamic> get $json => AdminServiceBase$json;
+  $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> get $messageJson => AdminServiceBase$messageJson;
+}
+

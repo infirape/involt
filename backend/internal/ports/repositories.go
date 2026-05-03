@@ -27,6 +27,7 @@ type CustomerRepository interface {
 	GetByCode(ctx context.Context, code string) (*domain.Customer, error)
 	ListAll(ctx context.Context) ([]domain.Customer, error)
 	SaveBatch(ctx context.Context, customers []domain.Customer) error
+	Save(ctx context.Context, customer *domain.Customer) error
 	CountBySector(ctx context.Context, sectorID string) (int, error)
 }
 
@@ -38,4 +39,5 @@ type MetadataRepository interface {
 	SaveSectors(ctx context.Context, sectors []domain.Sector) error
 	GetAppConfig(ctx context.Context) (*domain.AppConfig, error)
 	GetSettings(ctx context.Context) (*domain.Settings, error)
+	SaveSettings(ctx context.Context, settings *domain.Settings) error
 }

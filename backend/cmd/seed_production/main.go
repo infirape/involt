@@ -101,9 +101,9 @@ func main() {
 		lastVal := 100.0 + r.Float64()*500.0
 
 		_, err = db.ExecContext(ctx, `
-			INSERT INTO customers (id, code, name, community_id, sector_id, connection_type, tariff, meter_number, latitude, longitude, initial_reading)
-			VALUES ($1, $2, $3, $4, $5, 'MONOFASICA', 0.85, $6, $7, $8, $9)`,
-			custID, code, name, commID, secID, "MET-"+code, lat, lng, lastVal)
+			INSERT INTO customers (id, code, name, community_id, sector_id, connection_type, tariff, meter_number, latitude, longitude, initial_reading, last_reading_value)
+			VALUES ($1, $2, $3, $4, $5, 'MONOFASICA', 0.85, $6, $7, $8, $9, $10)`,
+			custID, code, name, commID, secID, "MET-"+code, lat, lng, lastVal, lastVal)
 		if err != nil {
 			log.Printf("⚠️ Error inserting customer %s: %v", code, err)
 			continue

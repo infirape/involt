@@ -46,13 +46,14 @@ CREATE TABLE IF NOT EXISTS customers (
     name TEXT NOT NULL,
     community_id TEXT REFERENCES communities(id),
     sector_id TEXT REFERENCES sectors(id),
-    address TEXT,  -- Dirección del cliente (caserio, anexo, etc.)
+    address TEXT NOT NULL DEFAULT '',  -- Dirección del cliente (caserio, anexo, etc.)
     connection_type TEXT NOT NULL, -- MONOFASICA / TRIFASICA
     tariff DOUBLE PRECISION NOT NULL,
     meter_number TEXT NOT NULL,
-    latitude DOUBLE PRECISION,
-    longitude DOUBLE PRECISION,
+    latitude DOUBLE PRECISION NOT NULL DEFAULT 0,
+    longitude DOUBLE PRECISION NOT NULL DEFAULT 0,
     initial_reading DOUBLE PRECISION DEFAULT 0,
+    last_reading_value DOUBLE PRECISION DEFAULT 0,
     contract_start DATE,  -- Fecha de inicio de contrato
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -63,10 +64,10 @@ CREATE TABLE IF NOT EXISTS readings (
     previous_value DOUBLE PRECISION NOT NULL,
     current_value DOUBLE PRECISION NOT NULL,
     consumption DOUBLE PRECISION NOT NULL,
-    photo_url TEXT,
+    photo_url TEXT NOT NULL DEFAULT '',
     timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    latitude DOUBLE PRECISION,
-    longitude DOUBLE PRECISION,
+    latitude DOUBLE PRECISION NOT NULL DEFAULT 0,
+    longitude DOUBLE PRECISION NOT NULL DEFAULT 0,
     -- Periodo de facturación
     period_start DATE NOT NULL,
     period_end DATE NOT NULL,
@@ -91,3 +92,25 @@ INSERT INTO communities (id, name) VALUES ('COM-001', 'Chetilla') ON CONFLICT DO
 INSERT INTO sectors (id, community_id, name) VALUES ('SEC-001', 'COM-001', 'Chetilla Centro') ON CONFLICT DO NOTHING;
 INSERT INTO sectors (id, community_id, name) VALUES ('SEC-002', 'COM-001', 'La Libertad') ON CONFLICT DO NOTHING;
 INSERT INTO settings (id, municipalidad, empresa, dias_vencimiento) VALUES ('main', 'MUNICIPALIDAD DISTRITAL DE CHETILLA', 'HIDROELECTRICA QARWAQIRU', 15) ON CONFLICT DO NOTHING;
+
+-- Admin and RBAC
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'READER',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS user_sectors (
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    sector_id TEXT NOT NULL,
+    PRIMARY KEY (user_id, sector_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_sectors_user_id ON user_sectors(user_id);
+
+INSERT INTO users (email, password_hash, role)
+VALUES ('admin@infira.pe', '$2a$10$dwB7XvBZNbRY5GMwd61IRum0y5FSzn4hq3Dl3FuxdHwyi.i1exx0a', 'ADMIN')
+ON CONFLICT (email) DO NOTHING;

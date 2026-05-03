@@ -99,25 +99,7 @@ func (h *SyncHandler) PullMetadata(
 	}
 
 	for i, c := range customers {
-		connType := involtv1.ConnectionType_CONNECTION_TYPE_MONOFASICA
-		if c.ConnectionType == domain.ConnectionTypeTrifasica {
-			connType = involtv1.ConnectionType_CONNECTION_TYPE_TRIFASICA
-		}
-
-		resp.Customers[i] = &involtv1.Customer{
-			Id:             c.ID,
-			Code:           c.Code,
-			Name:           c.Name,
-			CommunityId:    c.CommunityID,
-			SectorId:       c.SectorID,
-			ConnectionType: connType,
-			Tariff:         c.Tariff,
-			MeterNumber:    c.MeterNumber,
-			Latitude:       c.Latitude,
-			Longitude:      c.Longitude,
-			LastReadingValue: c.LastReadingValue,
-			InitialReading: c.InitialReading,
-		}
+		resp.Customers[i] = domain.MapCustomerToProto(&c)
 	}
 
 	// Fetch and map readings
@@ -127,21 +109,7 @@ func (h *SyncHandler) PullMetadata(
 	} else {
 		resp.Readings = make([]*involtv1.Reading, len(readings))
 		for i, r := range readings {
-			resp.Readings[i] = &involtv1.Reading{
-				Id:               r.ID,
-				CustomerId:       r.CustomerID,
-				PreviousValue:    r.PreviousValue,
-				CurrentValue:     r.CurrentValue,
-				ConsumptionKwh:   r.Consumption,
-				PhotoUrl:         r.PhotoURL,
-				Timestamp:        r.Timestamp.Unix(),
-				Latitude:         r.Latitude,
-				Longitude:        r.Longitude,
-				CargoFijo:        r.CargoFijo,
-				AlumbradoPublico: r.AlumbradoPublico,
-				SaldoRedondeo:    r.SaldoRedondeo,
-				Period:           r.Timestamp.Format("2006-01"),
-			}
+			resp.Readings[i] = domain.MapReadingToProto(&r)
 		}
 	}
 
@@ -159,47 +127,27 @@ func (h *SyncHandler) PushReadings(
 	}
 
 	for _, r := range req.Msg.Readings {
+		reading := domain.MapProtoToReading(r)
 		
-		// Use the previous value sent by the app to ensure consistency with the UI
-		prevVal := r.PreviousValue
-		consumption := r.CurrentValue - prevVal
+		// Recalculate components to ensure server-side truth
+		prevVal := reading.PreviousValue
+		consumption := reading.CurrentValue - prevVal
 		if consumption < 0 {
 			consumption = 0
 		}
 
-		// Use settings for charges if not provided by app
-		cargoFijo := r.CargoFijo
-		if cargoFijo == 0 {
-			cargoFijo = settings.CargoFijo
-		}
-
-		alumbrado := r.AlumbradoPublico
-		if alumbrado == 0 {
-			alumbrado = settings.Alumbrado
-		}
-
-		// Calculate components
 		consumptionCharge := consumption * settings.TarifaKWh
-		subtotal := consumptionCharge + cargoFijo + alumbrado + settings.Mantenimiento
-		total := subtotal + r.SaldoRedondeo
+		subtotal := consumptionCharge + settings.CargoFijo + settings.Alumbrado + settings.Mantenimiento
+		total := subtotal + reading.SaldoRedondeo
 
-		reading := &domain.Reading{
-			ID:               r.Id,
-			CustomerID:       r.CustomerId,
-			PreviousValue:    prevVal,
-			CurrentValue:     r.CurrentValue,
-			Consumption:      consumption,
-			PhotoURL:         r.PhotoUrl,
-			Timestamp:        time.Unix(r.Timestamp, 0),
-			Latitude:         r.Latitude,
-			Longitude:        r.Longitude,
-			CargoFijo:        cargoFijo,
-			AlumbradoPublico: alumbrado,
-			Mantenimiento:    settings.Mantenimiento, // We need to store this in the reading
-			Subtotal:         subtotal,
-			TotalToPay:       total,
-			SaldoRedondeo:    r.SaldoRedondeo,
-		}
+		// Update with server calculations
+		reading.Consumption = consumption
+		reading.CargoFijo = settings.CargoFijo
+		reading.AlumbradoPublico = settings.Alumbrado
+		reading.Mantenimiento = settings.Mantenimiento
+		reading.Subtotal = subtotal
+		reading.TotalToPay = total
+
 		if err := h.readingRepo.Save(ctx, reading); err != nil {
 			log.Printf("⚠️ Error saving reading %s: %v", r.Id, err)
 			continue
