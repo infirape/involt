@@ -1,0 +1,147 @@
+syntax = "proto3";
+
+package involt.v1;
+
+import "involt/v1/models.proto";
+
+option go_package = "github.com/infira/involt/backend/internal/gen/involt/v1;involtv1";
+
+// AdminService handles administrative operations like user management and RBAC.
+service AdminService {
+  // Login authenticates a user and returns a JWT token.
+  rpc Login(LoginRequest) returns (LoginResponse);
+  
+  // GetUsers returns a list of all administrative users.
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse);
+  
+  // UpsertUser creates or updates an administrative user.
+  rpc UpsertUser(UpsertUserRequest) returns (UpsertUserResponse);
+  
+  // GetSectors returns all available sectors for assignment.
+  rpc GetSectors(GetSectorsRequest) returns (GetSectorsResponse);
+
+  // GetCustomers returns a list of all customers.
+  rpc GetCustomers(GetCustomersRequest) returns (GetCustomersResponse);
+
+  // GetReadings returns a list of readings, optionally filtered.
+  rpc GetReadings(GetReadingsRequest) returns (GetReadingsResponse);
+
+  // GetSettings returns the current system settings.
+  rpc GetSettings(GetSettingsRequest) returns (GetSettingsResponse);
+
+  // UpdateSettings updates the system settings.
+  rpc UpdateSettings(UpdateSettingsRequest) returns (UpdateSettingsResponse);
+
+  // UpsertCustomer creates or updates a customer.
+  rpc UpsertCustomer(UpsertCustomerRequest) returns (UpsertCustomerResponse);
+
+  // GetDashboardStats returns summary statistics for the dashboard.
+  rpc GetDashboardStats(GetDashboardStatsRequest) returns (GetDashboardStatsResponse);
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string token = 1;
+  User user = 2;
+}
+
+message GetUsersRequest {}
+
+message GetUsersResponse {
+  repeated User users = 1;
+}
+
+message UpsertUserRequest {
+  User user = 1;
+  string password = 2;
+}
+
+message UpsertUserResponse {
+  User user = 1;
+}
+
+message GetSectorsRequest {}
+
+message GetSectorsResponse {
+  repeated Sector sectors = 1;
+}
+
+message GetCustomersRequest {
+  string sector_id = 1;
+  string search_query = 2;
+}
+
+message GetCustomersResponse {
+  repeated Customer customers = 1;
+}
+
+message GetReadingsRequest {
+  string customer_id = 1;
+  string sector_id = 2;
+  string period = 3;
+}
+
+message GetReadingsResponse {
+  repeated Reading readings = 1;
+}
+
+message GetSettingsRequest {}
+
+message GetSettingsResponse {
+  Settings settings = 1;
+}
+
+message UpdateSettingsRequest {
+  Settings settings = 1;
+}
+
+message UpdateSettingsResponse {
+  Settings settings = 1;
+}
+
+message UpsertCustomerRequest {
+  Customer customer = 1;
+}
+
+message UpsertCustomerResponse {
+  Customer customer = 1;
+}
+
+enum UserRole {
+  USER_ROLE_UNSPECIFIED = 0;
+  USER_ROLE_ADMIN = 1;
+  USER_ROLE_SUPERVISOR = 2;
+  USER_ROLE_READER = 3;
+}
+
+message User {
+  string id = 1;
+  string email = 2;
+  UserRole role = 3;
+  repeated string assigned_sector_ids = 4;
+}
+
+message GetDashboardStatsRequest {
+  string period = 1;
+}
+
+message GetDashboardStatsResponse {
+  int32 total_customers = 1;
+  int32 total_users = 2;
+  int32 total_readings_period = 3;
+  int32 pending_readings_period = 4;
+  repeated SectorStat sector_stats = 5;
+}
+
+message SectorStat {
+  string sector_id = 1;
+  string sector_name = 2;
+  int32 registered_count = 3;
+  int32 total_count = 4;
+  int32 progress_percentage = 5;
+  double total_consumption = 6;
+}
