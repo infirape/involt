@@ -1,24 +1,30 @@
 "use client";
 
-import { LayoutDashboard, LogOut, Settings, Users, Zap } from "lucide-react";
+import { LayoutDashboard, LogOut, Settings, Users, Zap, Calendar } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { user, isAdmin } = useAuth();
 
   const menuItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/customers", label: "Clientes", icon: Users },
     { href: "/dashboard/readings", label: "Lecturas", icon: Zap },
-    { href: "/dashboard/users", label: "Usuarios", icon: Users },
-    { href: "/dashboard/settings", label: "Configuración", icon: Settings },
+    ...(isAdmin ? [
+      { href: "/dashboard/users", label: "Usuarios", icon: Users },
+      { href: "/dashboard/periods", label: "Periodos", icon: Calendar },
+      { href: "/dashboard/settings", label: "Configuración", icon: Settings },
+    ] : []),
   ];
 
   const handleLogout = () => {
     document.cookie = "admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    localStorage.removeItem("admin_user");
     router.push("/login");
   };
 

@@ -18,6 +18,7 @@ type ReadingRepository interface {
 	ListPeriods(ctx context.Context) ([]string, error)
 	CountBySectorAndPeriod(ctx context.Context, sectorID, period string) (int, error)
 	SumConsumptionBySectorAndPeriod(ctx context.Context, sectorID, period string) (float64, error)
+	SumRevenueBySectorAndPeriod(ctx context.Context, sectorID, period string) (float64, error)
 	SumRevenueByPeriod(ctx context.Context, period string) (float64, error)
 	SumConsumptionByPeriod(ctx context.Context, period string) (float64, error)
 	List(ctx context.Context, customerID, sectorID, period string, limit, offset int) ([]domain.Reading, int, error)
@@ -45,4 +46,13 @@ type MetadataRepository interface {
 	GetAppConfig(ctx context.Context) (*domain.AppConfig, error)
 	GetSettings(ctx context.Context) (*domain.Settings, error)
 	SaveSettings(ctx context.Context, settings *domain.Settings) error
+}
+
+// PeriodRepository defines operations for managing billing periods.
+type PeriodRepository interface {
+	GetByID(ctx context.Context, id string) (*domain.Period, error)
+	GetCurrent(ctx context.Context) (*domain.Period, error)
+	List(ctx context.Context) ([]domain.Period, error)
+	Save(ctx context.Context, period *domain.Period) error
+	GetStats(ctx context.Context, periodID string) (*domain.PeriodStats, error)
 }

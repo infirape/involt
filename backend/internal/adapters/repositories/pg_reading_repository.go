@@ -147,6 +147,15 @@ func (r *PostgresReadingRepository) SumConsumptionBySectorAndPeriod(ctx context.
 	return sum, err
 }
 
+func (r *PostgresReadingRepository) SumRevenueBySectorAndPeriod(ctx context.Context, sectorID, period string) (float64, error) {
+	var sum float64
+	query := `SELECT COALESCE(SUM(r.total_to_pay), 0) FROM readings r
+	          JOIN customers c ON r.customer_id = c.id
+	          WHERE c.sector_id = $1 AND to_char(r.timestamp, 'YYYY-MM') = $2`
+	err := r.db.GetContext(ctx, &sum, query, sectorID, period)
+	return sum, err
+}
+
 func (r *PostgresReadingRepository) SumRevenueByPeriod(ctx context.Context, period string) (float64, error) {
 	var sum float64
 	query := `SELECT COALESCE(SUM(total_to_pay), 0) FROM readings WHERE to_char(timestamp, 'YYYY-MM') = $1`

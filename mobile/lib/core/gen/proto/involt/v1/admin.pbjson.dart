@@ -368,6 +368,134 @@ final $typed_data.Uint8List sectorStatDescriptor = $convert.base64Decode(
     'NlbnRhZ2UYBSABKAVSEnByb2dyZXNzUGVyY2VudGFnZRIrChF0b3RhbF9jb25zdW1wdGlvbhgG'
     'IAEoAVIQdG90YWxDb25zdW1wdGlvbg==');
 
+@$core.Deprecated('Use listPeriodsRequestDescriptor instead')
+const ListPeriodsRequest$json = {
+  '1': 'ListPeriodsRequest',
+};
+
+/// Descriptor for `ListPeriodsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listPeriodsRequestDescriptor = $convert.base64Decode(
+    'ChJMaXN0UGVyaW9kc1JlcXVlc3Q=');
+
+@$core.Deprecated('Use listPeriodsResponseDescriptor instead')
+const ListPeriodsResponse$json = {
+  '1': 'ListPeriodsResponse',
+  '2': [
+    {'1': 'periods', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.Period', '10': 'periods'},
+  ],
+};
+
+/// Descriptor for `ListPeriodsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listPeriodsResponseDescriptor = $convert.base64Decode(
+    'ChNMaXN0UGVyaW9kc1Jlc3BvbnNlEisKB3BlcmlvZHMYASADKAsyES5pbnZvbHQudjEuUGVyaW'
+    '9kUgdwZXJpb2Rz');
+
+@$core.Deprecated('Use getPeriodStatsRequestDescriptor instead')
+const GetPeriodStatsRequest$json = {
+  '1': 'GetPeriodStatsRequest',
+  '2': [
+    {'1': 'period_id', '3': 1, '4': 1, '5': 9, '10': 'periodId'},
+  ],
+};
+
+/// Descriptor for `GetPeriodStatsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getPeriodStatsRequestDescriptor = $convert.base64Decode(
+    'ChVHZXRQZXJpb2RTdGF0c1JlcXVlc3QSGwoJcGVyaW9kX2lkGAEgASgJUghwZXJpb2RJZA==');
+
+@$core.Deprecated('Use getPeriodStatsResponseDescriptor instead')
+const GetPeriodStatsResponse$json = {
+  '1': 'GetPeriodStatsResponse',
+  '2': [
+    {'1': 'total_customers', '3': 1, '4': 1, '5': 5, '10': 'totalCustomers'},
+    {'1': 'readings_captured', '3': 2, '4': 1, '5': 5, '10': 'readingsCaptured'},
+    {'1': 'missing_readings', '3': 3, '4': 1, '5': 5, '10': 'missingReadings'},
+    {'1': 'missing_customers', '3': 4, '4': 3, '5': 11, '6': '.involt.v1.MissingCustomer', '10': 'missingCustomers'},
+  ],
+};
+
+/// Descriptor for `GetPeriodStatsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getPeriodStatsResponseDescriptor = $convert.base64Decode(
+    'ChZHZXRQZXJpb2RTdGF0c1Jlc3BvbnNlEicKD3RvdGFsX2N1c3RvbWVycxgBIAEoBVIOdG90YW'
+    'xDdXN0b21lcnMSKwoRcmVhZGluZ3NfY2FwdHVyZWQYAiABKAVSEHJlYWRpbmdzQ2FwdHVyZWQS'
+    'KQoQbWlzc2luZ19yZWFkaW5ncxgDIAEoBVIPbWlzc2luZ1JlYWRpbmdzEkcKEW1pc3NpbmdfY3'
+    'VzdG9tZXJzGAQgAygLMhouaW52b2x0LnYxLk1pc3NpbmdDdXN0b21lclIQbWlzc2luZ0N1c3Rv'
+    'bWVycw==');
+
+@$core.Deprecated('Use missingCustomerDescriptor instead')
+const MissingCustomer$json = {
+  '1': 'MissingCustomer',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
+    {'1': 'code', '3': 3, '4': 1, '5': 9, '10': 'code'},
+    {'1': 'sector_name', '3': 4, '4': 1, '5': 9, '10': 'sectorName'},
+    {'1': 'supervisor', '3': 5, '4': 1, '5': 9, '10': 'supervisor'},
+  ],
+};
+
+/// Descriptor for `MissingCustomer`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List missingCustomerDescriptor = $convert.base64Decode(
+    'Cg9NaXNzaW5nQ3VzdG9tZXISDgoCaWQYASABKAlSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWUSEg'
+    'oEY29kZRgDIAEoCVIEY29kZRIfCgtzZWN0b3JfbmFtZRgEIAEoCVIKc2VjdG9yTmFtZRIeCgpz'
+    'dXBlcnZpc29yGAUgASgJUgpzdXBlcnZpc29y');
+
+@$core.Deprecated('Use openPeriodRequestDescriptor instead')
+const OpenPeriodRequest$json = {
+  '1': 'OpenPeriodRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'start_date', '3': 2, '4': 1, '5': 9, '10': 'startDate'},
+    {'1': 'end_date', '3': 3, '4': 1, '5': 9, '10': 'endDate'},
+  ],
+};
+
+/// Descriptor for `OpenPeriodRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List openPeriodRequestDescriptor = $convert.base64Decode(
+    'ChFPcGVuUGVyaW9kUmVxdWVzdBIOCgJpZBgBIAEoCVICaWQSHQoKc3RhcnRfZGF0ZRgCIAEoCV'
+    'IJc3RhcnREYXRlEhkKCGVuZF9kYXRlGAMgASgJUgdlbmREYXRl');
+
+@$core.Deprecated('Use openPeriodResponseDescriptor instead')
+const OpenPeriodResponse$json = {
+  '1': 'OpenPeriodResponse',
+  '2': [
+    {'1': 'period', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Period', '10': 'period'},
+  ],
+};
+
+/// Descriptor for `OpenPeriodResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List openPeriodResponseDescriptor = $convert.base64Decode(
+    'ChJPcGVuUGVyaW9kUmVzcG9uc2USKQoGcGVyaW9kGAEgASgLMhEuaW52b2x0LnYxLlBlcmlvZF'
+    'IGcGVyaW9k');
+
+@$core.Deprecated('Use closePeriodRequestDescriptor instead')
+const ClosePeriodRequest$json = {
+  '1': 'ClosePeriodRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'open_next', '3': 2, '4': 1, '5': 8, '10': 'openNext'},
+  ],
+};
+
+/// Descriptor for `ClosePeriodRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List closePeriodRequestDescriptor = $convert.base64Decode(
+    'ChJDbG9zZVBlcmlvZFJlcXVlc3QSDgoCaWQYASABKAlSAmlkEhsKCW9wZW5fbmV4dBgCIAEoCF'
+    'IIb3Blbk5leHQ=');
+
+@$core.Deprecated('Use closePeriodResponseDescriptor instead')
+const ClosePeriodResponse$json = {
+  '1': 'ClosePeriodResponse',
+  '2': [
+    {'1': 'closed_period', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Period', '10': 'closedPeriod'},
+    {'1': 'next_period', '3': 2, '4': 1, '5': 11, '6': '.involt.v1.Period', '10': 'nextPeriod'},
+  ],
+};
+
+/// Descriptor for `ClosePeriodResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List closePeriodResponseDescriptor = $convert.base64Decode(
+    'ChNDbG9zZVBlcmlvZFJlc3BvbnNlEjYKDWNsb3NlZF9wZXJpb2QYASABKAsyES5pbnZvbHQudj'
+    'EuUGVyaW9kUgxjbG9zZWRQZXJpb2QSMgoLbmV4dF9wZXJpb2QYAiABKAsyES5pbnZvbHQudjEu'
+    'UGVyaW9kUgpuZXh0UGVyaW9k');
+
 const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
   '1': 'AdminService',
   '2': [
@@ -382,6 +510,10 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'UpsertCustomer', '2': '.involt.v1.UpsertCustomerRequest', '3': '.involt.v1.UpsertCustomerResponse'},
     {'1': 'DeleteCustomer', '2': '.involt.v1.DeleteCustomerRequest', '3': '.involt.v1.DeleteCustomerResponse'},
     {'1': 'GetDashboardStats', '2': '.involt.v1.GetDashboardStatsRequest', '3': '.involt.v1.GetDashboardStatsResponse'},
+    {'1': 'ListPeriods', '2': '.involt.v1.ListPeriodsRequest', '3': '.involt.v1.ListPeriodsResponse'},
+    {'1': 'GetPeriodStats', '2': '.involt.v1.GetPeriodStatsRequest', '3': '.involt.v1.GetPeriodStatsResponse'},
+    {'1': 'OpenPeriod', '2': '.involt.v1.OpenPeriodRequest', '3': '.involt.v1.OpenPeriodResponse'},
+    {'1': 'ClosePeriod', '2': '.involt.v1.ClosePeriodRequest', '3': '.involt.v1.ClosePeriodResponse'},
   ],
 };
 
@@ -415,6 +547,16 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.GetDashboardStatsRequest': GetDashboardStatsRequest$json,
   '.involt.v1.GetDashboardStatsResponse': GetDashboardStatsResponse$json,
   '.involt.v1.SectorStat': SectorStat$json,
+  '.involt.v1.ListPeriodsRequest': ListPeriodsRequest$json,
+  '.involt.v1.ListPeriodsResponse': ListPeriodsResponse$json,
+  '.involt.v1.Period': $0.Period$json,
+  '.involt.v1.GetPeriodStatsRequest': GetPeriodStatsRequest$json,
+  '.involt.v1.GetPeriodStatsResponse': GetPeriodStatsResponse$json,
+  '.involt.v1.MissingCustomer': MissingCustomer$json,
+  '.involt.v1.OpenPeriodRequest': OpenPeriodRequest$json,
+  '.involt.v1.OpenPeriodResponse': OpenPeriodResponse$json,
+  '.involt.v1.ClosePeriodRequest': ClosePeriodRequest$json,
+  '.involt.v1.ClosePeriodResponse': ClosePeriodResponse$json,
 };
 
 /// Descriptor for `AdminService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -434,5 +576,11 @@ final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
     'ZXN0GiEuaW52b2x0LnYxLlVwc2VydEN1c3RvbWVyUmVzcG9uc2USVQoORGVsZXRlQ3VzdG9tZX'
     'ISIC5pbnZvbHQudjEuRGVsZXRlQ3VzdG9tZXJSZXF1ZXN0GiEuaW52b2x0LnYxLkRlbGV0ZUN1'
     'c3RvbWVyUmVzcG9uc2USXgoRR2V0RGFzaGJvYXJkU3RhdHMSIy5pbnZvbHQudjEuR2V0RGFzaG'
-    'JvYXJkU3RhdHNSZXF1ZXN0GiQuaW52b2x0LnYxLkdldERhc2hib2FyZFN0YXRzUmVzcG9uc2U=');
+    'JvYXJkU3RhdHNSZXF1ZXN0GiQuaW52b2x0LnYxLkdldERhc2hib2FyZFN0YXRzUmVzcG9uc2US'
+    'TAoLTGlzdFBlcmlvZHMSHS5pbnZvbHQudjEuTGlzdFBlcmlvZHNSZXF1ZXN0Gh4uaW52b2x0Ln'
+    'YxLkxpc3RQZXJpb2RzUmVzcG9uc2USVQoOR2V0UGVyaW9kU3RhdHMSIC5pbnZvbHQudjEuR2V0'
+    'UGVyaW9kU3RhdHNSZXF1ZXN0GiEuaW52b2x0LnYxLkdldFBlcmlvZFN0YXRzUmVzcG9uc2USSQ'
+    'oKT3BlblBlcmlvZBIcLmludm9sdC52MS5PcGVuUGVyaW9kUmVxdWVzdBodLmludm9sdC52MS5P'
+    'cGVuUGVyaW9kUmVzcG9uc2USTAoLQ2xvc2VQZXJpb2QSHS5pbnZvbHQudjEuQ2xvc2VQZXJpb2'
+    'RSZXF1ZXN0Gh4uaW52b2x0LnYxLkNsb3NlUGVyaW9kUmVzcG9uc2U=');
 

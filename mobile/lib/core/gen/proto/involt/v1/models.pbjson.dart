@@ -29,6 +29,21 @@ final $typed_data.Uint8List connectionTypeDescriptor = $convert.base64Decode(
     '5ORUNUSU9OX1RZUEVfTU9OT0ZBU0lDQRABEh0KGUNPTk5FQ1RJT05fVFlQRV9UUklGQVNJQ0EQ'
     'Ag==');
 
+@$core.Deprecated('Use periodStatusDescriptor instead')
+const PeriodStatus$json = {
+  '1': 'PeriodStatus',
+  '2': [
+    {'1': 'PERIOD_STATUS_UNSPECIFIED', '2': 0},
+    {'1': 'PERIOD_STATUS_OPEN', '2': 1},
+    {'1': 'PERIOD_STATUS_CLOSED', '2': 2},
+  ],
+};
+
+/// Descriptor for `PeriodStatus`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List periodStatusDescriptor = $convert.base64Decode(
+    'CgxQZXJpb2RTdGF0dXMSHQoZUEVSSU9EX1NUQVRVU19VTlNQRUNJRklFRBAAEhYKElBFUklPRF'
+    '9TVEFUVVNfT1BFThABEhgKFFBFUklPRF9TVEFUVVNfQ0xPU0VEEAI=');
+
 @$core.Deprecated('Use communityDescriptor instead')
 const Community$json = {
   '1': 'Community',
@@ -178,4 +193,21 @@ final $typed_data.Uint8List settingsDescriptor = $convert.base64Decode(
     'aWZhX2t3aBgIIAEoAVIJdGFyaWZhS3doEh0KCmNhcmdvX2Zpam8YCSABKAFSCWNhcmdvRmlqbx'
     'IcCglhbHVtYnJhZG8YCiABKAFSCWFsdW1icmFkbxIkCg1tYW50ZW5pbWllbnRvGAsgASgBUg1t'
     'YW50ZW5pbWllbnRvEhAKA2lndhgMIAEoCFIDaWd2');
+
+@$core.Deprecated('Use periodDescriptor instead')
+const Period$json = {
+  '1': 'Period',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'start_date', '3': 2, '4': 1, '5': 9, '10': 'startDate'},
+    {'1': 'end_date', '3': 3, '4': 1, '5': 9, '10': 'endDate'},
+    {'1': 'status', '3': 4, '4': 1, '5': 14, '6': '.involt.v1.PeriodStatus', '10': 'status'},
+  ],
+};
+
+/// Descriptor for `Period`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List periodDescriptor = $convert.base64Decode(
+    'CgZQZXJpb2QSDgoCaWQYASABKAlSAmlkEh0KCnN0YXJ0X2RhdGUYAiABKAlSCXN0YXJ0RGF0ZR'
+    'IZCghlbmRfZGF0ZRgDIAEoCVIHZW5kRGF0ZRIvCgZzdGF0dXMYBCABKA4yFy5pbnZvbHQudjEu'
+    'UGVyaW9kU3RhdHVzUgZzdGF0dXM=');
 

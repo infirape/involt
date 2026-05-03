@@ -7,3 +7,13 @@ plugins:
   - name: connect-go
     out: backend/internal/gen
     opt: paths=source_relative
+  - name: es
+    out: admin-ui/app/gen
+    opt:
+      - target=ts
+      - import_extension=none
+  - name: connect-es
+    out: admin-ui/app/gen
+    opt:
+      - target=ts
+      - import_extension=none

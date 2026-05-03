@@ -35,6 +35,18 @@ export default function LoginPage() {
       // Store token in cookie (simple client-side for now, would be better in server action)
       document.cookie = `admin_token=${resp.token}; path=/; max-age=86400; SameSite=Strict`;
 
+      // Store user info for UI role-based access
+      if (resp.user) {
+        localStorage.setItem(
+          "admin_user",
+          JSON.stringify({
+            id: resp.user.id,
+            email: resp.user.email,
+            role: resp.user.role,
+          }),
+        );
+      }
+
       router.push("/dashboard");
     } catch (err: unknown) {
       console.error("Login failed:", err);
@@ -69,7 +81,7 @@ export default function LoginPage() {
             <span className="text-primary tracking-normal">QARWAQIRU</span>
           </CardTitle>
           <CardDescription className="text-muted-foreground/60 font-medium">
-            Portal de Gestión y Telemetría
+            Portal de Gestión
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleLogin}>

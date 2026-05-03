@@ -67,7 +67,7 @@ export default function CustomerMap() {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
-              Chetilla <span className="text-muted-foreground">Telemetría</span>
+              Chetilla <span className="text-muted-foreground">QARWAQIRU</span>
             </p>
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function CustomerMap() {
         className="h-full w-full brightness-[0.8] contrast-[1.1]"
       >
         <TileLayer
-          attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+          attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
           url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           maxZoom={22}
           maxNativeZoom={17}

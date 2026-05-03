@@ -62,6 +62,17 @@ const (
 	// AdminServiceGetDashboardStatsProcedure is the fully-qualified name of the AdminService's
 	// GetDashboardStats RPC.
 	AdminServiceGetDashboardStatsProcedure = "/involt.v1.AdminService/GetDashboardStats"
+	// AdminServiceListPeriodsProcedure is the fully-qualified name of the AdminService's ListPeriods
+	// RPC.
+	AdminServiceListPeriodsProcedure = "/involt.v1.AdminService/ListPeriods"
+	// AdminServiceGetPeriodStatsProcedure is the fully-qualified name of the AdminService's
+	// GetPeriodStats RPC.
+	AdminServiceGetPeriodStatsProcedure = "/involt.v1.AdminService/GetPeriodStats"
+	// AdminServiceOpenPeriodProcedure is the fully-qualified name of the AdminService's OpenPeriod RPC.
+	AdminServiceOpenPeriodProcedure = "/involt.v1.AdminService/OpenPeriod"
+	// AdminServiceClosePeriodProcedure is the fully-qualified name of the AdminService's ClosePeriod
+	// RPC.
+	AdminServiceClosePeriodProcedure = "/involt.v1.AdminService/ClosePeriod"
 )
 
 // AdminServiceClient is a client for the involt.v1.AdminService service.
@@ -88,6 +99,14 @@ type AdminServiceClient interface {
 	DeleteCustomer(context.Context, *connect.Request[v1.DeleteCustomerRequest]) (*connect.Response[v1.DeleteCustomerResponse], error)
 	// GetDashboardStats returns summary statistics for the dashboard.
 	GetDashboardStats(context.Context, *connect.Request[v1.GetDashboardStatsRequest]) (*connect.Response[v1.GetDashboardStatsResponse], error)
+	// ListPeriods returns all billing periods.
+	ListPeriods(context.Context, *connect.Request[v1.ListPeriodsRequest]) (*connect.Response[v1.ListPeriodsResponse], error)
+	// GetPeriodStats returns detailed statistics for a specific period.
+	GetPeriodStats(context.Context, *connect.Request[v1.GetPeriodStatsRequest]) (*connect.Response[v1.GetPeriodStatsResponse], error)
+	// OpenPeriod opens a new billing period.
+	OpenPeriod(context.Context, *connect.Request[v1.OpenPeriodRequest]) (*connect.Response[v1.OpenPeriodResponse], error)
+	// ClosePeriod closes a billing period and optionally opens the next one.
+	ClosePeriod(context.Context, *connect.Request[v1.ClosePeriodRequest]) (*connect.Response[v1.ClosePeriodResponse], error)
 }
 
 // NewAdminServiceClient constructs a client for the involt.v1.AdminService service. By default, it
@@ -167,6 +186,30 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("GetDashboardStats")),
 			connect.WithClientOptions(opts...),
 		),
+		listPeriods: connect.NewClient[v1.ListPeriodsRequest, v1.ListPeriodsResponse](
+			httpClient,
+			baseURL+AdminServiceListPeriodsProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("ListPeriods")),
+			connect.WithClientOptions(opts...),
+		),
+		getPeriodStats: connect.NewClient[v1.GetPeriodStatsRequest, v1.GetPeriodStatsResponse](
+			httpClient,
+			baseURL+AdminServiceGetPeriodStatsProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetPeriodStats")),
+			connect.WithClientOptions(opts...),
+		),
+		openPeriod: connect.NewClient[v1.OpenPeriodRequest, v1.OpenPeriodResponse](
+			httpClient,
+			baseURL+AdminServiceOpenPeriodProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("OpenPeriod")),
+			connect.WithClientOptions(opts...),
+		),
+		closePeriod: connect.NewClient[v1.ClosePeriodRequest, v1.ClosePeriodResponse](
+			httpClient,
+			baseURL+AdminServiceClosePeriodProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("ClosePeriod")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -183,6 +226,10 @@ type adminServiceClient struct {
 	upsertCustomer    *connect.Client[v1.UpsertCustomerRequest, v1.UpsertCustomerResponse]
 	deleteCustomer    *connect.Client[v1.DeleteCustomerRequest, v1.DeleteCustomerResponse]
 	getDashboardStats *connect.Client[v1.GetDashboardStatsRequest, v1.GetDashboardStatsResponse]
+	listPeriods       *connect.Client[v1.ListPeriodsRequest, v1.ListPeriodsResponse]
+	getPeriodStats    *connect.Client[v1.GetPeriodStatsRequest, v1.GetPeriodStatsResponse]
+	openPeriod        *connect.Client[v1.OpenPeriodRequest, v1.OpenPeriodResponse]
+	closePeriod       *connect.Client[v1.ClosePeriodRequest, v1.ClosePeriodResponse]
 }
 
 // Login calls involt.v1.AdminService.Login.
@@ -240,6 +287,26 @@ func (c *adminServiceClient) GetDashboardStats(ctx context.Context, req *connect
 	return c.getDashboardStats.CallUnary(ctx, req)
 }
 
+// ListPeriods calls involt.v1.AdminService.ListPeriods.
+func (c *adminServiceClient) ListPeriods(ctx context.Context, req *connect.Request[v1.ListPeriodsRequest]) (*connect.Response[v1.ListPeriodsResponse], error) {
+	return c.listPeriods.CallUnary(ctx, req)
+}
+
+// GetPeriodStats calls involt.v1.AdminService.GetPeriodStats.
+func (c *adminServiceClient) GetPeriodStats(ctx context.Context, req *connect.Request[v1.GetPeriodStatsRequest]) (*connect.Response[v1.GetPeriodStatsResponse], error) {
+	return c.getPeriodStats.CallUnary(ctx, req)
+}
+
+// OpenPeriod calls involt.v1.AdminService.OpenPeriod.
+func (c *adminServiceClient) OpenPeriod(ctx context.Context, req *connect.Request[v1.OpenPeriodRequest]) (*connect.Response[v1.OpenPeriodResponse], error) {
+	return c.openPeriod.CallUnary(ctx, req)
+}
+
+// ClosePeriod calls involt.v1.AdminService.ClosePeriod.
+func (c *adminServiceClient) ClosePeriod(ctx context.Context, req *connect.Request[v1.ClosePeriodRequest]) (*connect.Response[v1.ClosePeriodResponse], error) {
+	return c.closePeriod.CallUnary(ctx, req)
+}
+
 // AdminServiceHandler is an implementation of the involt.v1.AdminService service.
 type AdminServiceHandler interface {
 	// Login authenticates a user and returns a JWT token.
@@ -264,6 +331,14 @@ type AdminServiceHandler interface {
 	DeleteCustomer(context.Context, *connect.Request[v1.DeleteCustomerRequest]) (*connect.Response[v1.DeleteCustomerResponse], error)
 	// GetDashboardStats returns summary statistics for the dashboard.
 	GetDashboardStats(context.Context, *connect.Request[v1.GetDashboardStatsRequest]) (*connect.Response[v1.GetDashboardStatsResponse], error)
+	// ListPeriods returns all billing periods.
+	ListPeriods(context.Context, *connect.Request[v1.ListPeriodsRequest]) (*connect.Response[v1.ListPeriodsResponse], error)
+	// GetPeriodStats returns detailed statistics for a specific period.
+	GetPeriodStats(context.Context, *connect.Request[v1.GetPeriodStatsRequest]) (*connect.Response[v1.GetPeriodStatsResponse], error)
+	// OpenPeriod opens a new billing period.
+	OpenPeriod(context.Context, *connect.Request[v1.OpenPeriodRequest]) (*connect.Response[v1.OpenPeriodResponse], error)
+	// ClosePeriod closes a billing period and optionally opens the next one.
+	ClosePeriod(context.Context, *connect.Request[v1.ClosePeriodRequest]) (*connect.Response[v1.ClosePeriodResponse], error)
 }
 
 // NewAdminServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -339,6 +414,30 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("GetDashboardStats")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceListPeriodsHandler := connect.NewUnaryHandler(
+		AdminServiceListPeriodsProcedure,
+		svc.ListPeriods,
+		connect.WithSchema(adminServiceMethods.ByName("ListPeriods")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetPeriodStatsHandler := connect.NewUnaryHandler(
+		AdminServiceGetPeriodStatsProcedure,
+		svc.GetPeriodStats,
+		connect.WithSchema(adminServiceMethods.ByName("GetPeriodStats")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceOpenPeriodHandler := connect.NewUnaryHandler(
+		AdminServiceOpenPeriodProcedure,
+		svc.OpenPeriod,
+		connect.WithSchema(adminServiceMethods.ByName("OpenPeriod")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceClosePeriodHandler := connect.NewUnaryHandler(
+		AdminServiceClosePeriodProcedure,
+		svc.ClosePeriod,
+		connect.WithSchema(adminServiceMethods.ByName("ClosePeriod")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/involt.v1.AdminService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AdminServiceLoginProcedure:
@@ -363,6 +462,14 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceDeleteCustomerHandler.ServeHTTP(w, r)
 		case AdminServiceGetDashboardStatsProcedure:
 			adminServiceGetDashboardStatsHandler.ServeHTTP(w, r)
+		case AdminServiceListPeriodsProcedure:
+			adminServiceListPeriodsHandler.ServeHTTP(w, r)
+		case AdminServiceGetPeriodStatsProcedure:
+			adminServiceGetPeriodStatsHandler.ServeHTTP(w, r)
+		case AdminServiceOpenPeriodProcedure:
+			adminServiceOpenPeriodHandler.ServeHTTP(w, r)
+		case AdminServiceClosePeriodProcedure:
+			adminServiceClosePeriodHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -414,4 +521,20 @@ func (UnimplementedAdminServiceHandler) DeleteCustomer(context.Context, *connect
 
 func (UnimplementedAdminServiceHandler) GetDashboardStats(context.Context, *connect.Request[v1.GetDashboardStatsRequest]) (*connect.Response[v1.GetDashboardStatsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetDashboardStats is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) ListPeriods(context.Context, *connect.Request[v1.ListPeriodsRequest]) (*connect.Response[v1.ListPeriodsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.ListPeriods is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetPeriodStats(context.Context, *connect.Request[v1.GetPeriodStatsRequest]) (*connect.Response[v1.GetPeriodStatsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetPeriodStats is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) OpenPeriod(context.Context, *connect.Request[v1.OpenPeriodRequest]) (*connect.Response[v1.OpenPeriodResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.OpenPeriod is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) ClosePeriod(context.Context, *connect.Request[v1.ClosePeriodRequest]) (*connect.Response[v1.ClosePeriodResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.ClosePeriod is not implemented"))
 }

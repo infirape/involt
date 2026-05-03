@@ -26,7 +26,7 @@ func main() {
 	// 1. Database Connection
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://involt_user:involt_password@localhost:5432/involt_db?sslmode=disable"
+		dbURL = "postgres://involt_user:involt_password@127.0.0.1:5432/involt_db?sslmode=disable"
 	}
 
 	var db *sqlx.DB
@@ -52,6 +52,7 @@ func main() {
 	readingRepo := repositories.NewPostgresReadingRepository(db)
 	settingsRepo := repositories.NewSettingsRepository(db)
 	adminRepo := repositories.NewPostgresAdminRepository(db)
+	periodRepo := repositories.NewPostgresPeriodRepository(db)
 	pdfGen := pdf.NewMarotoGenerator()
 
 	// 3. Initialize Handlers
@@ -62,7 +63,7 @@ func main() {
 
 	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, pdfGen)
 	settingsHandler := handlers.NewSettingsHandler(settingsRepo)
-	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, jwtSecret)
+	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret)
 	adminHandler := admin.NewAdminHandler(adminRepo, settingsRepo, customerRepo, readingRepo, metaRepo, pdfGen, jwtSecret)
 
 	// 4. Setup Mux

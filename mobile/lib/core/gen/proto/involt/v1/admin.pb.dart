@@ -1523,6 +1523,586 @@ class SectorStat extends $pb.GeneratedMessage {
   void clearTotalConsumption() => clearField(6);
 }
 
+class ListPeriodsRequest extends $pb.GeneratedMessage {
+  factory ListPeriodsRequest() => create();
+  ListPeriodsRequest._() : super();
+  factory ListPeriodsRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ListPeriodsRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ListPeriodsRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ListPeriodsRequest clone() => ListPeriodsRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ListPeriodsRequest copyWith(void Function(ListPeriodsRequest) updates) => super.copyWith((message) => updates(message as ListPeriodsRequest)) as ListPeriodsRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ListPeriodsRequest create() => ListPeriodsRequest._();
+  ListPeriodsRequest createEmptyInstance() => create();
+  static $pb.PbList<ListPeriodsRequest> createRepeated() => $pb.PbList<ListPeriodsRequest>();
+  @$core.pragma('dart2js:noInline')
+  static ListPeriodsRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListPeriodsRequest>(create);
+  static ListPeriodsRequest? _defaultInstance;
+}
+
+class ListPeriodsResponse extends $pb.GeneratedMessage {
+  factory ListPeriodsResponse({
+    $core.Iterable<$0.Period>? periods,
+  }) {
+    final $result = create();
+    if (periods != null) {
+      $result.periods.addAll(periods);
+    }
+    return $result;
+  }
+  ListPeriodsResponse._() : super();
+  factory ListPeriodsResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ListPeriodsResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ListPeriodsResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..pc<$0.Period>(1, _omitFieldNames ? '' : 'periods', $pb.PbFieldType.PM, subBuilder: $0.Period.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ListPeriodsResponse clone() => ListPeriodsResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ListPeriodsResponse copyWith(void Function(ListPeriodsResponse) updates) => super.copyWith((message) => updates(message as ListPeriodsResponse)) as ListPeriodsResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ListPeriodsResponse create() => ListPeriodsResponse._();
+  ListPeriodsResponse createEmptyInstance() => create();
+  static $pb.PbList<ListPeriodsResponse> createRepeated() => $pb.PbList<ListPeriodsResponse>();
+  @$core.pragma('dart2js:noInline')
+  static ListPeriodsResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListPeriodsResponse>(create);
+  static ListPeriodsResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$0.Period> get periods => $_getList(0);
+}
+
+class GetPeriodStatsRequest extends $pb.GeneratedMessage {
+  factory GetPeriodStatsRequest({
+    $core.String? periodId,
+  }) {
+    final $result = create();
+    if (periodId != null) {
+      $result.periodId = periodId;
+    }
+    return $result;
+  }
+  GetPeriodStatsRequest._() : super();
+  factory GetPeriodStatsRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetPeriodStatsRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetPeriodStatsRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'periodId')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetPeriodStatsRequest clone() => GetPeriodStatsRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetPeriodStatsRequest copyWith(void Function(GetPeriodStatsRequest) updates) => super.copyWith((message) => updates(message as GetPeriodStatsRequest)) as GetPeriodStatsRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetPeriodStatsRequest create() => GetPeriodStatsRequest._();
+  GetPeriodStatsRequest createEmptyInstance() => create();
+  static $pb.PbList<GetPeriodStatsRequest> createRepeated() => $pb.PbList<GetPeriodStatsRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetPeriodStatsRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetPeriodStatsRequest>(create);
+  static GetPeriodStatsRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get periodId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set periodId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPeriodId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPeriodId() => clearField(1);
+}
+
+class GetPeriodStatsResponse extends $pb.GeneratedMessage {
+  factory GetPeriodStatsResponse({
+    $core.int? totalCustomers,
+    $core.int? readingsCaptured,
+    $core.int? missingReadings,
+    $core.Iterable<MissingCustomer>? missingCustomers,
+  }) {
+    final $result = create();
+    if (totalCustomers != null) {
+      $result.totalCustomers = totalCustomers;
+    }
+    if (readingsCaptured != null) {
+      $result.readingsCaptured = readingsCaptured;
+    }
+    if (missingReadings != null) {
+      $result.missingReadings = missingReadings;
+    }
+    if (missingCustomers != null) {
+      $result.missingCustomers.addAll(missingCustomers);
+    }
+    return $result;
+  }
+  GetPeriodStatsResponse._() : super();
+  factory GetPeriodStatsResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetPeriodStatsResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetPeriodStatsResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..a<$core.int>(1, _omitFieldNames ? '' : 'totalCustomers', $pb.PbFieldType.O3)
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'readingsCaptured', $pb.PbFieldType.O3)
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'missingReadings', $pb.PbFieldType.O3)
+    ..pc<MissingCustomer>(4, _omitFieldNames ? '' : 'missingCustomers', $pb.PbFieldType.PM, subBuilder: MissingCustomer.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetPeriodStatsResponse clone() => GetPeriodStatsResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetPeriodStatsResponse copyWith(void Function(GetPeriodStatsResponse) updates) => super.copyWith((message) => updates(message as GetPeriodStatsResponse)) as GetPeriodStatsResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetPeriodStatsResponse create() => GetPeriodStatsResponse._();
+  GetPeriodStatsResponse createEmptyInstance() => create();
+  static $pb.PbList<GetPeriodStatsResponse> createRepeated() => $pb.PbList<GetPeriodStatsResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetPeriodStatsResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetPeriodStatsResponse>(create);
+  static GetPeriodStatsResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get totalCustomers => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set totalCustomers($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasTotalCustomers() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearTotalCustomers() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get readingsCaptured => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set readingsCaptured($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasReadingsCaptured() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearReadingsCaptured() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get missingReadings => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set missingReadings($core.int v) { $_setSignedInt32(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasMissingReadings() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMissingReadings() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.List<MissingCustomer> get missingCustomers => $_getList(3);
+}
+
+class MissingCustomer extends $pb.GeneratedMessage {
+  factory MissingCustomer({
+    $core.String? id,
+    $core.String? name,
+    $core.String? code,
+    $core.String? sectorName,
+    $core.String? supervisor,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    if (name != null) {
+      $result.name = name;
+    }
+    if (code != null) {
+      $result.code = code;
+    }
+    if (sectorName != null) {
+      $result.sectorName = sectorName;
+    }
+    if (supervisor != null) {
+      $result.supervisor = supervisor;
+    }
+    return $result;
+  }
+  MissingCustomer._() : super();
+  factory MissingCustomer.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory MissingCustomer.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MissingCustomer', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..aOS(2, _omitFieldNames ? '' : 'name')
+    ..aOS(3, _omitFieldNames ? '' : 'code')
+    ..aOS(4, _omitFieldNames ? '' : 'sectorName')
+    ..aOS(5, _omitFieldNames ? '' : 'supervisor')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  MissingCustomer clone() => MissingCustomer()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  MissingCustomer copyWith(void Function(MissingCustomer) updates) => super.copyWith((message) => updates(message as MissingCustomer)) as MissingCustomer;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MissingCustomer create() => MissingCustomer._();
+  MissingCustomer createEmptyInstance() => create();
+  static $pb.PbList<MissingCustomer> createRepeated() => $pb.PbList<MissingCustomer>();
+  @$core.pragma('dart2js:noInline')
+  static MissingCustomer getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MissingCustomer>(create);
+  static MissingCustomer? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get name => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set name($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearName() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get code => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set code($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasCode() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearCode() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get sectorName => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set sectorName($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasSectorName() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearSectorName() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get supervisor => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set supervisor($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasSupervisor() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearSupervisor() => clearField(5);
+}
+
+class OpenPeriodRequest extends $pb.GeneratedMessage {
+  factory OpenPeriodRequest({
+    $core.String? id,
+    $core.String? startDate,
+    $core.String? endDate,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    if (startDate != null) {
+      $result.startDate = startDate;
+    }
+    if (endDate != null) {
+      $result.endDate = endDate;
+    }
+    return $result;
+  }
+  OpenPeriodRequest._() : super();
+  factory OpenPeriodRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory OpenPeriodRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'OpenPeriodRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..aOS(2, _omitFieldNames ? '' : 'startDate')
+    ..aOS(3, _omitFieldNames ? '' : 'endDate')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  OpenPeriodRequest clone() => OpenPeriodRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  OpenPeriodRequest copyWith(void Function(OpenPeriodRequest) updates) => super.copyWith((message) => updates(message as OpenPeriodRequest)) as OpenPeriodRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static OpenPeriodRequest create() => OpenPeriodRequest._();
+  OpenPeriodRequest createEmptyInstance() => create();
+  static $pb.PbList<OpenPeriodRequest> createRepeated() => $pb.PbList<OpenPeriodRequest>();
+  @$core.pragma('dart2js:noInline')
+  static OpenPeriodRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<OpenPeriodRequest>(create);
+  static OpenPeriodRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get startDate => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set startDate($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasStartDate() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearStartDate() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get endDate => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set endDate($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasEndDate() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearEndDate() => clearField(3);
+}
+
+class OpenPeriodResponse extends $pb.GeneratedMessage {
+  factory OpenPeriodResponse({
+    $0.Period? period,
+  }) {
+    final $result = create();
+    if (period != null) {
+      $result.period = period;
+    }
+    return $result;
+  }
+  OpenPeriodResponse._() : super();
+  factory OpenPeriodResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory OpenPeriodResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'OpenPeriodResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOM<$0.Period>(1, _omitFieldNames ? '' : 'period', subBuilder: $0.Period.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  OpenPeriodResponse clone() => OpenPeriodResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  OpenPeriodResponse copyWith(void Function(OpenPeriodResponse) updates) => super.copyWith((message) => updates(message as OpenPeriodResponse)) as OpenPeriodResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static OpenPeriodResponse create() => OpenPeriodResponse._();
+  OpenPeriodResponse createEmptyInstance() => create();
+  static $pb.PbList<OpenPeriodResponse> createRepeated() => $pb.PbList<OpenPeriodResponse>();
+  @$core.pragma('dart2js:noInline')
+  static OpenPeriodResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<OpenPeriodResponse>(create);
+  static OpenPeriodResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.Period get period => $_getN(0);
+  @$pb.TagNumber(1)
+  set period($0.Period v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPeriod() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPeriod() => clearField(1);
+  @$pb.TagNumber(1)
+  $0.Period ensurePeriod() => $_ensure(0);
+}
+
+class ClosePeriodRequest extends $pb.GeneratedMessage {
+  factory ClosePeriodRequest({
+    $core.String? id,
+    $core.bool? openNext,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    if (openNext != null) {
+      $result.openNext = openNext;
+    }
+    return $result;
+  }
+  ClosePeriodRequest._() : super();
+  factory ClosePeriodRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ClosePeriodRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ClosePeriodRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..aOB(2, _omitFieldNames ? '' : 'openNext')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ClosePeriodRequest clone() => ClosePeriodRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ClosePeriodRequest copyWith(void Function(ClosePeriodRequest) updates) => super.copyWith((message) => updates(message as ClosePeriodRequest)) as ClosePeriodRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ClosePeriodRequest create() => ClosePeriodRequest._();
+  ClosePeriodRequest createEmptyInstance() => create();
+  static $pb.PbList<ClosePeriodRequest> createRepeated() => $pb.PbList<ClosePeriodRequest>();
+  @$core.pragma('dart2js:noInline')
+  static ClosePeriodRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ClosePeriodRequest>(create);
+  static ClosePeriodRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.bool get openNext => $_getBF(1);
+  @$pb.TagNumber(2)
+  set openNext($core.bool v) { $_setBool(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasOpenNext() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearOpenNext() => clearField(2);
+}
+
+class ClosePeriodResponse extends $pb.GeneratedMessage {
+  factory ClosePeriodResponse({
+    $0.Period? closedPeriod,
+    $0.Period? nextPeriod,
+  }) {
+    final $result = create();
+    if (closedPeriod != null) {
+      $result.closedPeriod = closedPeriod;
+    }
+    if (nextPeriod != null) {
+      $result.nextPeriod = nextPeriod;
+    }
+    return $result;
+  }
+  ClosePeriodResponse._() : super();
+  factory ClosePeriodResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ClosePeriodResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ClosePeriodResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOM<$0.Period>(1, _omitFieldNames ? '' : 'closedPeriod', subBuilder: $0.Period.create)
+    ..aOM<$0.Period>(2, _omitFieldNames ? '' : 'nextPeriod', subBuilder: $0.Period.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ClosePeriodResponse clone() => ClosePeriodResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ClosePeriodResponse copyWith(void Function(ClosePeriodResponse) updates) => super.copyWith((message) => updates(message as ClosePeriodResponse)) as ClosePeriodResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ClosePeriodResponse create() => ClosePeriodResponse._();
+  ClosePeriodResponse createEmptyInstance() => create();
+  static $pb.PbList<ClosePeriodResponse> createRepeated() => $pb.PbList<ClosePeriodResponse>();
+  @$core.pragma('dart2js:noInline')
+  static ClosePeriodResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ClosePeriodResponse>(create);
+  static ClosePeriodResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.Period get closedPeriod => $_getN(0);
+  @$pb.TagNumber(1)
+  set closedPeriod($0.Period v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasClosedPeriod() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearClosedPeriod() => clearField(1);
+  @$pb.TagNumber(1)
+  $0.Period ensureClosedPeriod() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $0.Period get nextPeriod => $_getN(1);
+  @$pb.TagNumber(2)
+  set nextPeriod($0.Period v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasNextPeriod() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearNextPeriod() => clearField(2);
+  @$pb.TagNumber(2)
+  $0.Period ensureNextPeriod() => $_ensure(1);
+}
+
 class AdminServiceApi {
   $pb.RpcClient _client;
   AdminServiceApi(this._client);
@@ -1559,6 +2139,18 @@ class AdminServiceApi {
   ;
   $async.Future<GetDashboardStatsResponse> getDashboardStats($pb.ClientContext? ctx, GetDashboardStatsRequest request) =>
     _client.invoke<GetDashboardStatsResponse>(ctx, 'AdminService', 'GetDashboardStats', request, GetDashboardStatsResponse())
+  ;
+  $async.Future<ListPeriodsResponse> listPeriods($pb.ClientContext? ctx, ListPeriodsRequest request) =>
+    _client.invoke<ListPeriodsResponse>(ctx, 'AdminService', 'ListPeriods', request, ListPeriodsResponse())
+  ;
+  $async.Future<GetPeriodStatsResponse> getPeriodStats($pb.ClientContext? ctx, GetPeriodStatsRequest request) =>
+    _client.invoke<GetPeriodStatsResponse>(ctx, 'AdminService', 'GetPeriodStats', request, GetPeriodStatsResponse())
+  ;
+  $async.Future<OpenPeriodResponse> openPeriod($pb.ClientContext? ctx, OpenPeriodRequest request) =>
+    _client.invoke<OpenPeriodResponse>(ctx, 'AdminService', 'OpenPeriod', request, OpenPeriodResponse())
+  ;
+  $async.Future<ClosePeriodResponse> closePeriod($pb.ClientContext? ctx, ClosePeriodRequest request) =>
+    _client.invoke<ClosePeriodResponse>(ctx, 'AdminService', 'ClosePeriod', request, ClosePeriodResponse())
   ;
 }
 

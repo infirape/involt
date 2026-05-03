@@ -40,6 +40,18 @@ service AdminService {
 
   // GetDashboardStats returns summary statistics for the dashboard.
   rpc GetDashboardStats(GetDashboardStatsRequest) returns (GetDashboardStatsResponse);
+
+  // ListPeriods returns all billing periods.
+  rpc ListPeriods(ListPeriodsRequest) returns (ListPeriodsResponse);
+
+  // GetPeriodStats returns detailed statistics for a specific period.
+  rpc GetPeriodStats(GetPeriodStatsRequest) returns (GetPeriodStatsResponse);
+
+  // OpenPeriod opens a new billing period.
+  rpc OpenPeriod(OpenPeriodRequest) returns (OpenPeriodResponse);
+
+  // ClosePeriod closes a billing period and optionally opens the next one.
+  rpc ClosePeriod(ClosePeriodRequest) returns (ClosePeriodResponse);
 }
 
 message DeleteCustomerRequest {
@@ -164,4 +176,49 @@ message SectorStat {
   int32 total_count = 4;
   int32 progress_percentage = 5;
   double total_consumption = 6;
+}
+
+message ListPeriodsRequest {}
+
+message ListPeriodsResponse {
+  repeated Period periods = 1;
+}
+
+message GetPeriodStatsRequest {
+  string period_id = 1;
+}
+
+message GetPeriodStatsResponse {
+  int32 total_customers = 1;
+  int32 readings_captured = 2;
+  int32 missing_readings = 3;
+  repeated MissingCustomer missing_customers = 4;
+}
+
+message MissingCustomer {
+  string id = 1;
+  string name = 2;
+  string code = 3;
+  string sector_name = 4;
+  string supervisor = 5;
+}
+
+message OpenPeriodRequest {
+  string id = 1; // YYYY-MM
+  string start_date = 2;
+  string end_date = 3;
+}
+
+message OpenPeriodResponse {
+  Period period = 1;
+}
+
+message ClosePeriodRequest {
+  string id = 1;
+  bool open_next = 2;
+}
+
+message ClosePeriodResponse {
+  Period closed_period = 1;
+  Period next_period = 2;
 }

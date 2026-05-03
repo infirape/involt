@@ -15,7 +15,10 @@ import dynamic from "next/dynamic";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { adminClient } from "@/lib/rpc";
+import { useRouter } from "next/navigation";
 import type { GetDashboardStatsResponse } from "@/app/gen/involt/v1/admin_pb";
+import { PeriodStatus } from "@/app/gen/involt/v1/models_pb";
+import type { Period } from "@/app/gen/involt/v1/models_pb";
 
 const CustomerMap = dynamic(
   () => import("@/components/dashboard/CustomerMap"),
@@ -26,7 +29,7 @@ const CustomerMap = dynamic(
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-            Sincronizando Geo-telemetría...
+            Sincronizando Geo...
           </p>
         </div>
       </div>
@@ -35,6 +38,7 @@ const CustomerMap = dynamic(
 );
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [data, setData] = useState<{
     stats: GetDashboardStatsResponse | null;
     loading: boolean;
@@ -43,10 +47,15 @@ export default function DashboardPage() {
     loading: true,
   });
 
+  const [periods, setPeriods] = useState<Period[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState<string | null>(null);
+
   const fetchStats = useCallback(async () => {
+    if (!selectedPeriod) return;
+    setData((prev) => ({ ...prev, loading: true }));
     try {
       const resp = await adminClient.getDashboardStats({
-        period: new Date().toISOString().slice(0, 7), // YYYY-MM
+        period: selectedPeriod,
       });
       setData({
         stats: resp,
@@ -56,14 +65,32 @@ export default function DashboardPage() {
       console.error("Failed to fetch dashboard stats:", err);
       setData((prev) => ({ ...prev, loading: false }));
     }
+  }, [selectedPeriod]);
+
+  useEffect(() => {
+    async function init() {
+      try {
+        const resp = await adminClient.listPeriods({});
+        setPeriods(resp.periods);
+        const current =
+          resp.periods.find((p) => p.status === PeriodStatus.OPEN) ||
+          resp.periods[0];
+        if (current) {
+          setSelectedPeriod(current.id);
+        } else {
+          // Fallback to today if no periods exist
+          setSelectedPeriod(new Date().toISOString().slice(0, 7));
+        }
+      } catch (err) {
+        console.error("Failed to list periods:", err);
+      }
+    }
+    init();
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchStats();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [fetchStats]);
+    if (selectedPeriod) fetchStats();
+  }, [selectedPeriod, fetchStats]);
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   useEffect(() => {
@@ -166,13 +193,29 @@ export default function DashboardPage() {
             <p className="text-sm font-black text-white">28 de Mayo, 2026</p>
           </div>
           <div className="h-12 w-px bg-white/5 mx-2 hidden md:block" />
-          <button className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/30 transition-all group overflow-hidden relative">
-            <div className="absolute inset-0 bg-linear-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <Clock className="w-4 h-4 text-primary relative z-10" />
-            <span className="text-xs font-black uppercase tracking-widest relative z-10">
-              Mayo 2026
-            </span>
-          </button>
+          <div className="relative group">
+            <select
+              value={selectedPeriod || ""}
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              className="appearance-none flex items-center gap-3 px-10 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/30 transition-all text-xs font-black uppercase tracking-widest cursor-pointer outline-none focus:ring-2 focus:ring-primary/20"
+            >
+              {periods.map((p) => (
+                <option
+                  key={p.id}
+                  value={p.id}
+                  className="bg-[#050505] text-white"
+                >
+                  {p.id} {p.status === PeriodStatus.OPEN ? "• ABIERTO" : ""}
+                </option>
+              ))}
+              {periods.length === 0 && (
+                <option value={new Date().toISOString().slice(0, 7)}>
+                  {new Date().toISOString().slice(0, 7)}
+                </option>
+              )}
+            </select>
+            <Clock className="w-4 h-4 text-primary absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
         </div>
       </div>
 
@@ -324,7 +367,10 @@ export default function DashboardPage() {
               </div>
             </CardContent>
             <div className="p-6 bg-white/2 border-t border-white/5 mt-auto">
-              <button className="w-full py-4 rounded-2xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/10 hover:border-primary/40 transition-all shadow-xl">
+              <button 
+                onClick={() => router.push("/dashboard/readings")}
+                className="w-full py-4 rounded-2xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/10 hover:border-primary/40 transition-all shadow-xl"
+              >
                 Auditar Sectores
               </button>
             </div>

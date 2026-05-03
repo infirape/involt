@@ -55,17 +55,12 @@ export function ExportModal({
               <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
                 Periodo de Facturación
               </label>
-              <select
+              <input
+                type="month"
                 value={filters.period}
                 onChange={(e) => onFilterChange({ ...filters, period: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-sm font-bold focus:outline-none focus:border-primary/50 transition-all appearance-none text-white"
-              >
-                {periods.map((p) => (
-                  <option key={p} value={p} className="bg-zinc-900 text-white">
-                    {p}
-                  </option>
-                ))}
-              </select>
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-sm font-bold focus:outline-none focus:border-primary/50 transition-all appearance-none text-white scheme-dark"
+              />
             </div>
 
             <div className="space-y-2">

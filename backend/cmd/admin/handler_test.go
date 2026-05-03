@@ -32,6 +32,9 @@ func (m *mockReadingRepo) SumConsumptionBySectorAndPeriod(ctx context.Context, s
 func (m *mockReadingRepo) SumRevenueByPeriod(ctx context.Context, period string) (float64, error) {
 	return 0, nil
 }
+func (m *mockReadingRepo) SumRevenueBySectorAndPeriod(ctx context.Context, sectorID, period string) (float64, error) {
+	return 0, nil
+}
 func (m *mockReadingRepo) SumConsumptionByPeriod(ctx context.Context, period string) (float64, error) {
 	return 0, nil
 }

@@ -10,6 +10,7 @@ import (
 	involtv1 "github.com/infira/involt/backend/internal/gen/involt/v1"
 	"github.com/infira/involt/backend/internal/gen/involt/v1/involtv1connect"
 	"github.com/infira/involt/backend/internal/ports"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -19,6 +20,7 @@ type AdminHandler struct {
 	metaRepo     ports.MetadataRepository
 	customerRepo ports.CustomerRepository
 	readingRepo  ports.ReadingRepository
+	periodRepo   ports.PeriodRepository
 	jwtService   *auth.JWTService
 }
 
@@ -27,6 +29,7 @@ func NewAdminHandler(
 	metaRepo ports.MetadataRepository,
 	customerRepo ports.CustomerRepository,
 	readingRepo ports.ReadingRepository,
+	periodRepo ports.PeriodRepository,
 	jwtSecret string,
 ) *AdminHandler {
 	return &AdminHandler{
@@ -34,6 +37,7 @@ func NewAdminHandler(
 		metaRepo:     metaRepo,
 		customerRepo: customerRepo,
 		readingRepo:  readingRepo,
+		periodRepo:   periodRepo,
 		jwtService:   auth.NewJWTService(jwtSecret),
 	}
 }
@@ -72,6 +76,10 @@ func (h *AdminHandler) GetUsers(
 	ctx context.Context,
 	req *connect.Request[involtv1.GetUsersRequest],
 ) (*connect.Response[involtv1.GetUsersResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can list users"))
+	}
 	users, err := h.adminRepo.ListUsers(ctx)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
@@ -96,6 +104,10 @@ func (h *AdminHandler) UpsertUser(
 	ctx context.Context,
 	req *connect.Request[involtv1.UpsertUserRequest],
 ) (*connect.Response[involtv1.UpsertUserResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can manage users"))
+	}
 	u := req.Msg.User
 	if u.Email == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("email is required"))
@@ -107,6 +119,10 @@ func (h *AdminHandler) UpsertUser(
 		Email:             u.Email,
 		Role:              mapProtoRoleToDomain(u.Role),
 		AssignedSectorIDs: u.AssignedSectorIds,
+	}
+
+	if domainUser.ID == "" {
+		domainUser.ID = uuid.New().String()
 	}
 
 	if req.Msg.Password != "" {
@@ -198,9 +214,15 @@ func (h *AdminHandler) GetCustomers(
 
 	var allowedSectors []string
 	if user.Role != string(domain.RoleAdmin) {
-		allowedSectors = user.AssignedSectorIDs
-	}
-	if req.Msg.SectorId != "" {
+		if req.Msg.SectorId != "" {
+			if !contains(user.AssignedSectorIDs, req.Msg.SectorId) {
+				return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("sector not assigned"))
+			}
+			allowedSectors = []string{req.Msg.SectorId}
+		} else {
+			allowedSectors = user.AssignedSectorIDs
+		}
+	} else if req.Msg.SectorId != "" {
 		allowedSectors = []string{req.Msg.SectorId}
 	}
 
@@ -329,9 +351,17 @@ func (h *AdminHandler) GetSettings(
 	ctx context.Context,
 	req *connect.Request[involtv1.GetSettingsRequest],
 ) (*connect.Response[involtv1.GetSettingsResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can view settings"))
+	}
+
 	settings, err := h.metaRepo.GetSettings(ctx)
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		// If no settings found, return an empty/default one instead of erroring out
+		return connect.NewResponse(&involtv1.GetSettingsResponse{
+			Settings: &involtv1.Settings{},
+		}), nil
 	}
 
 	return connect.NewResponse(&involtv1.GetSettingsResponse{
@@ -356,6 +386,10 @@ func (h *AdminHandler) UpdateSettings(
 	ctx context.Context,
 	req *connect.Request[involtv1.UpdateSettingsRequest],
 ) (*connect.Response[involtv1.UpdateSettingsResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can update settings"))
+	}
 	s := req.Msg.Settings
 	domainSettings := &domain.Settings{
 		Municipalidad:   s.Municipalidad,
@@ -386,6 +420,10 @@ func (h *AdminHandler) UpsertCustomer(
 	ctx context.Context,
 	req *connect.Request[involtv1.UpsertCustomerRequest],
 ) (*connect.Response[involtv1.UpsertCustomerResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can manage customers"))
+	}
 	c := req.Msg.Customer
 	contractStart, _ := time.Parse(time.RFC3339, c.ContractStart)
 
@@ -420,6 +458,10 @@ func (h *AdminHandler) DeleteCustomer(
 	ctx context.Context,
 	req *connect.Request[involtv1.DeleteCustomerRequest],
 ) (*connect.Response[involtv1.DeleteCustomerResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can delete customers"))
+	}
 	err := h.customerRepo.Delete(ctx, req.Msg.Id)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
@@ -434,70 +476,83 @@ func (h *AdminHandler) GetDashboardStats(
 	ctx context.Context,
 	req *connect.Request[involtv1.GetDashboardStatsRequest],
 ) (*connect.Response[involtv1.GetDashboardStatsResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok {
+		return nil, connect.NewError(connect.CodeUnauthenticated, nil)
+	}
+
 	period := req.Msg.Period
 	if period == "" {
 		period = time.Now().Format("2006-01")
 	}
 
-	// 1. Total Customers
-	customers, err := h.customerRepo.ListAll(ctx)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
-
-	// 2. Total Users
-	users, err := h.adminRepo.ListUsers(ctx)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
-
-	// 3. Readings in Period
-	readingsCount, _ := h.readingRepo.CountByPeriod(ctx, period)
-
-	// 4. Pending in Period
-	pendingCount, _ := h.readingRepo.CountPendingByPeriod(ctx, period)
-
-	// 5. Business Metrics
-	revenue, _ := h.readingRepo.SumRevenueByPeriod(ctx, period)
-	consumption, _ := h.readingRepo.SumConsumptionByPeriod(ctx, period)
-
 	// Calculate previous period (YYYY-MM)
 	t, _ := time.Parse("2006-01", period)
 	prevPeriod := t.AddDate(0, -1, 0).Format("2006-01")
-	prevConsumption, _ := h.readingRepo.SumConsumptionByPeriod(ctx, prevPeriod)
 
-	// 6. Sector Stats
-	sectors, _ := h.metaRepo.ListSectors(ctx)
+	// Get all sectors first to filter
+	allSectors, _ := h.metaRepo.ListSectors(ctx)
+	var sectors []domain.Sector
+	if userCtx.Role == string(domain.RoleAdmin) {
+		sectors = allSectors
+	} else {
+		for _, s := range allSectors {
+			if contains(userCtx.AssignedSectorIDs, s.ID) {
+				sectors = append(sectors, s)
+			}
+		}
+	}
+
+	// Calculate Sector Stats and Aggregate Totals
 	sectorStats := make([]*involtv1.SectorStat, len(sectors))
+	var totalCustomers, totalReadings, totalPending int32
+	var totalRevenue, totalConsumption, totalPrevConsumption float64
+
 	for i, s := range sectors {
-		total, _ := h.customerRepo.CountBySector(ctx, s.ID)
+		count, _ := h.customerRepo.CountBySector(ctx, s.ID)
 		registered, _ := h.readingRepo.CountBySectorAndPeriod(ctx, s.ID, period)
 		sConsumption, _ := h.readingRepo.SumConsumptionBySectorAndPeriod(ctx, s.ID, period)
+		sRevenue, _ := h.readingRepo.SumRevenueBySectorAndPeriod(ctx, s.ID, period)
+		sPrevConsumption, _ := h.readingRepo.SumConsumptionBySectorAndPeriod(ctx, s.ID, prevPeriod)
+
+		totalCustomers += int32(count)
+		totalReadings += int32(registered)
+		totalPending += int32(count - registered)
+		totalRevenue += sRevenue
+		totalConsumption += sConsumption
+		totalPrevConsumption += sPrevConsumption
 
 		progress := int32(0)
-		if total > 0 {
-			progress = int32((registered * 100) / total)
+		if count > 0 {
+			progress = int32((registered * 100) / count)
 		}
 
 		sectorStats[i] = &involtv1.SectorStat{
 			SectorId:           s.ID,
 			SectorName:         s.Name,
 			RegisteredCount:    int32(registered),
-			TotalCount:         int32(total),
+			TotalCount:         int32(count),
 			ProgressPercentage: progress,
 			TotalConsumption:   sConsumption,
 		}
 	}
 
+	// Total Users (Only show total for ADMIN)
+	var totalUsers int32
+	if userCtx.Role == string(domain.RoleAdmin) {
+		users, _ := h.adminRepo.ListUsers(ctx)
+		totalUsers = int32(len(users))
+	}
+
 	return connect.NewResponse(&involtv1.GetDashboardStatsResponse{
-		TotalCustomers:        int32(len(customers)),
-		TotalUsers:            int32(len(users)),
-		TotalReadingsPeriod:   int32(readingsCount),
-		PendingReadingsPeriod: int32(pendingCount),
-		TotalRevenue:          revenue,
-		TotalConsumptionKwh:   consumption,
-		PreviousConsumptionKwh: prevConsumption,
-		SectorStats:           sectorStats,
+		TotalCustomers:         totalCustomers,
+		TotalUsers:             totalUsers,
+		TotalReadingsPeriod:    totalReadings,
+		PendingReadingsPeriod:  totalPending,
+		TotalRevenue:           totalRevenue,
+		TotalConsumptionKwh:    totalConsumption,
+		PreviousConsumptionKwh: totalPrevConsumption,
+		SectorStats:            sectorStats,
 	}), nil
 }
 
@@ -546,6 +601,154 @@ func mapProtoConnectionTypeToDomain(conn involtv1.ConnectionType) domain.Connect
 		return domain.ConnectionTypeTrifasica
 	default:
 		return domain.ConnectionTypeMonofasica
+	}
+}
+
+func (h *AdminHandler) ListPeriods(ctx context.Context, req *connect.Request[involtv1.ListPeriodsRequest]) (*connect.Response[involtv1.ListPeriodsResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can manage periods"))
+	}
+
+	periods, err := h.periodRepo.List(ctx)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	var protoPeriods []*involtv1.Period
+	for _, p := range periods {
+		protoPeriods = append(protoPeriods, &involtv1.Period{
+			Id:        p.ID,
+			StartDate: p.StartDate.Format("2006-01-02"),
+			EndDate:   p.EndDate.Format("2006-01-02"),
+			Status:    mapDomainStatusToProto(p.Status),
+		})
+	}
+
+	return connect.NewResponse(&involtv1.ListPeriodsResponse{Periods: protoPeriods}), nil
+}
+
+func (h *AdminHandler) GetPeriodStats(ctx context.Context, req *connect.Request[involtv1.GetPeriodStatsRequest]) (*connect.Response[involtv1.GetPeriodStatsResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can view period stats"))
+	}
+
+	stats, err := h.periodRepo.GetStats(ctx, req.Msg.PeriodId)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	var missing []*involtv1.MissingCustomer
+	for _, m := range stats.MissingCustomers {
+		missing = append(missing, &involtv1.MissingCustomer{
+			Id:         m.ID,
+			Name:       m.Name,
+			Code:       m.Code,
+			SectorName: m.SectorName,
+			Supervisor: m.Supervisor,
+		})
+	}
+
+	return connect.NewResponse(&involtv1.GetPeriodStatsResponse{
+		TotalCustomers:   int32(stats.TotalCustomers),
+		ReadingsCaptured: int32(stats.ReadingsCaptured),
+		MissingReadings:  int32(stats.MissingReadings),
+		MissingCustomers: missing,
+	}), nil
+}
+
+func (h *AdminHandler) OpenPeriod(ctx context.Context, req *connect.Request[involtv1.OpenPeriodRequest]) (*connect.Response[involtv1.OpenPeriodResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can open periods"))
+	}
+
+	start, _ := time.Parse("2006-01-02", req.Msg.StartDate)
+	end, _ := time.Parse("2006-01-02", req.Msg.EndDate)
+
+	p := &domain.Period{
+		ID:        req.Msg.Id,
+		StartDate: start,
+		EndDate:   end,
+		Status:    domain.PeriodStatusOpen,
+	}
+
+	if err := h.periodRepo.Save(ctx, p); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	return connect.NewResponse(&involtv1.OpenPeriodResponse{
+		Period: &involtv1.Period{
+			Id:        p.ID,
+			StartDate: p.StartDate.Format("2006-01-02"),
+			EndDate:   p.EndDate.Format("2006-01-02"),
+			Status:    involtv1.PeriodStatus_PERIOD_STATUS_OPEN,
+		},
+	}), nil
+}
+
+func (h *AdminHandler) ClosePeriod(ctx context.Context, req *connect.Request[involtv1.ClosePeriodRequest]) (*connect.Response[involtv1.ClosePeriodResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can close periods"))
+	}
+
+	p, err := h.periodRepo.GetByID(ctx, req.Msg.Id)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("period not found"))
+	}
+
+	p.Status = domain.PeriodStatusClosed
+	if err := h.periodRepo.Save(ctx, p); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	resp := &involtv1.ClosePeriodResponse{
+		ClosedPeriod: &involtv1.Period{
+			Id:        p.ID,
+			StartDate: p.StartDate.Format("2006-01-02"),
+			EndDate:   p.EndDate.Format("2006-01-02"),
+			Status:    involtv1.PeriodStatus_PERIOD_STATUS_CLOSED,
+		},
+	}
+
+	if req.Msg.OpenNext {
+		// Calculate next month
+		t, _ := time.Parse("2006-01", p.ID)
+		nextT := t.AddDate(0, 1, 0)
+		nextID := nextT.Format("2006-01")
+		nextStart := nextT.Format("2006-01-02")
+		nextEnd := nextT.AddDate(0, 1, -1).Format("2006-01-02")
+
+		nextP := &domain.Period{
+			ID:        nextID,
+			StartDate: nextT,
+			EndDate:   nextT.AddDate(0, 1, -1),
+			Status:    domain.PeriodStatusOpen,
+		}
+
+		if err := h.periodRepo.Save(ctx, nextP); err == nil {
+			resp.NextPeriod = &involtv1.Period{
+				Id:        nextID,
+				StartDate: nextStart,
+				EndDate:   nextEnd,
+				Status:    involtv1.PeriodStatus_PERIOD_STATUS_OPEN,
+			}
+		}
+	}
+
+	return connect.NewResponse(resp), nil
+}
+
+func mapDomainStatusToProto(s domain.PeriodStatus) involtv1.PeriodStatus {
+	switch s {
+	case domain.PeriodStatusOpen:
+		return involtv1.PeriodStatus_PERIOD_STATUS_OPEN
+	case domain.PeriodStatusClosed:
+		return involtv1.PeriodStatus_PERIOD_STATUS_CLOSED
+	default:
+		return involtv1.PeriodStatus_PERIOD_STATUS_UNSPECIFIED
 	}
 }
 

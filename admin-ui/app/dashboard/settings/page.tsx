@@ -15,13 +15,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { adminClient } from "@/lib/rpc";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
+  const { isAdmin, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    if (!authLoading && !isAdmin) {
+      router.push("/dashboard");
+    }
+  }, [authLoading, isAdmin, router]);
+
+  useEffect(() => {
+    if (!isAdmin) return;
     let isMounted = true;
     async function fetchSettings() {
       // Force to next microtask to avoid synchronous setState warning in React 19
@@ -39,7 +50,7 @@ export default function SettingsPage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [isAdmin]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +65,8 @@ export default function SettingsPage() {
       setSaving(false);
     }
   };
+
+  if (authLoading || !isAdmin) return null;
 
   if (loading) {
     return (

@@ -23,6 +23,7 @@ import { adminClient } from "@/lib/rpc";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import dynamic from "next/dynamic";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 const LocationPicker = dynamic(() => import("@/components/dashboard/LocationPicker"), {
   ssr: false,
@@ -34,6 +35,7 @@ const LocationPicker = dynamic(() => import("@/components/dashboard/LocationPick
 });
 
 export default function CustomersPage() {
+  const { isAdmin } = useAuth();
   const [data, setData] = useState<{
     customers: Customer[];
     sectors: Sector[];
@@ -172,13 +174,15 @@ export default function CustomersPage() {
             {data.totalCount} Registros Totales • Chetilla
           </p>
         </div>
-        <Button
-          onClick={() => handleOpenModal()}
-          className="h-14 px-8 font-black uppercase tracking-widest rounded-2xl bg-primary text-black hover:scale-105 transition-all shadow-[0_0_30px_rgba(255,0,255,0.2)]"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Nuevo Suministro
-        </Button>
+        {isAdmin && (
+          <Button
+            onClick={() => handleOpenModal()}
+            className="h-14 px-8 font-black uppercase tracking-widest rounded-2xl bg-primary text-black hover:scale-105 transition-all shadow-[0_0_30px_rgba(255,0,255,0.2)]"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Nuevo Suministro
+          </Button>
+        )}
       </div>
 
       {/* Filters Bar */}
@@ -315,12 +319,14 @@ export default function CustomersPage() {
                         >
                           <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
                         </button>
-                        <button
-                          onClick={() => handleDeleteCustomer(customer.id)}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 border border-white/5 hover:bg-red-500 hover:text-black hover:border-red-500 transition-all group/btn"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDeleteCustomer(customer.id)}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 border border-white/5 hover:bg-red-500 hover:text-black hover:border-red-500 transition-all group/btn"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -536,7 +542,7 @@ export default function CustomersPage() {
               </div>
 
               <div className="px-8 py-6 bg-white/2 border-t border-white/5 flex items-center justify-between">
-                {editingCustomer?.id && (
+                {isAdmin && editingCustomer?.id && (
                   <Button
                     type="button"
                     variant="ghost"
@@ -558,7 +564,7 @@ export default function CustomersPage() {
                   </Button>
                   <Button
                     type="submit"
-                    disabled={saving}
+                    disabled={saving || !isAdmin}
                     className="rounded-xl bg-primary text-black font-black uppercase text-[10px] tracking-widest px-8 shadow-[0_0_20px_rgba(255,0,255,0.2)]"
                   >
                     {saving ? "Guardando..." : "Guardar Cambios"}

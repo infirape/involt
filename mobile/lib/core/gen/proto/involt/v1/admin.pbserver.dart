@@ -32,6 +32,10 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
   $async.Future<$1.UpsertCustomerResponse> upsertCustomer($pb.ServerContext ctx, $1.UpsertCustomerRequest request);
   $async.Future<$1.DeleteCustomerResponse> deleteCustomer($pb.ServerContext ctx, $1.DeleteCustomerRequest request);
   $async.Future<$1.GetDashboardStatsResponse> getDashboardStats($pb.ServerContext ctx, $1.GetDashboardStatsRequest request);
+  $async.Future<$1.ListPeriodsResponse> listPeriods($pb.ServerContext ctx, $1.ListPeriodsRequest request);
+  $async.Future<$1.GetPeriodStatsResponse> getPeriodStats($pb.ServerContext ctx, $1.GetPeriodStatsRequest request);
+  $async.Future<$1.OpenPeriodResponse> openPeriod($pb.ServerContext ctx, $1.OpenPeriodRequest request);
+  $async.Future<$1.ClosePeriodResponse> closePeriod($pb.ServerContext ctx, $1.ClosePeriodRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -46,6 +50,10 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'UpsertCustomer': return $1.UpsertCustomerRequest();
       case 'DeleteCustomer': return $1.DeleteCustomerRequest();
       case 'GetDashboardStats': return $1.GetDashboardStatsRequest();
+      case 'ListPeriods': return $1.ListPeriodsRequest();
+      case 'GetPeriodStats': return $1.GetPeriodStatsRequest();
+      case 'OpenPeriod': return $1.OpenPeriodRequest();
+      case 'ClosePeriod': return $1.ClosePeriodRequest();
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }
@@ -63,6 +71,10 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'UpsertCustomer': return this.upsertCustomer(ctx, request as $1.UpsertCustomerRequest);
       case 'DeleteCustomer': return this.deleteCustomer(ctx, request as $1.DeleteCustomerRequest);
       case 'GetDashboardStats': return this.getDashboardStats(ctx, request as $1.GetDashboardStatsRequest);
+      case 'ListPeriods': return this.listPeriods(ctx, request as $1.ListPeriodsRequest);
+      case 'GetPeriodStats': return this.getPeriodStats(ctx, request as $1.GetPeriodStatsRequest);
+      case 'OpenPeriod': return this.openPeriod(ctx, request as $1.OpenPeriodRequest);
+      case 'ClosePeriod': return this.closePeriod(ctx, request as $1.ClosePeriodRequest);
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }

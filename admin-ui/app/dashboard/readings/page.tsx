@@ -17,12 +17,16 @@ import {
 } from "lucide-react";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import type { Reading, Sector } from "@/app/gen/involt/v1/models_pb";
+import { PeriodStatus } from "@/app/gen/involt/v1/models_pb";
 import { Card } from "@/components/ui/card";
 import { adminClient } from "@/lib/rpc";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { useRouter } from "next/navigation";
 import { ExportModal } from "@/components/dashboard/readings/ExportModal";
 import { ReadingsStats } from "@/components/dashboard/readings/ReadingsStats";
 
 export default function ReadingsPage() {
+  const { isReader } = useAuth();
   const [data, setData] = useState<{
     readings: Reading[];
     totalCount: number;
@@ -79,14 +83,15 @@ export default function ReadingsPage() {
         }),
         adminClient.getDashboardStats({
           period: filters.period,
-        })
+        }),
       ]);
 
       const totalReadings = statsResp.totalReadingsPeriod;
       const pendingReadings = statsResp.pendingReadingsPeriod;
-      const syncPercentage = totalReadings + pendingReadings > 0 
-        ? (totalReadings / (totalReadings + pendingReadings)) * 100 
-        : 0;
+      const syncPercentage =
+        totalReadings + pendingReadings > 0
+          ? (totalReadings / (totalReadings + pendingReadings)) * 100
+          : 0;
 
       setData((prev) => ({
         ...prev,
@@ -97,7 +102,7 @@ export default function ReadingsPage() {
           totalRevenue: statsResp.totalRevenue,
           totalConsumptionKwh: statsResp.totalConsumptionKwh,
           syncPercentage: syncPercentage,
-        }
+        },
       }));
     } catch (err) {
       console.error("Failed to fetch readings:", err);
@@ -108,25 +113,29 @@ export default function ReadingsPage() {
   useEffect(() => {
     const initPage = async () => {
       try {
-        const sectorsResp = await adminClient.getSectors({});
-        
-        const currentYear = new Date().getFullYear();
-        const generatedPeriods: string[] = [];
-        for (let i = 0; i < 12; i++) {
-          const month = (i + 1).toString().padStart(2, '0');
-          generatedPeriods.push(`${currentYear}-${month}`);
-        }
+        const [sectorsResp, periodsResp] = await Promise.all([
+          adminClient.getSectors({}),
+          adminClient.listPeriods({}),
+        ]);
 
-        setData(prev => ({
+        const dbPeriods = periodsResp.periods.map((p) => p.id);
+        const currentOpen = periodsResp.periods.find(
+          (p) => p.status === PeriodStatus.OPEN,
+        );
+
+        setData((prev) => ({
           ...prev,
           sectors: sectorsResp.sectors,
-          periods: generatedPeriods
+          periods: dbPeriods,
         }));
 
-        setExportFilters(prev => ({
-          ...prev,
-          period: filters.period || generatedPeriods[new Date().getMonth()],
-        }));
+        if (currentOpen) {
+          setFilters((prev) => ({ ...prev, period: currentOpen.id }));
+          setExportFilters((prev) => ({ ...prev, period: currentOpen.id }));
+        } else if (dbPeriods.length > 0) {
+          setFilters((prev) => ({ ...prev, period: dbPeriods[0] }));
+          setExportFilters((prev) => ({ ...prev, period: dbPeriods[0] }));
+        }
       } catch (err) {
         console.error("Failed to init readings page:", err);
       }
@@ -137,7 +146,7 @@ export default function ReadingsPage() {
 
   useEffect(() => {
     let isMounted = true;
-    
+
     // Defer the execution to avoid synchronous setState during effect execution
     const load = async () => {
       await Promise.resolve();
@@ -145,9 +154,11 @@ export default function ReadingsPage() {
         await fetchReadings();
       }
     };
-    
+
     load();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, [fetchReadings]);
 
   const totalPages = useMemo(
@@ -169,21 +180,36 @@ export default function ReadingsPage() {
             Control de <span className="text-primary italic">Lecturas</span>
           </h1>
           <p className="text-muted-foreground/40 font-bold uppercase text-[10px] tracking-[0.3em] mt-2">
-            {data.totalCount} Registros • Telemetría General
+            {data.totalCount} Registros • General
           </p>
         </div>
         <div className="flex gap-3">
-          <button 
-            onClick={() => setIsExportModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-black hover:bg-primary/90 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
-          >
-            <Download className="w-4 h-4" />
-            Descargar Recibos
-          </button>
-          <button className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest">
-            <Calendar className="w-4 h-4 text-primary" />
-            {filters.period || "Periodo Actual"}
-          </button>
+          {!isReader && (
+            <button
+              onClick={() => setIsExportModalOpen(true)}
+              className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-black hover:bg-primary/90 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+            >
+              <Download className="w-4 h-4" />
+              Descargar Recibos
+            </button>
+          )}
+          <div className="relative group">
+            <select
+              className="flex items-center gap-2 px-10 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer outline-none focus:ring-2 focus:ring-primary/20 appearance-none bg-zinc-900 min-w-[160px]"
+              value={filters.period}
+              onChange={(e) => {
+                setFilters((prev) => ({ ...prev, period: e.target.value }));
+                setPagination((prev) => ({ ...prev, pageNumber: 1 }));
+              }}
+            >
+              {data.periods.map((p) => (
+                <option key={p} value={p} className="bg-zinc-900 text-white">
+                  {p}
+                </option>
+              ))}
+            </select>
+            <Calendar className="w-4 h-4 text-primary absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
         </div>
       </div>
 
@@ -212,27 +238,40 @@ export default function ReadingsPage() {
               setPagination((prev) => ({ ...prev, pageNumber: 1 }));
             }}
           >
-            <option value="" className="bg-zinc-900 text-white">Todos los Sectores</option>
-            {data.sectors.map(s => (
-              <option key={s.id} value={s.id} className="bg-zinc-900 text-white">{s.name}</option>
+            <option value="" className="bg-zinc-900 text-white">
+              Todos los Sectores
+            </option>
+            {data.sectors.map((s) => (
+              <option
+                key={s.id}
+                value={s.id}
+                className="bg-zinc-900 text-white"
+              >
+                {s.name}
+              </option>
             ))}
           </select>
         </div>
         <div className="relative group">
           <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
-          <input
-            type="month"
-            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-5 text-xs font-bold focus:outline-none focus:border-primary/50 transition-all appearance-none cursor-pointer scheme-dark"
+          <select
+            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-5 text-xs font-bold focus:outline-none focus:border-primary/50 transition-all appearance-none cursor-pointer"
             value={filters.period}
             onChange={(e) => {
               setFilters((prev) => ({ ...prev, period: e.target.value }));
               setPagination((prev) => ({ ...prev, pageNumber: 1 }));
             }}
-          />
+          >
+            {data.periods.map((p) => (
+              <option key={p} value={p} className="bg-zinc-900 text-white">
+                {p}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      <ReadingsStats 
+      <ReadingsStats
         totalConsumptionKwh={data.stats.totalConsumptionKwh}
         totalRevenue={data.stats.totalRevenue}
         syncPercentage={data.stats.syncPercentage}
@@ -333,14 +372,21 @@ export default function ReadingsPage() {
                       </span>
                     </td>
                     <td className="px-8 py-3 text-right">
-                      <button 
+                      <button
                         onClick={() => {
-                          const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+                          const baseUrl =
+                            process.env.NEXT_PUBLIC_API_URL ||
+                            "http://localhost:8080";
                           const cookieRow = document.cookie
-                            .split('; ')
-                            .find(row => row.startsWith('admin_token='));
-                          const token = cookieRow ? cookieRow.substring('admin_token='.length) : "";
-                          window.open(`${baseUrl}/admin/readings/pdf/${reading.id}?token=${encodeURIComponent(token)}`, '_blank');
+                            .split("; ")
+                            .find((row) => row.startsWith("admin_token="));
+                          const token = cookieRow
+                            ? cookieRow.substring("admin_token=".length)
+                            : "";
+                          window.open(
+                            `${baseUrl}/admin/readings/pdf/${reading.id}?token=${encodeURIComponent(token)}`,
+                            "_blank",
+                          );
                         }}
                         className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 border border-white/5 hover:bg-primary hover:text-black hover:border-primary transition-all group/btn"
                       >
@@ -418,7 +464,7 @@ export default function ReadingsPage() {
       </Card>
 
       {/* Export Selection Modal */}
-      <ExportModal 
+      <ExportModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
         periods={data.periods}
@@ -426,35 +472,40 @@ export default function ReadingsPage() {
         filters={exportFilters}
         onFilterChange={setExportFilters}
         onExport={async () => {
-          const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+          const baseUrl =
+            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
           const cookieRow = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('admin_token='));
-          const token = cookieRow ? cookieRow.substring('admin_token='.length) : "";
-          
+            .split("; ")
+            .find((row) => row.startsWith("admin_token="));
+          const token = cookieRow
+            ? cookieRow.substring("admin_token=".length)
+            : "";
+
           const url = `${baseUrl}/admin/readings/bulk-pdf?period=${exportFilters.period}&sectorId=${exportFilters.sectorId}&token=${encodeURIComponent(token)}`;
-          
+
           try {
             // Background fetch to avoid opening new windows
             const response = await fetch(url);
             if (!response.ok) throw new Error("Export failed");
-            
-             const blob = await response.blob();
-             const contentDisposition = response.headers.get("Content-Disposition");
-             let fileName = `recibos_${exportFilters.period}.pdf`;
-             if (contentDisposition) {
-               const match = contentDisposition.match(/filename=(.+)/);
-               if (match && match[1]) fileName = match[1];
-             }
 
-             const downloadUrl = window.URL.createObjectURL(blob);
-             const link = document.createElement("a");
-             link.href = downloadUrl;
-             link.setAttribute("download", fileName);
-             document.body.appendChild(link);
-             link.click();
-             link.remove();
-             window.URL.revokeObjectURL(downloadUrl);
+            const blob = await response.blob();
+            const contentDisposition = response.headers.get(
+              "Content-Disposition",
+            );
+            let fileName = `recibos_${exportFilters.period}.pdf`;
+            if (contentDisposition) {
+              const match = contentDisposition.match(/filename=(.+)/);
+              if (match && match[1]) fileName = match[1];
+            }
+
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = downloadUrl;
+            link.setAttribute("download", fileName);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(downloadUrl);
             setIsExportModalOpen(false);
           } catch (err) {
             console.error("Export error:", err);

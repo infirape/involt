@@ -9,8 +9,12 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { adminClient } from "@/lib/rpc";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export default function UsersPage() {
+  const { isAdmin, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [data, setData] = useState<{
     users: AdminUser[];
     sectors: Sector[];
@@ -25,6 +29,12 @@ export default function UsersPage() {
     null,
   );
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && !isAdmin) {
+      router.push("/dashboard");
+    }
+  }, [authLoading, isAdmin, router]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -44,11 +54,10 @@ export default function UsersPage() {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (isAdmin) {
       fetchData();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [fetchData]);
+    }
+  }, [isAdmin, fetchData]);
 
   const [password, setPassword] = useState("");
 
@@ -93,6 +102,8 @@ export default function UsersPage() {
       return { ...prev, assignedSectorIds: newSectors };
     });
   };
+
+  if (authLoading || !isAdmin) return null;
 
   return (
     <div className="p-8 space-y-8">
@@ -317,24 +328,26 @@ export default function UsersPage() {
                   <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">
                     Sectores Asignados
                   </Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {data.sectors.map((s) => (
-                      <button
-                        key={s.id}
-                        type="button"
-                        onClick={() => toggleSector(s.id)}
-                        className={`flex items-center justify-between p-3 rounded-xl border transition-all text-xs font-bold uppercase ${
-                          editingUser.assignedSectorIds?.includes(s.id)
-                            ? "bg-primary/10 border-primary/30 text-primary"
-                            : "bg-white/5 border-white/5 text-muted-foreground hover:bg-white/10"
-                        }`}
-                      >
-                        {s.name}
-                        {editingUser.assignedSectorIds?.includes(s.id) && (
-                          <Shield className="w-3 h-3" />
-                        )}
-                      </button>
-                    ))}
+                  <div className="max-h-48 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
+                    <div className="grid grid-cols-2 gap-2">
+                      {data.sectors.map((s) => (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => toggleSector(s.id)}
+                          className={`flex items-center justify-between py-2 px-3 rounded-xl border transition-all text-[10px] font-bold uppercase ${
+                            editingUser.assignedSectorIds?.includes(s.id)
+                              ? "bg-primary/10 border-primary/30 text-primary"
+                              : "bg-white/5 border-white/5 text-muted-foreground hover:bg-white/10"
+                          }`}
+                        >
+                          <span className="truncate mr-2">{s.name}</span>
+                          {editingUser.assignedSectorIds?.includes(s.id) && (
+                            <Shield className="w-3 h-3 shrink-0" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                   <p className="text-[10px] text-muted-foreground/60 italic">
                     * Si no se seleccionan sectores, el usuario tendrá acceso a
@@ -352,6 +365,7 @@ export default function UsersPage() {
                   Cancelar
                 </Button>
                 <Button
+                  type="submit"
                   disabled={saving}
                   className="h-12 px-8 font-black uppercase tracking-tighter rounded-xl bg-primary text-primary-foreground hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20"
                 >

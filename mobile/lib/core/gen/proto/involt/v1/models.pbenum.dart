@@ -31,5 +31,22 @@ class ConnectionType extends $pb.ProtobufEnum {
   const ConnectionType._($core.int v, $core.String n) : super(v, n);
 }
 
+class PeriodStatus extends $pb.ProtobufEnum {
+  static const PeriodStatus PERIOD_STATUS_UNSPECIFIED = PeriodStatus._(0, _omitEnumNames ? '' : 'PERIOD_STATUS_UNSPECIFIED');
+  static const PeriodStatus PERIOD_STATUS_OPEN = PeriodStatus._(1, _omitEnumNames ? '' : 'PERIOD_STATUS_OPEN');
+  static const PeriodStatus PERIOD_STATUS_CLOSED = PeriodStatus._(2, _omitEnumNames ? '' : 'PERIOD_STATUS_CLOSED');
+
+  static const $core.List<PeriodStatus> values = <PeriodStatus> [
+    PERIOD_STATUS_UNSPECIFIED,
+    PERIOD_STATUS_OPEN,
+    PERIOD_STATUS_CLOSED,
+  ];
+
+  static final $core.Map<$core.int, PeriodStatus> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static PeriodStatus? valueOf($core.int value) => _byValue[value];
+
+  const PeriodStatus._($core.int v, $core.String n) : super(v, n);
+}
+
 
 const _omitEnumNames = $core.bool.fromEnvironment('protobuf.omit_enum_names');

@@ -93,3 +93,16 @@ message Settings {
   double mantenimiento = 11;
   bool igv = 12;
 }
+
+enum PeriodStatus {
+  PERIOD_STATUS_UNSPECIFIED = 0;
+  PERIOD_STATUS_OPEN = 1;
+  PERIOD_STATUS_CLOSED = 2;
+}
+
+message Period {
+  string id = 1; // YYYY-MM
+  string start_date = 2;
+  string end_date = 3;
+  PeriodStatus status = 4;
+}
