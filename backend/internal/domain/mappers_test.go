@@ -8,15 +8,16 @@ import (
 )
 
 func TestMapProtoToReading(t *testing.T) {
-	now := time.Now().Unix()
+	now := time.Now().Truncate(time.Second)
+	nowStr := now.Format(time.RFC3339)
 	proto := &involtv1.Reading{
 		Id:               "read-123",
 		CustomerId:       "cust-456",
 		PreviousValue:    100.5,
 		CurrentValue:     150.2,
-		ConsumptionKwh:   49.7,
+		Consumption:      49.7,
 		PhotoUrl:         "http://photos/1.jpg",
-		Timestamp:        now,
+		Timestamp:        nowStr,
 		Latitude:         -7.15,
 		Longitude:        -78.50,
 		CargoFijo:        6.00,
@@ -30,11 +31,11 @@ func TestMapProtoToReading(t *testing.T) {
 	if domain.ID != proto.Id {
 		t.Errorf("expected ID %s, got %s", proto.Id, domain.ID)
 	}
-	if domain.Consumption != proto.ConsumptionKwh {
-		t.Errorf("expected Consumption %f, got %f", proto.ConsumptionKwh, domain.Consumption)
+	if domain.Consumption != proto.Consumption {
+		t.Errorf("expected Consumption %f, got %f", proto.Consumption, domain.Consumption)
 	}
-	if domain.Timestamp.Unix() != proto.Timestamp {
-		t.Errorf("expected Timestamp %d, got %d", proto.Timestamp, domain.Timestamp.Unix())
+	if !domain.Timestamp.Equal(now) {
+		t.Errorf("expected Timestamp %v, got %v", now, domain.Timestamp)
 	}
 	if domain.TotalToPay != proto.TotalToPay {
 		t.Errorf("expected TotalToPay %f, got %f", proto.TotalToPay, domain.TotalToPay)

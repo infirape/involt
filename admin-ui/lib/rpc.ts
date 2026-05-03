@@ -4,10 +4,10 @@ import { createConnectTransport } from "@connectrpc/connect-web";
 import { AdminService } from "@/app/gen/involt/v1/admin_pb";
 
 const authInterceptor: Interceptor = (next) => async (req) => {
-  const token = document.cookie
+  const cookieRow = document.cookie
     .split("; ")
-    .find((row) => row.startsWith("admin_token="))
-    ?.split("=")[1];
+    .find((row) => row.startsWith("admin_token="));
+  const token = cookieRow ? cookieRow.substring("admin_token=".length) : undefined;
 
   if (token) {
     req.header.set("Authorization", `Bearer ${token}`);

@@ -60,13 +60,21 @@ func (g *MarotoGenerator) GenerateBatch(ctx context.Context, readings []domain.R
 		Build()
 	m := maroto.New(cfg)
 
-	for _, r := range readings {
+	for i, r := range readings {
 		customer := customers[r.CustomerID]
 		if customer == nil {
 			customer = &domain.Customer{Name: "Desconocido", Code: "N/A"}
 		}
 		g.addReceiptComponents(m, &r, customer, settings, customer.CommunityName, customer.SectorName)
-		m.AddRows(row.New(10)) 
+		
+		// If it's the first receipt of the page, add a separator
+		if (i+1)%2 != 0 && (i+1) < len(readings) {
+			m.AddRows(row.New(20).Add(
+				col.New(12).WithStyle(&props.Cell{BorderType: border.Bottom, BorderThickness: 0.1}),
+			))
+		} else {
+			m.AddRows(row.New(10))
+		}
 	}
 
 	document, err := m.Generate()

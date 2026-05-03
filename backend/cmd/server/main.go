@@ -63,7 +63,7 @@ func main() {
 	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, pdfGen)
 	settingsHandler := handlers.NewSettingsHandler(settingsRepo)
 	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, jwtSecret)
-	adminHandler := admin.NewAdminHandler(settingsRepo, customerRepo, readingRepo, metaRepo, pdfGen)
+	adminHandler := admin.NewAdminHandler(adminRepo, settingsRepo, customerRepo, readingRepo, metaRepo, pdfGen, jwtSecret)
 
 	// 4. Setup Mux
 	mux := http.NewServeMux()
@@ -117,7 +117,7 @@ func main() {
 		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Connect-Protocol-Version", "Content-Type", "Authorization"},
-		ExposedHeaders:   []string{"Connect-Protocol-Version"},
+		ExposedHeaders:   []string{"Connect-Protocol-Version", "Content-Disposition"},
 		AllowCredentials: true,
 	})
 

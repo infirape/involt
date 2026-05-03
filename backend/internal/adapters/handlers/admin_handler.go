@@ -247,6 +247,11 @@ func (h *AdminHandler) GetReadings(
 	ctx context.Context,
 	req *connect.Request[involtv1.GetReadingsRequest],
 ) (*connect.Response[involtv1.GetReadingsResponse], error) {
+	user, ok := auth.GetUserFromContext(ctx)
+	if !ok {
+		return nil, connect.NewError(connect.CodeUnauthenticated, nil)
+	}
+
 	pageSize := req.Msg.PageSize
 	if pageSize <= 0 {
 		pageSize = 20
@@ -256,7 +261,32 @@ func (h *AdminHandler) GetReadings(
 		offset = 0
 	}
 
-	readings, total, err := h.readingRepo.List(ctx, req.Msg.CustomerId, req.Msg.SectorId, req.Msg.Period, int(pageSize), int(offset))
+	sectorID := req.Msg.SectorId
+	if user.Role != string(domain.RoleAdmin) {
+		if sectorID != "" {
+			allowed := false
+			for _, id := range user.AssignedSectorIDs {
+				if id == sectorID {
+					allowed = true
+					break
+				}
+			}
+			if !allowed {
+				return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("sector not assigned"))
+			}
+		} else {
+			// If non-admin and no sector selected, we MUST force filtering by assigned sectors.
+			// However, since Repo.List currently takes a single string, we'll return an error 
+			// or default to the first assigned sector if available.
+			if len(user.AssignedSectorIDs) > 0 {
+				sectorID = user.AssignedSectorIDs[0]
+			} else {
+				return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("no assigned sectors"))
+			}
+		}
+	}
+
+	readings, total, err := h.readingRepo.List(ctx, req.Msg.CustomerId, sectorID, req.Msg.Period, int(pageSize), int(offset))
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}

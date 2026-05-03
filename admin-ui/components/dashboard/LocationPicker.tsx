@@ -72,7 +72,7 @@ export default function LocationPicker({
           />
         )}
       </MapContainer>
-      <div className="absolute bottom-4 left-4 z-[1000] bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 shadow-2xl pointer-events-none">
+      <div className="absolute bottom-4 left-4 z-1000 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 shadow-2xl pointer-events-none">
         <p className="text-[9px] font-black uppercase tracking-widest text-primary">
           Haz click o arrastra el marcador
         </p>

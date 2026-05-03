@@ -29,7 +29,16 @@ func (m *mockReadingRepo) CountBySectorAndPeriod(ctx context.Context, sectorID, 
 func (m *mockReadingRepo) SumConsumptionBySectorAndPeriod(ctx context.Context, sectorID, period string) (float64, error) {
 	return m.sumBySector[sectorID], nil
 }
+func (m *mockReadingRepo) SumRevenueByPeriod(ctx context.Context, period string) (float64, error) {
+	return 0, nil
+}
+func (m *mockReadingRepo) SumConsumptionByPeriod(ctx context.Context, period string) (float64, error) {
+	return 0, nil
+}
 func (m *mockReadingRepo) ListAll(ctx context.Context) ([]domain.Reading, error) { return nil, nil }
+func (m *mockReadingRepo) List(ctx context.Context, customerID, sectorID, period string, limit, offset int) ([]domain.Reading, int, error) {
+	return nil, 0, nil
+}
 
 
 type mockCustomerRepo struct {
@@ -43,6 +52,11 @@ func (m *mockCustomerRepo) SaveBatch(ctx context.Context, customers []domain.Cus
 func (m *mockCustomerRepo) CountBySector(ctx context.Context, sectorID string) (int, error) {
 	return m.countBySector[sectorID], nil
 }
+func (m *mockCustomerRepo) List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int) ([]domain.Customer, int, error) {
+	return nil, 0, nil
+}
+func (m *mockCustomerRepo) Save(ctx context.Context, customer *domain.Customer) error { return nil }
+func (m *mockCustomerRepo) Delete(ctx context.Context, id string) error               { return nil }
 
 type mockMetadataRepo struct {
 	sectors []domain.Sector
@@ -55,7 +69,8 @@ func (m *mockMetadataRepo) ListSectors(ctx context.Context) ([]domain.Sector, er
 func (m *mockMetadataRepo) SaveCommunities(ctx context.Context, communities []domain.Community) error { return nil }
 func (m *mockMetadataRepo) SaveSectors(ctx context.Context, sectors []domain.Sector) error { return nil }
 func (m *mockMetadataRepo) GetAppConfig(ctx context.Context) (*domain.AppConfig, error) { return nil, nil }
-func (m *mockMetadataRepo) GetSettings(ctx context.Context) (*domain.Settings, error) { return nil, nil }
+func (m *mockMetadataRepo) GetSettings(ctx context.Context) (*domain.Settings, error)   { return nil, nil }
+func (m *mockMetadataRepo) SaveSettings(ctx context.Context, settings *domain.Settings) error { return nil }
 
 type mockReceiptGen struct{}
 

@@ -11,21 +11,46 @@ import {
   CheckCircle2,
   Search,
   Filter,
+  Download,
+  X,
+  FileText,
 } from "lucide-react";
 import { useEffect, useState, useCallback, useMemo } from "react";
-import type { Reading } from "@/app/gen/involt/v1/models_pb";
+import type { Reading, Sector } from "@/app/gen/involt/v1/models_pb";
 import { Card } from "@/components/ui/card";
 import { adminClient } from "@/lib/rpc";
+import { ExportModal } from "@/components/dashboard/readings/ExportModal";
+import { ReadingsStats } from "@/components/dashboard/readings/ReadingsStats";
 
 export default function ReadingsPage() {
   const [data, setData] = useState<{
     readings: Reading[];
     totalCount: number;
     loading: boolean;
+    stats: {
+      totalRevenue: number;
+      totalConsumptionKwh: number;
+      syncPercentage: number;
+    };
+    sectors: Sector[];
+    periods: string[];
   }>({
     readings: [],
     totalCount: 0,
     loading: true,
+    stats: {
+      totalRevenue: 0,
+      totalConsumptionKwh: 0,
+      syncPercentage: 0,
+    },
+    sectors: [],
+    periods: [],
+  });
+
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [exportFilters, setExportFilters] = useState({
+    period: "",
+    sectorId: "",
   });
 
   const [pagination, setPagination] = useState({
@@ -33,28 +58,47 @@ export default function ReadingsPage() {
     pageSize: 15,
   });
 
+  const currentMonth = new Date().toISOString().slice(0, 7);
+
   const [filters, setFilters] = useState({
     customerId: "",
     sectorId: "",
-    period: "",
+    period: currentMonth,
   });
 
   const fetchReadings = useCallback(async () => {
     try {
       setData((prev) => ({ ...prev, loading: true }));
-      const resp = await adminClient.getReadings({
-        customerId: filters.customerId,
-        sectorId: filters.sectorId,
-        period: filters.period,
-        pageNumber: pagination.pageNumber,
-        pageSize: pagination.pageSize,
-      });
+      const [readingsResp, statsResp] = await Promise.all([
+        adminClient.getReadings({
+          customerId: filters.customerId,
+          sectorId: filters.sectorId,
+          period: filters.period,
+          pageNumber: pagination.pageNumber,
+          pageSize: pagination.pageSize,
+        }),
+        adminClient.getDashboardStats({
+          period: filters.period,
+        })
+      ]);
 
-      setData({
-        readings: resp.readings,
-        totalCount: resp.totalCount,
+      const totalReadings = statsResp.totalReadingsPeriod;
+      const pendingReadings = statsResp.pendingReadingsPeriod;
+      const syncPercentage = totalReadings + pendingReadings > 0 
+        ? (totalReadings / (totalReadings + pendingReadings)) * 100 
+        : 0;
+
+      setData((prev) => ({
+        ...prev,
+        readings: readingsResp.readings,
+        totalCount: readingsResp.totalCount,
         loading: false,
-      });
+        stats: {
+          totalRevenue: statsResp.totalRevenue,
+          totalConsumptionKwh: statsResp.totalConsumptionKwh,
+          syncPercentage: syncPercentage,
+        }
+      }));
     } catch (err) {
       console.error("Failed to fetch readings:", err);
       setData((prev) => ({ ...prev, loading: false }));
@@ -62,10 +106,48 @@ export default function ReadingsPage() {
   }, [filters, pagination]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchReadings();
-    }, 0);
-    return () => clearTimeout(timer);
+    const initPage = async () => {
+      try {
+        const sectorsResp = await adminClient.getSectors({});
+        
+        const currentYear = new Date().getFullYear();
+        const generatedPeriods: string[] = [];
+        for (let i = 0; i < 12; i++) {
+          const month = (i + 1).toString().padStart(2, '0');
+          generatedPeriods.push(`${currentYear}-${month}`);
+        }
+
+        setData(prev => ({
+          ...prev,
+          sectors: sectorsResp.sectors,
+          periods: generatedPeriods
+        }));
+
+        setExportFilters(prev => ({
+          ...prev,
+          period: filters.period || generatedPeriods[new Date().getMonth()],
+        }));
+      } catch (err) {
+        console.error("Failed to init readings page:", err);
+      }
+    };
+
+    initPage();
+  }, []); // Only once on mount
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    // Defer the execution to avoid synchronous setState during effect execution
+    const load = async () => {
+      await Promise.resolve();
+      if (isMounted) {
+        await fetchReadings();
+      }
+    };
+    
+    load();
+    return () => { isMounted = false; };
   }, [fetchReadings]);
 
   const totalPages = useMemo(
@@ -91,9 +173,16 @@ export default function ReadingsPage() {
           </p>
         </div>
         <div className="flex gap-3">
+          <button 
+            onClick={() => setIsExportModalOpen(true)}
+            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-black hover:bg-primary/90 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+          >
+            <Download className="w-4 h-4" />
+            Descargar Recibos
+          </button>
           <button className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest">
             <Calendar className="w-4 h-4 text-primary" />
-            Mayo 2026
+            {filters.period || "Periodo Actual"}
           </button>
         </div>
       </div>
@@ -123,9 +212,10 @@ export default function ReadingsPage() {
               setPagination((prev) => ({ ...prev, pageNumber: 1 }));
             }}
           >
-            <option value="">Todos los Sectores</option>
-            <option value="sector-1">Chetilla Centro</option>
-            <option value="sector-2">Tambillo</option>
+            <option value="" className="bg-zinc-900 text-white">Todos los Sectores</option>
+            {data.sectors.map(s => (
+              <option key={s.id} value={s.id} className="bg-zinc-900 text-white">{s.name}</option>
+            ))}
           </select>
         </div>
         <div className="relative group">
@@ -142,42 +232,11 @@ export default function ReadingsPage() {
         </div>
       </div>
 
-      {/* Stats Quick View */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-primary/5 border-primary/10 rounded-2xl p-4 group hover:bg-primary/10 transition-all duration-500">
-          <div className="flex items-center gap-2 mb-1 opacity-60">
-            <Zap className="w-3.5 h-3.5 text-primary" />
-            <p className="text-[9px] font-black uppercase tracking-widest text-primary">
-              Consumo Promedio
-            </p>
-          </div>
-          <p className="text-xl font-black tracking-tighter text-white">
-            124.5 <span className="text-xs opacity-40">kWh</span>
-          </p>
-        </Card>
-        <Card className="bg-cyan-500/5 border-cyan-500/10 rounded-2xl p-4 group hover:bg-cyan-500/10 transition-all duration-500">
-          <div className="flex items-center gap-2 mb-1 opacity-60">
-            <DollarSign className="w-3.5 h-3.5 text-cyan-500" />
-            <p className="text-[9px] font-black uppercase tracking-widest text-cyan-500">
-              Ticket Promedio
-            </p>
-          </div>
-          <p className="text-xl font-black tracking-tighter text-white">
-            S/ 84.20
-          </p>
-        </Card>
-        <Card className="bg-emerald-500/5 border-emerald-500/10 rounded-2xl p-4 group hover:bg-emerald-500/10 transition-all duration-500">
-          <div className="flex items-center gap-2 mb-1 opacity-60">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-            <p className="text-[9px] font-black uppercase tracking-widest text-emerald-500">
-              Sincronización
-            </p>
-          </div>
-          <p className="text-xl font-black tracking-tighter text-white">
-            100% <span className="text-xs opacity-40">OK</span>
-          </p>
-        </Card>
-      </div>
+      <ReadingsStats 
+        totalConsumptionKwh={data.stats.totalConsumptionKwh}
+        totalRevenue={data.stats.totalRevenue}
+        syncPercentage={data.stats.syncPercentage}
+      />
 
       {/* Main Table Card */}
       <Card className="border-white/5 bg-card/10 backdrop-blur-3xl overflow-hidden rounded-[2.5rem] shadow-2xl">
@@ -277,7 +336,11 @@ export default function ReadingsPage() {
                       <button 
                         onClick={() => {
                           const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-                          window.open(`${baseUrl}/admin/readings/pdf/${reading.id}`, '_blank');
+                          const cookieRow = document.cookie
+                            .split('; ')
+                            .find(row => row.startsWith('admin_token='));
+                          const token = cookieRow ? cookieRow.substring('admin_token='.length) : "";
+                          window.open(`${baseUrl}/admin/readings/pdf/${reading.id}?token=${encodeURIComponent(token)}`, '_blank');
                         }}
                         className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 border border-white/5 hover:bg-primary hover:text-black hover:border-primary transition-all group/btn"
                       >
@@ -353,6 +416,52 @@ export default function ReadingsPage() {
           </div>
         </div>
       </Card>
+
+      {/* Export Selection Modal */}
+      <ExportModal 
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        periods={data.periods}
+        sectors={data.sectors}
+        filters={exportFilters}
+        onFilterChange={setExportFilters}
+        onExport={async () => {
+          const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+          const cookieRow = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('admin_token='));
+          const token = cookieRow ? cookieRow.substring('admin_token='.length) : "";
+          
+          const url = `${baseUrl}/admin/readings/bulk-pdf?period=${exportFilters.period}&sectorId=${exportFilters.sectorId}&token=${encodeURIComponent(token)}`;
+          
+          try {
+            // Background fetch to avoid opening new windows
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("Export failed");
+            
+             const blob = await response.blob();
+             const contentDisposition = response.headers.get("Content-Disposition");
+             let fileName = `recibos_${exportFilters.period}.pdf`;
+             if (contentDisposition) {
+               const match = contentDisposition.match(/filename=(.+)/);
+               if (match && match[1]) fileName = match[1];
+             }
+
+             const downloadUrl = window.URL.createObjectURL(blob);
+             const link = document.createElement("a");
+             link.href = downloadUrl;
+             link.setAttribute("download", fileName);
+             document.body.appendChild(link);
+             link.click();
+             link.remove();
+             window.URL.revokeObjectURL(downloadUrl);
+            setIsExportModalOpen(false);
+          } catch (err) {
+            console.error("Export error:", err);
+            alert("Error al generar el ZIP. Por favor re-ingresa al sistema.");
+          }
+        }}
+      />
     </div>
   );
 }
