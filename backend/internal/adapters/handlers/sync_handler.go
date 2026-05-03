@@ -18,6 +18,7 @@ type SyncHandler struct {
 	metaRepo     ports.MetadataRepository
 	customerRepo ports.CustomerRepository
 	readingRepo  ports.ReadingRepository
+	periodRepo   ports.PeriodRepository
 	pdfGen       ports.ReceiptGenerator
 }
 
@@ -25,12 +26,14 @@ func NewSyncHandler(
 	metaRepo ports.MetadataRepository,
 	customerRepo ports.CustomerRepository,
 	readingRepo ports.ReadingRepository,
+	periodRepo ports.PeriodRepository,
 	pdfGen ports.ReceiptGenerator,
 ) *SyncHandler {
 	return &SyncHandler{
 		metaRepo:     metaRepo,
 		customerRepo: customerRepo,
 		readingRepo:  readingRepo,
+		periodRepo:   periodRepo,
 		pdfGen:       pdfGen,
 	}
 }
@@ -111,6 +114,11 @@ func (h *SyncHandler) PullMetadata(
 		for i, r := range readings {
 			resp.Readings[i] = domain.MapReadingToProto(&r)
 		}
+	}
+
+	// Fetch current open period
+	if openPeriod, err := h.periodRepo.GetCurrent(ctx); err == nil && openPeriod != nil {
+		resp.CurrentPeriod = domain.MapPeriodToProto(openPeriod)
 	}
 
 	return connect.NewResponse(resp), nil

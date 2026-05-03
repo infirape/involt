@@ -183,6 +183,7 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     $core.Iterable<$0.Reading>? readings,
     $0.AppConfig? config,
     $0.Settings? settings,
+    $0.Period? currentPeriod,
   }) {
     final $result = create();
     if (communities != null) {
@@ -203,6 +204,9 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     if (settings != null) {
       $result.settings = settings;
     }
+    if (currentPeriod != null) {
+      $result.currentPeriod = currentPeriod;
+    }
     return $result;
   }
   PullMetadataResponse._() : super();
@@ -216,6 +220,7 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     ..pc<$0.Reading>(4, _omitFieldNames ? '' : 'readings', $pb.PbFieldType.PM, subBuilder: $0.Reading.create)
     ..aOM<$0.AppConfig>(5, _omitFieldNames ? '' : 'config', subBuilder: $0.AppConfig.create)
     ..aOM<$0.Settings>(6, _omitFieldNames ? '' : 'settings', subBuilder: $0.Settings.create)
+    ..aOM<$0.Period>(7, _omitFieldNames ? '' : 'currentPeriod', subBuilder: $0.Period.create)
     ..hasRequiredFields = false
   ;
 
@@ -273,6 +278,17 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
   void clearSettings() => clearField(6);
   @$pb.TagNumber(6)
   $0.Settings ensureSettings() => $_ensure(5);
+
+  @$pb.TagNumber(7)
+  $0.Period get currentPeriod => $_getN(6);
+  @$pb.TagNumber(7)
+  set currentPeriod($0.Period v) { setField(7, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasCurrentPeriod() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearCurrentPeriod() => clearField(7);
+  @$pb.TagNumber(7)
+  $0.Period ensureCurrentPeriod() => $_ensure(6);
 }
 
 class UploadPhotoRequest extends $pb.GeneratedMessage {

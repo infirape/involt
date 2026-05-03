@@ -65,6 +65,7 @@ const PullMetadataResponse$json = {
     {'1': 'readings', '3': 4, '4': 3, '5': 11, '6': '.involt.v1.Reading', '10': 'readings'},
     {'1': 'config', '3': 5, '4': 1, '5': 11, '6': '.involt.v1.AppConfig', '10': 'config'},
     {'1': 'settings', '3': 6, '4': 1, '5': 11, '6': '.involt.v1.Settings', '10': 'settings'},
+    {'1': 'current_period', '3': 7, '4': 1, '5': 11, '6': '.involt.v1.Period', '10': 'currentPeriod'},
   ],
 };
 
@@ -75,7 +76,8 @@ final $typed_data.Uint8List pullMetadataResponseDescriptor = $convert.base64Deco
     'dG9yUgdzZWN0b3JzEjEKCWN1c3RvbWVycxgDIAMoCzITLmludm9sdC52MS5DdXN0b21lclIJY3'
     'VzdG9tZXJzEi4KCHJlYWRpbmdzGAQgAygLMhIuaW52b2x0LnYxLlJlYWRpbmdSCHJlYWRpbmdz'
     'EiwKBmNvbmZpZxgFIAEoCzIULmludm9sdC52MS5BcHBDb25maWdSBmNvbmZpZxIvCghzZXR0aW'
-    '5ncxgGIAEoCzITLmludm9sdC52MS5TZXR0aW5nc1IIc2V0dGluZ3M=');
+    '5ncxgGIAEoCzITLmludm9sdC52MS5TZXR0aW5nc1IIc2V0dGluZ3MSOAoOY3VycmVudF9wZXJp'
+    'b2QYByABKAsyES5pbnZvbHQudjEuUGVyaW9kUg1jdXJyZW50UGVyaW9k');
 
 @$core.Deprecated('Use uploadPhotoRequestDescriptor instead')
 const UploadPhotoRequest$json = {
@@ -150,6 +152,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> SyncServic
   '.involt.v1.Customer': $0.Customer$json,
   '.involt.v1.AppConfig': $0.AppConfig$json,
   '.involt.v1.Settings': $0.Settings$json,
+  '.involt.v1.Period': $0.Period$json,
   '.involt.v1.UploadPhotoRequest': UploadPhotoRequest$json,
   '.involt.v1.UploadPhotoResponse': UploadPhotoResponse$json,
   '.involt.v1.DownloadReceiptRequest': DownloadReceiptRequest$json,

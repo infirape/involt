@@ -111,6 +111,19 @@ class SyncService {
           );
         }
 
+        // Current Period
+        if (response.message.hasCurrentPeriod()) {
+          batch.insert(
+            db.settings,
+            SettingsCompanion.insert(
+              key: 'current_period',
+              value: response.message.currentPeriod.id,
+            ),
+            mode: InsertMode.insertOrReplace,
+          );
+          print('📅 Sync: Current period set to ${response.message.currentPeriod.id}');
+        }
+
         // 5. Readings (Historical)
         for (final r in response.message.readings) {
           batch.insert(

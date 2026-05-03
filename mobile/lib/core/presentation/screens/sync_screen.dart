@@ -6,6 +6,8 @@ import '../../data/database.dart';
 import '../../data/services/sync_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:provider/provider.dart';
+import '../providers/app_state_provider.dart';
 
 class SyncScreen extends StatefulWidget {
   final AppDatabase db;
@@ -252,8 +254,9 @@ class _SyncScreenState extends State<SyncScreen> {
 
     try {
       await syncService.pullMetadata();
-
+      
       if (context.mounted) {
+        await context.read<AppStateProvider>().loadPeriod();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('✅ Datos actualizados con éxito'),
@@ -297,6 +300,7 @@ class _SyncScreenState extends State<SyncScreen> {
       await syncService.pullMetadata();
 
       if (context.mounted) {
+        await context.read<AppStateProvider>().loadPeriod();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('✅ Sincronización completada con éxito'),

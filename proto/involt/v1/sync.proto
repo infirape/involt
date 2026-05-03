@@ -41,6 +41,7 @@ message PullMetadataResponse {
   repeated Reading readings = 4;
   AppConfig config = 5;
   Settings settings = 6;
+  Period current_period = 7;
 }
 
 message UploadPhotoRequest {

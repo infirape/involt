@@ -132,3 +132,24 @@ func MapCustomerToProto(d *Customer) *involtv1.Customer {
 		ContractStart:    d.ContractStart.Format(time.RFC3339),
 	}
 }
+
+// MapPeriodToProto converts a Domain period to Protobuf.
+func MapPeriodToProto(d *Period) *involtv1.Period {
+	if d == nil {
+		return nil
+	}
+	status := involtv1.PeriodStatus_PERIOD_STATUS_UNSPECIFIED
+	switch d.Status {
+	case PeriodStatusOpen:
+		status = involtv1.PeriodStatus_PERIOD_STATUS_OPEN
+	case PeriodStatusClosed:
+		status = involtv1.PeriodStatus_PERIOD_STATUS_CLOSED
+	}
+
+	return &involtv1.Period{
+		Id:        d.ID,
+		StartDate: d.StartDate.Format("2006-01-02"),
+		EndDate:   d.EndDate.Format("2006-01-02"),
+		Status:    status,
+	}
+}

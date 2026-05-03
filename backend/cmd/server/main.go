@@ -61,7 +61,7 @@ func main() {
 		jwtSecret = "super-secret-key-change-me-in-prod"
 	}
 
-	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, pdfGen)
+	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, periodRepo, pdfGen)
 	settingsHandler := handlers.NewSettingsHandler(settingsRepo)
 	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret)
 	adminHandler := admin.NewAdminHandler(adminRepo, settingsRepo, customerRepo, readingRepo, metaRepo, pdfGen, jwtSecret)
