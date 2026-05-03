@@ -13,3 +13,6 @@ scratch/
 
 # Binaries
 backend/server
+
+# Temp
+jira_*.json

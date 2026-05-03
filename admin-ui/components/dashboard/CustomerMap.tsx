@@ -12,7 +12,8 @@ export default function CustomerMap() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    
     async function fetchCustomers() {
       try {
         const resp = await adminClient.getCustomers({});
@@ -22,6 +23,7 @@ export default function CustomerMap() {
       }
     }
     fetchCustomers();
+    return () => clearTimeout(timer);
   }, []);
 
   // Chetilla, Cajamarca center

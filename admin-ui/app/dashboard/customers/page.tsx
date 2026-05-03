@@ -24,7 +24,7 @@ export default function CustomersPage() {
     useState<Partial<Customer> | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     try {
       const [customersResp, sectorsResp] = await Promise.all([
         adminClient.getCustomers({}),
@@ -37,11 +37,11 @@ export default function CustomersPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   const handleOpenModal = (customer: Partial<Customer> | null = null) => {
     setEditingCustomer(

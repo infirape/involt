@@ -25,7 +25,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<GetDashboardStatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchStats = useCallback(async () => {
+  const fetchStats = async () => {
     try {
       const resp = await adminClient.getDashboardStats({});
       setStats(resp);
@@ -34,11 +34,11 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     fetchStats();
-  }, [fetchStats]);
+  }, []);
 
   const cards = [
     { 

@@ -18,7 +18,7 @@ export default function UsersPage() {
   const [editingUser, setEditingUser] = useState<Partial<AdminUser> | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     try {
       const [usersResp, sectorsResp] = await Promise.all([
         adminClient.getUsers({}),
@@ -31,11 +31,11 @@ export default function UsersPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   const [password, setPassword] = useState("");
 
