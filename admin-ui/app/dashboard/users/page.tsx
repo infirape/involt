@@ -11,31 +11,42 @@ import { Label } from "@/components/ui/label";
 import { adminClient } from "@/lib/rpc";
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<AdminUser[]>([]);
-  const [sectors, setSectors] = useState<Sector[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<{
+    users: AdminUser[];
+    sectors: Sector[];
+    loading: boolean;
+  }>({
+    users: [],
+    sectors: [],
+    loading: true,
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<Partial<AdminUser> | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [usersResp, sectorsResp] = await Promise.all([
         adminClient.getUsers({}),
         adminClient.getSectors({}),
       ]);
-      setUsers(usersResp.users);
-      setSectors(sectorsResp.sectors);
+      setData({
+        users: usersResp.users,
+        sectors: sectorsResp.sectors,
+        loading: false,
+      });
     } catch (err) {
       console.error("Failed to fetch data:", err);
-    } finally {
-      setLoading(false);
+      setData((prev) => ({ ...prev, loading: false }));
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    const timer = setTimeout(() => {
+      fetchData();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [fetchData]);
 
   const [password, setPassword] = useState("");
 
@@ -121,7 +132,7 @@ export default function UsersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {loading && users.length === 0 ? (
+                {data.loading && data.users.length === 0 ? (
                   [1, 2, 3].map((i) => (
                     <tr key={`skeleton-${i}`} className="animate-pulse">
                       <td colSpan={4} className="px-6 py-8">
@@ -129,14 +140,14 @@ export default function UsersPage() {
                       </td>
                     </tr>
                   ))
-                ) : users.length === 0 ? (
+                ) : data.users.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground italic">
                       No hay usuarios registrados
                     </td>
                   </tr>
                 ) : (
-                  users.map((u) => (
+                  data.users.map((u) => (
                     <tr key={u.id} className="group hover:bg-white/[0.02] transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -166,7 +177,7 @@ export default function UsersPage() {
                                 key={sid}
                                 className="text-[10px] font-bold text-muted-foreground bg-white/5 px-2 py-1 rounded border border-white/5"
                               >
-                                {sectors.find((s) => s.id === sid)?.name || sid}
+                                {data.sectors.find((s) => s.id === sid)?.name || sid}
                               </span>
                             ))
                           )}
@@ -201,7 +212,7 @@ export default function UsersPage() {
               <div>
                 <CardHeader className="p-0">
                   <h2 className="text-2xl font-black uppercase tracking-tighter">
-                    {users.find((u) => u.id === editingUser.id)
+                    {data.users.find((u) => u.id === editingUser.id)
                       ? "Editar Usuario"
                       : "Nuevo Usuario"}
                   </h2>
@@ -239,10 +250,10 @@ export default function UsersPage() {
                   </div>
                   <div className="space-y-2">
                     <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">
-                      Contraseña {users.find((u) => u.id === editingUser.id) ? "(Opcional)" : ""}
+                      Contraseña {data.users.find((u) => u.id === editingUser.id) ? "(Opcional)" : ""}
                     </Label>
                     <Input
-                      required={!users.find((u) => u.id === editingUser.id)}
+                      required={!data.users.find((u) => u.id === editingUser.id)}
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -276,7 +287,7 @@ export default function UsersPage() {
                     Sectores Asignados
                   </Label>
                   <div className="grid grid-cols-2 gap-2">
-                    {sectors.map((s) => (
+                    {data.sectors.map((s) => (
                       <button
                         key={s.id}
                         type="button"

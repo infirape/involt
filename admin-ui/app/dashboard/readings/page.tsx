@@ -14,17 +14,21 @@ export default function ReadingsPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    let isMounted = true;
     async function fetchData() {
+      // Force to next microtask to avoid synchronous setState warning in React 19
+      await Promise.resolve();
       try {
         const resp = await adminClient.getReadings({});
-        setReadings(resp.readings);
+        if (isMounted) setReadings(resp.readings);
       } catch (err) {
         console.error("Failed to fetch readings:", err);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
     fetchData();
+    return () => { isMounted = false; };
   }, []);
 
   return (

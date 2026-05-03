@@ -16,17 +16,21 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     async function fetchSettings() {
+      // Force to next microtask to avoid synchronous setState warning in React 19
+      await Promise.resolve();
       try {
         const resp = await adminClient.getSettings({});
-        setSettings(resp.settings ?? null);
+        if (isMounted) setSettings(resp.settings ?? null);
       } catch (err) {
         console.error("Failed to fetch settings:", err);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
     fetchSettings();
+    return () => { isMounted = false; };
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
