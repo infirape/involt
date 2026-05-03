@@ -1,0 +1,343 @@
+"use client";
+
+import { FileText, MapIcon, Users, Zap, CheckCircle2, Clock, ArrowUpRight, Activity } from "lucide-react";
+import dynamic from "next/dynamic";
+import { useEffect, useState, useCallback } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { adminClient } from "@/lib/rpc";
+import type { GetDashboardStatsResponse } from "@/app/gen/involt/v1/admin_pb";
+
+const CustomerMap = dynamic(() => import("@/components/dashboard/CustomerMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[400px] w-full rounded-3xl bg-white/5 animate-pulse flex items-center justify-center border border-white/5">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+          Cargando Telemetría...
+        </p>
+      </div>
+    </div>
+  ),
+});
+
+export default function DashboardPage() {
+  const [stats, setStats] = useState<GetDashboardStatsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchStats = useCallback(async () => {
+    try {
+      const resp = await adminClient.getDashboardStats({});
+      setStats(resp);
+    } catch (err) {
+      console.error("Failed to fetch dashboard stats:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
+
+  const cards = [
+    { 
+      title: "Clientes", 
+      value: stats?.totalCustomers.toLocaleString() || "0", 
+      icon: Users, 
+      color: "from-blue-500/20 to-blue-600/5",
+      accent: "bg-blue-500",
+      description: "Padron general"
+    },
+    { 
+      title: "Staff", 
+      value: stats?.totalUsers.toLocaleString() || "0", 
+      icon: MapIcon, 
+      color: "from-emerald-500/20 to-emerald-600/5",
+      accent: "bg-emerald-500",
+      description: "Acceso administrativo"
+    },
+    { 
+      title: "Lecturas", 
+      value: stats?.totalReadingsPeriod.toLocaleString() || "0", 
+      icon: Zap, 
+      color: "from-primary/20 to-primary/5",
+      accent: "bg-primary",
+      description: "Periodo actual"
+    },
+    { 
+      title: "Pendientes", 
+      value: stats?.pendingReadingsPeriod.toLocaleString() || "0", 
+      icon: Clock, 
+      color: "from-orange-500/20 to-orange-600/5",
+      accent: "bg-orange-500",
+      description: "Sin registro"
+    },
+  ];
+
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  return (
+    <div className="p-8 space-y-10 animate-in fade-in zoom-in-95 duration-1000 relative">
+      {/* Dynamic Spotlight Effect */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-50 transition-opacity duration-500"
+        style={{
+          background: `radial-gradient(800px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255,0,255,0.04), transparent 80%)`
+        }}
+      />
+      <div 
+        className="fixed inset-0 pointer-events-none z-50 transition-opacity duration-300"
+        style={{
+          background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255,191,0,0.05), transparent 70%)`
+        }}
+      />
+      <div 
+        className="fixed inset-0 pointer-events-none z-50 transition-opacity duration-200"
+        style={{
+          background: `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0,255,255,0.02), transparent 60%)`
+        }}
+      />
+
+      {/* Background Decorative Elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-cyan-500/10 blur-[100px] rounded-full" />
+      </div>
+
+      {/* Header */}
+      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between border-b border-white/5 pb-8">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-[9px] font-black uppercase tracking-widest text-primary">
+              Sistema v1.2.0
+            </span>
+            <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[9px] font-black uppercase tracking-widest text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.1)]">
+              <div className="w-1 h-1 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
+              Live
+            </span>
+          </div>
+          <h1 className="text-5xl font-black tracking-tighter leading-none">
+            Panel <span className="text-primary italic">QARWAQIRU</span>
+          </h1>
+          <p className="text-muted-foreground/60 font-bold uppercase text-xs tracking-widest">
+            Telemetría y Gestión Energética • Chetilla
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-4 mt-6 md:mt-0">
+          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group">
+            <Clock className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+            <span className="text-xs font-black uppercase tracking-widest">Periodo: 2026-05</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Quick Stats Grid */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map((card) => (
+          <Card
+            key={card.title}
+            className="relative overflow-hidden border-white/5 bg-gradient-to-br bg-card/40 backdrop-blur-xl hover:translate-y-[-4px] transition-all duration-500 group"
+          >
+            <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${card.color} blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div className={`p-2.5 rounded-xl ${card.accent}/10 border border-${card.accent}/20`}>
+                  <card.icon className={`w-5 h-5 ${card.accent.replace('bg-', 'text-')}`} />
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary transition-colors" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                  {card.title}
+                </p>
+                <div className="text-4xl font-black tracking-tighter">
+                  {loading ? (
+                    <div className="h-10 w-20 bg-white/5 animate-pulse rounded-lg mt-1" />
+                  ) : (
+                    card.value
+                  )}
+                </div>
+                <p className="text-[9px] font-bold text-muted-foreground/40 uppercase">
+                  {card.description}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Main Content Layout */}
+      <div className="grid gap-8 lg:grid-cols-12 items-start">
+        {/* Left Column: Map & Primary Content */}
+        <div className="lg:col-span-8 space-y-8">
+          <div className="relative group rounded-[2.5rem] p-1 bg-gradient-to-br from-white/10 to-transparent border border-white/5 shadow-2xl overflow-hidden">
+            <CustomerMap />
+          </div>
+
+          <div className="grid gap-8 sm:grid-cols-2">
+            <Card className="border-white/5 bg-card/20 backdrop-blur-md rounded-3xl overflow-hidden group">
+              <CardHeader className="bg-white/[0.02] border-b border-white/5 py-4">
+                <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-primary animate-pulse" />
+                  Actividad del Servidor
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="h-32 flex items-end gap-1 px-2">
+                  {[40, 70, 45, 90, 65, 80, 50, 85, 95, 60, 75, 55].map((h, i) => (
+                    <div 
+                      key={i} 
+                      className="flex-1 bg-white/5 rounded-t-sm group-hover:bg-amber-500/40 transition-all duration-500 hover:!bg-amber-500 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]" 
+                      style={{ height: `${h}%` }}
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-between mt-4 text-[9px] font-black uppercase text-muted-foreground/40 tracking-widest">
+                  <span>Sincronización Cruda</span>
+                  <span className="text-primary font-black">98.4% Efficiency</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-white/5 bg-card/20 backdrop-blur-md rounded-3xl overflow-hidden">
+              <CardHeader className="bg-white/[0.02] border-b border-white/5 py-4">
+                <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-cyan-500" />
+                  Reporte Rápido
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 flex flex-col justify-center h-full min-h-[160px] text-center">
+                <p className="text-xs text-muted-foreground/60 font-medium mb-4 italic px-4">
+                  "El consumo en Chetilla Centro aumentó un 14% respecto al periodo anterior."
+                </p>
+                <button className="mx-auto px-6 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-black uppercase tracking-widest text-cyan-500 hover:bg-cyan-500 hover:text-black transition-all">
+                  Generar Auditoría
+                </button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Right Column: Status & Sector List */}
+        <div className="lg:col-span-4 space-y-8 h-full">
+          {/* System Status Card */}
+          <Card className="border-white/5 bg-card/20 backdrop-blur-md rounded-[2rem] overflow-hidden">
+            <CardHeader className="bg-white/[0.02] border-b border-white/5 py-4">
+              <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground/80">
+                Estado Operativo
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/5 space-y-1">
+                  <p className="text-[8px] font-black uppercase text-muted-foreground/40 tracking-widest">Core</p>
+                  <p className="text-xs font-black text-green-500">OPTIMAL</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/5 space-y-1">
+                  <p className="text-[8px] font-black uppercase text-muted-foreground/40 tracking-widest">Sync</p>
+                  <p className="text-xs font-black text-cyan-500">ACTIVE</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4 pt-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] font-black uppercase leading-tight">Qarwaqiru Pro</p>
+                    <p className="text-[9px] text-muted-foreground font-bold">Latency: 24ms</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                    <Activity className="w-4 h-4 text-cyan-500" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] font-black uppercase leading-tight">Database Cluster</p>
+                    <p className="text-[9px] text-muted-foreground font-bold">Load: 12.4%</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Sector Progress - Now contained and scrollable */}
+          <Card className="border-white/5 bg-card/20 backdrop-blur-md rounded-[2rem] overflow-hidden flex flex-col max-h-[600px]">
+            <CardHeader className="bg-white/[0.02] border-b border-white/5 py-4 shrink-0">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-widest">
+                  Avance Sectores
+                </CardTitle>
+                <div className="px-2 py-1 rounded bg-primary/10 text-[8px] font-black text-primary uppercase">
+                  {stats?.sectorStats.length || 0} Sectores
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 overflow-y-auto scrollbar-hide">
+              <div className="divide-y divide-white/5">
+                {loading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="p-5 space-y-3 animate-pulse">
+                      <div className="h-3 w-24 bg-white/5 rounded" />
+                      <div className="h-1.5 w-full bg-white/5 rounded" />
+                    </div>
+                  ))
+                ) : stats?.sectorStats.length === 0 ? (
+                  <div className="p-12 text-center text-muted-foreground text-[10px] font-bold uppercase tracking-widest italic">
+                    Sin actividad registrada
+                  </div>
+                ) : (
+                  stats?.sectorStats.map((s) => (
+                    <div key={s.sectorId} className="p-5 hover:bg-white/[0.03] transition-colors group">
+                      <div className="flex items-center justify-between mb-2.5">
+                        <div className="space-y-0.5">
+                          <h4 className="text-[11px] font-black uppercase tracking-tight group-hover:text-primary transition-colors truncate max-w-[150px]">
+                            {s.sectorName}
+                          </h4>
+                          <p className="text-[9px] font-bold text-muted-foreground/40 uppercase">
+                            {s.registeredCount} / {s.totalCount} Registros
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-sm font-black tracking-tighter text-primary">
+                            {s.progressPercentage}%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-primary transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(255,0,255,0.4)]"
+                          style={{ width: `${s.progressPercentage}%` }}
+                        />
+                      </div>
+                      <div className="mt-2 flex justify-between items-center text-[8px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-muted-foreground">Consumo Total</span>
+                        <span className="text-cyan-500">{s.totalConsumption.toLocaleString()} kWh</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+            <div className="p-4 bg-white/[0.01] border-t border-white/5 mt-auto shrink-0">
+              <button className="w-full py-2 rounded-xl bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all">
+                Ver Detalles por Sector
+              </button>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
