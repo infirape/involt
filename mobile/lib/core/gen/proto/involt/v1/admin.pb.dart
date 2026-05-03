@@ -19,6 +19,106 @@ import 'models.pb.dart' as $0;
 
 export 'admin.pbenum.dart';
 
+class DeleteCustomerRequest extends $pb.GeneratedMessage {
+  factory DeleteCustomerRequest({
+    $core.String? id,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    return $result;
+  }
+  DeleteCustomerRequest._() : super();
+  factory DeleteCustomerRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteCustomerRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteCustomerRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteCustomerRequest clone() => DeleteCustomerRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteCustomerRequest copyWith(void Function(DeleteCustomerRequest) updates) => super.copyWith((message) => updates(message as DeleteCustomerRequest)) as DeleteCustomerRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteCustomerRequest create() => DeleteCustomerRequest._();
+  DeleteCustomerRequest createEmptyInstance() => create();
+  static $pb.PbList<DeleteCustomerRequest> createRepeated() => $pb.PbList<DeleteCustomerRequest>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteCustomerRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteCustomerRequest>(create);
+  static DeleteCustomerRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+}
+
+class DeleteCustomerResponse extends $pb.GeneratedMessage {
+  factory DeleteCustomerResponse({
+    $core.bool? success,
+  }) {
+    final $result = create();
+    if (success != null) {
+      $result.success = success;
+    }
+    return $result;
+  }
+  DeleteCustomerResponse._() : super();
+  factory DeleteCustomerResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteCustomerResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteCustomerResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'success')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteCustomerResponse clone() => DeleteCustomerResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteCustomerResponse copyWith(void Function(DeleteCustomerResponse) updates) => super.copyWith((message) => updates(message as DeleteCustomerResponse)) as DeleteCustomerResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteCustomerResponse create() => DeleteCustomerResponse._();
+  DeleteCustomerResponse createEmptyInstance() => create();
+  static $pb.PbList<DeleteCustomerResponse> createRepeated() => $pb.PbList<DeleteCustomerResponse>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteCustomerResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteCustomerResponse>(create);
+  static DeleteCustomerResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get success => $_getBF(0);
+  @$pb.TagNumber(1)
+  set success($core.bool v) { $_setBool(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSuccess() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSuccess() => clearField(1);
+}
+
 class LoginRequest extends $pb.GeneratedMessage {
   factory LoginRequest({
     $core.String? email,
@@ -423,6 +523,8 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
   factory GetCustomersRequest({
     $core.String? sectorId,
     $core.String? searchQuery,
+    $core.int? pageNumber,
+    $core.int? pageSize,
   }) {
     final $result = create();
     if (sectorId != null) {
@@ -430,6 +532,12 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
     }
     if (searchQuery != null) {
       $result.searchQuery = searchQuery;
+    }
+    if (pageNumber != null) {
+      $result.pageNumber = pageNumber;
+    }
+    if (pageSize != null) {
+      $result.pageSize = pageSize;
     }
     return $result;
   }
@@ -440,6 +548,8 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetCustomersRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'sectorId')
     ..aOS(2, _omitFieldNames ? '' : 'searchQuery')
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'pageNumber', $pb.PbFieldType.O3)
+    ..a<$core.int>(4, _omitFieldNames ? '' : 'pageSize', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -481,15 +591,37 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
   $core.bool hasSearchQuery() => $_has(1);
   @$pb.TagNumber(2)
   void clearSearchQuery() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get pageNumber => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set pageNumber($core.int v) { $_setSignedInt32(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPageNumber() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearPageNumber() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.int get pageSize => $_getIZ(3);
+  @$pb.TagNumber(4)
+  set pageSize($core.int v) { $_setSignedInt32(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasPageSize() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearPageSize() => clearField(4);
 }
 
 class GetCustomersResponse extends $pb.GeneratedMessage {
   factory GetCustomersResponse({
     $core.Iterable<$0.Customer>? customers,
+    $core.int? totalCount,
   }) {
     final $result = create();
     if (customers != null) {
       $result.customers.addAll(customers);
+    }
+    if (totalCount != null) {
+      $result.totalCount = totalCount;
     }
     return $result;
   }
@@ -499,6 +631,7 @@ class GetCustomersResponse extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetCustomersResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..pc<$0.Customer>(1, _omitFieldNames ? '' : 'customers', $pb.PbFieldType.PM, subBuilder: $0.Customer.create)
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'totalCount', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -525,6 +658,15 @@ class GetCustomersResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.List<$0.Customer> get customers => $_getList(0);
+
+  @$pb.TagNumber(2)
+  $core.int get totalCount => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set totalCount($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasTotalCount() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTotalCount() => clearField(2);
 }
 
 class GetReadingsRequest extends $pb.GeneratedMessage {
@@ -532,6 +674,8 @@ class GetReadingsRequest extends $pb.GeneratedMessage {
     $core.String? customerId,
     $core.String? sectorId,
     $core.String? period,
+    $core.int? pageNumber,
+    $core.int? pageSize,
   }) {
     final $result = create();
     if (customerId != null) {
@@ -543,6 +687,12 @@ class GetReadingsRequest extends $pb.GeneratedMessage {
     if (period != null) {
       $result.period = period;
     }
+    if (pageNumber != null) {
+      $result.pageNumber = pageNumber;
+    }
+    if (pageSize != null) {
+      $result.pageSize = pageSize;
+    }
     return $result;
   }
   GetReadingsRequest._() : super();
@@ -553,6 +703,8 @@ class GetReadingsRequest extends $pb.GeneratedMessage {
     ..aOS(1, _omitFieldNames ? '' : 'customerId')
     ..aOS(2, _omitFieldNames ? '' : 'sectorId')
     ..aOS(3, _omitFieldNames ? '' : 'period')
+    ..a<$core.int>(4, _omitFieldNames ? '' : 'pageNumber', $pb.PbFieldType.O3)
+    ..a<$core.int>(5, _omitFieldNames ? '' : 'pageSize', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -603,15 +755,37 @@ class GetReadingsRequest extends $pb.GeneratedMessage {
   $core.bool hasPeriod() => $_has(2);
   @$pb.TagNumber(3)
   void clearPeriod() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.int get pageNumber => $_getIZ(3);
+  @$pb.TagNumber(4)
+  set pageNumber($core.int v) { $_setSignedInt32(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasPageNumber() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearPageNumber() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.int get pageSize => $_getIZ(4);
+  @$pb.TagNumber(5)
+  set pageSize($core.int v) { $_setSignedInt32(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasPageSize() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearPageSize() => clearField(5);
 }
 
 class GetReadingsResponse extends $pb.GeneratedMessage {
   factory GetReadingsResponse({
     $core.Iterable<$0.Reading>? readings,
+    $core.int? totalCount,
   }) {
     final $result = create();
     if (readings != null) {
       $result.readings.addAll(readings);
+    }
+    if (totalCount != null) {
+      $result.totalCount = totalCount;
     }
     return $result;
   }
@@ -621,6 +795,7 @@ class GetReadingsResponse extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetReadingsResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..pc<$0.Reading>(1, _omitFieldNames ? '' : 'readings', $pb.PbFieldType.PM, subBuilder: $0.Reading.create)
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'totalCount', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -647,6 +822,15 @@ class GetReadingsResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.List<$0.Reading> get readings => $_getList(0);
+
+  @$pb.TagNumber(2)
+  $core.int get totalCount => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set totalCount($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasTotalCount() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTotalCount() => clearField(2);
 }
 
 class GetSettingsRequest extends $pb.GeneratedMessage {
@@ -1083,6 +1267,9 @@ class GetDashboardStatsResponse extends $pb.GeneratedMessage {
     $core.int? totalUsers,
     $core.int? totalReadingsPeriod,
     $core.int? pendingReadingsPeriod,
+    $core.double? totalRevenue,
+    $core.double? totalConsumptionKwh,
+    $core.double? previousConsumptionKwh,
     $core.Iterable<SectorStat>? sectorStats,
   }) {
     final $result = create();
@@ -1098,6 +1285,15 @@ class GetDashboardStatsResponse extends $pb.GeneratedMessage {
     if (pendingReadingsPeriod != null) {
       $result.pendingReadingsPeriod = pendingReadingsPeriod;
     }
+    if (totalRevenue != null) {
+      $result.totalRevenue = totalRevenue;
+    }
+    if (totalConsumptionKwh != null) {
+      $result.totalConsumptionKwh = totalConsumptionKwh;
+    }
+    if (previousConsumptionKwh != null) {
+      $result.previousConsumptionKwh = previousConsumptionKwh;
+    }
     if (sectorStats != null) {
       $result.sectorStats.addAll(sectorStats);
     }
@@ -1112,7 +1308,10 @@ class GetDashboardStatsResponse extends $pb.GeneratedMessage {
     ..a<$core.int>(2, _omitFieldNames ? '' : 'totalUsers', $pb.PbFieldType.O3)
     ..a<$core.int>(3, _omitFieldNames ? '' : 'totalReadingsPeriod', $pb.PbFieldType.O3)
     ..a<$core.int>(4, _omitFieldNames ? '' : 'pendingReadingsPeriod', $pb.PbFieldType.O3)
-    ..pc<SectorStat>(5, _omitFieldNames ? '' : 'sectorStats', $pb.PbFieldType.PM, subBuilder: SectorStat.create)
+    ..a<$core.double>(5, _omitFieldNames ? '' : 'totalRevenue', $pb.PbFieldType.OD)
+    ..a<$core.double>(6, _omitFieldNames ? '' : 'totalConsumptionKwh', $pb.PbFieldType.OD)
+    ..a<$core.double>(7, _omitFieldNames ? '' : 'previousConsumptionKwh', $pb.PbFieldType.OD)
+    ..pc<SectorStat>(8, _omitFieldNames ? '' : 'sectorStats', $pb.PbFieldType.PM, subBuilder: SectorStat.create)
     ..hasRequiredFields = false
   ;
 
@@ -1174,7 +1373,34 @@ class GetDashboardStatsResponse extends $pb.GeneratedMessage {
   void clearPendingReadingsPeriod() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.List<SectorStat> get sectorStats => $_getList(4);
+  $core.double get totalRevenue => $_getN(4);
+  @$pb.TagNumber(5)
+  set totalRevenue($core.double v) { $_setDouble(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasTotalRevenue() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearTotalRevenue() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.double get totalConsumptionKwh => $_getN(5);
+  @$pb.TagNumber(6)
+  set totalConsumptionKwh($core.double v) { $_setDouble(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasTotalConsumptionKwh() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearTotalConsumptionKwh() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.double get previousConsumptionKwh => $_getN(6);
+  @$pb.TagNumber(7)
+  set previousConsumptionKwh($core.double v) { $_setDouble(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasPreviousConsumptionKwh() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearPreviousConsumptionKwh() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.List<SectorStat> get sectorStats => $_getList(7);
 }
 
 class SectorStat extends $pb.GeneratedMessage {
@@ -1327,6 +1553,9 @@ class AdminServiceApi {
   ;
   $async.Future<UpsertCustomerResponse> upsertCustomer($pb.ClientContext? ctx, UpsertCustomerRequest request) =>
     _client.invoke<UpsertCustomerResponse>(ctx, 'AdminService', 'UpsertCustomer', request, UpsertCustomerResponse())
+  ;
+  $async.Future<DeleteCustomerResponse> deleteCustomer($pb.ClientContext? ctx, DeleteCustomerRequest request) =>
+    _client.invoke<DeleteCustomerResponse>(ctx, 'AdminService', 'DeleteCustomer', request, DeleteCustomerResponse())
   ;
   $async.Future<GetDashboardStatsResponse> getDashboardStats($pb.ClientContext? ctx, GetDashboardStatsRequest request) =>
     _client.invoke<GetDashboardStatsResponse>(ctx, 'AdminService', 'GetDashboardStats', request, GetDashboardStatsResponse())

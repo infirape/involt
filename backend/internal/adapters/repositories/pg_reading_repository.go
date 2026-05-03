@@ -146,6 +146,69 @@ func (r *PostgresReadingRepository) SumConsumptionBySectorAndPeriod(ctx context.
 	err := r.db.GetContext(ctx, &sum, query, sectorID, period)
 	return sum, err
 }
+
+func (r *PostgresReadingRepository) SumRevenueByPeriod(ctx context.Context, period string) (float64, error) {
+	var sum float64
+	query := `SELECT COALESCE(SUM(total_to_pay), 0) FROM readings WHERE to_char(timestamp, 'YYYY-MM') = $1`
+	err := r.db.GetContext(ctx, &sum, query, period)
+	return sum, err
+}
+
+func (r *PostgresReadingRepository) SumConsumptionByPeriod(ctx context.Context, period string) (float64, error) {
+	var sum float64
+	query := `SELECT COALESCE(SUM(consumption), 0) FROM readings WHERE to_char(timestamp, 'YYYY-MM') = $1`
+	err := r.db.GetContext(ctx, &sum, query, period)
+	return sum, err
+}
+func (r *PostgresReadingRepository) List(ctx context.Context, customerID, sectorID, period string, limit, offset int) ([]domain.Reading, int, error) {
+	var readings []domain.Reading
+	var total int
+
+	where := "1=1"
+	args := []interface{}{}
+	argIdx := 1
+
+	if customerID != "" {
+		where += fmt.Sprintf(" AND r.customer_id = $%d", argIdx)
+		args = append(args, customerID)
+		argIdx++
+	}
+
+	if sectorID != "" {
+		where += fmt.Sprintf(" AND c.sector_id = $%d", argIdx)
+		args = append(args, sectorID)
+		argIdx++
+	}
+
+	if period != "" {
+		where += fmt.Sprintf(" AND to_char(r.timestamp, 'YYYY-MM') = $%d", argIdx)
+		args = append(args, period)
+		argIdx++
+	}
+
+	// Get total count
+	countQuery := fmt.Sprintf(`SELECT COUNT(*) FROM readings r 
+	                           JOIN customers c ON r.customer_id = c.id 
+	                           WHERE %s`, where)
+	err := r.db.GetContext(ctx, &total, countQuery, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Get paginated data
+	query := fmt.Sprintf(`SELECT r.* FROM readings r
+	                       JOIN customers c ON r.customer_id = c.id
+	                       WHERE %s ORDER BY r.timestamp DESC LIMIT $%d OFFSET $%d`, where, argIdx, argIdx+1)
+	
+	args = append(args, limit, offset)
+	err = r.db.SelectContext(ctx, &readings, query, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return readings, total, nil
+}
+
 func (r *PostgresReadingRepository) ListAll(ctx context.Context) ([]domain.Reading, error) {
 	var readings []domain.Reading
 	query := `SELECT * FROM readings ORDER BY timestamp DESC`

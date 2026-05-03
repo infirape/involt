@@ -35,8 +35,19 @@ service AdminService {
   // UpsertCustomer creates or updates a customer.
   rpc UpsertCustomer(UpsertCustomerRequest) returns (UpsertCustomerResponse);
 
+  // DeleteCustomer removes a customer record.
+  rpc DeleteCustomer(DeleteCustomerRequest) returns (DeleteCustomerResponse);
+
   // GetDashboardStats returns summary statistics for the dashboard.
   rpc GetDashboardStats(GetDashboardStatsRequest) returns (GetDashboardStatsResponse);
+}
+
+message DeleteCustomerRequest {
+  string id = 1;
+}
+
+message DeleteCustomerResponse {
+  bool success = 1;
 }
 
 message LoginRequest {
@@ -73,20 +84,26 @@ message GetSectorsResponse {
 message GetCustomersRequest {
   string sector_id = 1;
   string search_query = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
 }
 
 message GetCustomersResponse {
   repeated Customer customers = 1;
+  int32 total_count = 2;
 }
 
 message GetReadingsRequest {
   string customer_id = 1;
   string sector_id = 2;
   string period = 3;
+  int32 page_number = 4;
+  int32 page_size = 5;
 }
 
 message GetReadingsResponse {
   repeated Reading readings = 1;
+  int32 total_count = 2;
 }
 
 message GetSettingsRequest {}
@@ -134,7 +151,10 @@ message GetDashboardStatsResponse {
   int32 total_users = 2;
   int32 total_readings_period = 3;
   int32 pending_readings_period = 4;
-  repeated SectorStat sector_stats = 5;
+  double total_revenue = 5;
+  double total_consumption_kwh = 6;
+  double previous_consumption_kwh = 7;
+  repeated SectorStat sector_stats = 8;
 }
 
 message SectorStat {

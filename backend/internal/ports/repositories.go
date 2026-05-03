@@ -18,6 +18,9 @@ type ReadingRepository interface {
 	ListPeriods(ctx context.Context) ([]string, error)
 	CountBySectorAndPeriod(ctx context.Context, sectorID, period string) (int, error)
 	SumConsumptionBySectorAndPeriod(ctx context.Context, sectorID, period string) (float64, error)
+	SumRevenueByPeriod(ctx context.Context, period string) (float64, error)
+	SumConsumptionByPeriod(ctx context.Context, period string) (float64, error)
+	List(ctx context.Context, customerID, sectorID, period string, limit, offset int) ([]domain.Reading, int, error)
 	ListAll(ctx context.Context) ([]domain.Reading, error)
 }
 
@@ -25,9 +28,11 @@ type ReadingRepository interface {
 type CustomerRepository interface {
 	GetByID(ctx context.Context, id string) (*domain.Customer, error)
 	GetByCode(ctx context.Context, code string) (*domain.Customer, error)
+	List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int) ([]domain.Customer, int, error)
 	ListAll(ctx context.Context) ([]domain.Customer, error)
 	SaveBatch(ctx context.Context, customers []domain.Customer) error
 	Save(ctx context.Context, customer *domain.Customer) error
+	Delete(ctx context.Context, id string) error
 	CountBySector(ctx context.Context, sectorID string) (int, error)
 }
 

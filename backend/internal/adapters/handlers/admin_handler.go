@@ -187,27 +187,33 @@ func (h *AdminHandler) GetCustomers(
 		return nil, connect.NewError(connect.CodeUnauthenticated, nil)
 	}
 
-	customers, err := h.customerRepo.ListAll(ctx)
+	pageSize := req.Msg.PageSize
+	if pageSize <= 0 {
+		pageSize = 20
+	}
+	offset := (req.Msg.PageNumber - 1) * pageSize
+	if offset < 0 {
+		offset = 0
+	}
+
+	var allowedSectors []string
+	if user.Role != string(domain.RoleAdmin) {
+		allowedSectors = user.AssignedSectorIDs
+	}
+	if req.Msg.SectorId != "" {
+		allowedSectors = []string{req.Msg.SectorId}
+	}
+
+	customers, total, err := h.customerRepo.List(ctx, allowedSectors, req.Msg.SearchQuery, int(pageSize), int(offset))
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
-	// Filter by sector if not ADMIN
-	var filtered []domain.Customer
-	if user.Role == string(domain.RoleAdmin) {
-		filtered = customers
-	} else {
-		for _, c := range customers {
-			if contains(user.AssignedSectorIDs, c.SectorID) {
-				filtered = append(filtered, c)
-			}
-		}
-	}
-
 	resp := &involtv1.GetCustomersResponse{
-		Customers: make([]*involtv1.Customer, len(filtered)),
+		Customers:  make([]*involtv1.Customer, len(customers)),
+		TotalCount: int32(total),
 	}
-	for i, c := range filtered {
+	for i, c := range customers {
 		resp.Customers[i] = &involtv1.Customer{
 			Id:               c.ID,
 			Code:             c.Code,
@@ -222,7 +228,6 @@ func (h *AdminHandler) GetCustomers(
 			Longitude:        c.Longitude,
 			InitialReading:   c.InitialReading,
 			LastReadingValue: c.LastReadingValue,
-			ContractStart:    c.ContractStart.Format(time.RFC3339),
 		}
 	}
 
@@ -242,24 +247,23 @@ func (h *AdminHandler) GetReadings(
 	ctx context.Context,
 	req *connect.Request[involtv1.GetReadingsRequest],
 ) (*connect.Response[involtv1.GetReadingsResponse], error) {
-	var readings []domain.Reading
-	var err error
-
-	if req.Msg.CustomerId != "" {
-		readings, err = h.readingRepo.ListByCustomer(ctx, req.Msg.CustomerId)
-	} else if req.Msg.SectorId != "" && req.Msg.Period != "" {
-		// We'll need a way to parse the period string or just use ListAll if simple
-		readings, err = h.readingRepo.ListAll(ctx)
-	} else {
-		readings, err = h.readingRepo.ListAll(ctx)
+	pageSize := req.Msg.PageSize
+	if pageSize <= 0 {
+		pageSize = 20
+	}
+	offset := (req.Msg.PageNumber - 1) * pageSize
+	if offset < 0 {
+		offset = 0
 	}
 
+	readings, total, err := h.readingRepo.List(ctx, req.Msg.CustomerId, req.Msg.SectorId, req.Msg.Period, int(pageSize), int(offset))
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	resp := &involtv1.GetReadingsResponse{
-		Readings: make([]*involtv1.Reading, len(readings)),
+		Readings:   make([]*involtv1.Reading, len(readings)),
+		TotalCount: int32(total),
 	}
 	for i, r := range readings {
 		resp.Readings[i] = &involtv1.Reading{
@@ -382,6 +386,20 @@ func (h *AdminHandler) UpsertCustomer(
 	}), nil
 }
 
+func (h *AdminHandler) DeleteCustomer(
+	ctx context.Context,
+	req *connect.Request[involtv1.DeleteCustomerRequest],
+) (*connect.Response[involtv1.DeleteCustomerResponse], error) {
+	err := h.customerRepo.Delete(ctx, req.Msg.Id)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	return connect.NewResponse(&involtv1.DeleteCustomerResponse{
+		Success: true,
+	}), nil
+}
+
 func (h *AdminHandler) GetDashboardStats(
 	ctx context.Context,
 	req *connect.Request[involtv1.GetDashboardStatsRequest],
@@ -409,13 +427,22 @@ func (h *AdminHandler) GetDashboardStats(
 	// 4. Pending in Period
 	pendingCount, _ := h.readingRepo.CountPendingByPeriod(ctx, period)
 
-	// 5. Sector Stats
+	// 5. Business Metrics
+	revenue, _ := h.readingRepo.SumRevenueByPeriod(ctx, period)
+	consumption, _ := h.readingRepo.SumConsumptionByPeriod(ctx, period)
+
+	// Calculate previous period (YYYY-MM)
+	t, _ := time.Parse("2006-01", period)
+	prevPeriod := t.AddDate(0, -1, 0).Format("2006-01")
+	prevConsumption, _ := h.readingRepo.SumConsumptionByPeriod(ctx, prevPeriod)
+
+	// 6. Sector Stats
 	sectors, _ := h.metaRepo.ListSectors(ctx)
 	sectorStats := make([]*involtv1.SectorStat, len(sectors))
 	for i, s := range sectors {
 		total, _ := h.customerRepo.CountBySector(ctx, s.ID)
 		registered, _ := h.readingRepo.CountBySectorAndPeriod(ctx, s.ID, period)
-		consumption, _ := h.readingRepo.SumConsumptionBySectorAndPeriod(ctx, s.ID, period)
+		sConsumption, _ := h.readingRepo.SumConsumptionBySectorAndPeriod(ctx, s.ID, period)
 
 		progress := int32(0)
 		if total > 0 {
@@ -428,7 +455,7 @@ func (h *AdminHandler) GetDashboardStats(
 			RegisteredCount:    int32(registered),
 			TotalCount:         int32(total),
 			ProgressPercentage: progress,
-			TotalConsumption:   consumption,
+			TotalConsumption:   sConsumption,
 		}
 	}
 
@@ -437,6 +464,9 @@ func (h *AdminHandler) GetDashboardStats(
 		TotalUsers:            int32(len(users)),
 		TotalReadingsPeriod:   int32(readingsCount),
 		PendingReadingsPeriod: int32(pendingCount),
+		TotalRevenue:          revenue,
+		TotalConsumptionKwh:   consumption,
+		PreviousConsumptionKwh: prevConsumption,
 		SectorStats:           sectorStats,
 	}), nil
 }

@@ -56,6 +56,9 @@ const (
 	// AdminServiceUpsertCustomerProcedure is the fully-qualified name of the AdminService's
 	// UpsertCustomer RPC.
 	AdminServiceUpsertCustomerProcedure = "/involt.v1.AdminService/UpsertCustomer"
+	// AdminServiceDeleteCustomerProcedure is the fully-qualified name of the AdminService's
+	// DeleteCustomer RPC.
+	AdminServiceDeleteCustomerProcedure = "/involt.v1.AdminService/DeleteCustomer"
 	// AdminServiceGetDashboardStatsProcedure is the fully-qualified name of the AdminService's
 	// GetDashboardStats RPC.
 	AdminServiceGetDashboardStatsProcedure = "/involt.v1.AdminService/GetDashboardStats"
@@ -81,6 +84,8 @@ type AdminServiceClient interface {
 	UpdateSettings(context.Context, *connect.Request[v1.UpdateSettingsRequest]) (*connect.Response[v1.UpdateSettingsResponse], error)
 	// UpsertCustomer creates or updates a customer.
 	UpsertCustomer(context.Context, *connect.Request[v1.UpsertCustomerRequest]) (*connect.Response[v1.UpsertCustomerResponse], error)
+	// DeleteCustomer removes a customer record.
+	DeleteCustomer(context.Context, *connect.Request[v1.DeleteCustomerRequest]) (*connect.Response[v1.DeleteCustomerResponse], error)
 	// GetDashboardStats returns summary statistics for the dashboard.
 	GetDashboardStats(context.Context, *connect.Request[v1.GetDashboardStatsRequest]) (*connect.Response[v1.GetDashboardStatsResponse], error)
 }
@@ -150,6 +155,12 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("UpsertCustomer")),
 			connect.WithClientOptions(opts...),
 		),
+		deleteCustomer: connect.NewClient[v1.DeleteCustomerRequest, v1.DeleteCustomerResponse](
+			httpClient,
+			baseURL+AdminServiceDeleteCustomerProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("DeleteCustomer")),
+			connect.WithClientOptions(opts...),
+		),
 		getDashboardStats: connect.NewClient[v1.GetDashboardStatsRequest, v1.GetDashboardStatsResponse](
 			httpClient,
 			baseURL+AdminServiceGetDashboardStatsProcedure,
@@ -170,6 +181,7 @@ type adminServiceClient struct {
 	getSettings       *connect.Client[v1.GetSettingsRequest, v1.GetSettingsResponse]
 	updateSettings    *connect.Client[v1.UpdateSettingsRequest, v1.UpdateSettingsResponse]
 	upsertCustomer    *connect.Client[v1.UpsertCustomerRequest, v1.UpsertCustomerResponse]
+	deleteCustomer    *connect.Client[v1.DeleteCustomerRequest, v1.DeleteCustomerResponse]
 	getDashboardStats *connect.Client[v1.GetDashboardStatsRequest, v1.GetDashboardStatsResponse]
 }
 
@@ -218,6 +230,11 @@ func (c *adminServiceClient) UpsertCustomer(ctx context.Context, req *connect.Re
 	return c.upsertCustomer.CallUnary(ctx, req)
 }
 
+// DeleteCustomer calls involt.v1.AdminService.DeleteCustomer.
+func (c *adminServiceClient) DeleteCustomer(ctx context.Context, req *connect.Request[v1.DeleteCustomerRequest]) (*connect.Response[v1.DeleteCustomerResponse], error) {
+	return c.deleteCustomer.CallUnary(ctx, req)
+}
+
 // GetDashboardStats calls involt.v1.AdminService.GetDashboardStats.
 func (c *adminServiceClient) GetDashboardStats(ctx context.Context, req *connect.Request[v1.GetDashboardStatsRequest]) (*connect.Response[v1.GetDashboardStatsResponse], error) {
 	return c.getDashboardStats.CallUnary(ctx, req)
@@ -243,6 +260,8 @@ type AdminServiceHandler interface {
 	UpdateSettings(context.Context, *connect.Request[v1.UpdateSettingsRequest]) (*connect.Response[v1.UpdateSettingsResponse], error)
 	// UpsertCustomer creates or updates a customer.
 	UpsertCustomer(context.Context, *connect.Request[v1.UpsertCustomerRequest]) (*connect.Response[v1.UpsertCustomerResponse], error)
+	// DeleteCustomer removes a customer record.
+	DeleteCustomer(context.Context, *connect.Request[v1.DeleteCustomerRequest]) (*connect.Response[v1.DeleteCustomerResponse], error)
 	// GetDashboardStats returns summary statistics for the dashboard.
 	GetDashboardStats(context.Context, *connect.Request[v1.GetDashboardStatsRequest]) (*connect.Response[v1.GetDashboardStatsResponse], error)
 }
@@ -308,6 +327,12 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("UpsertCustomer")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceDeleteCustomerHandler := connect.NewUnaryHandler(
+		AdminServiceDeleteCustomerProcedure,
+		svc.DeleteCustomer,
+		connect.WithSchema(adminServiceMethods.ByName("DeleteCustomer")),
+		connect.WithHandlerOptions(opts...),
+	)
 	adminServiceGetDashboardStatsHandler := connect.NewUnaryHandler(
 		AdminServiceGetDashboardStatsProcedure,
 		svc.GetDashboardStats,
@@ -334,6 +359,8 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceUpdateSettingsHandler.ServeHTTP(w, r)
 		case AdminServiceUpsertCustomerProcedure:
 			adminServiceUpsertCustomerHandler.ServeHTTP(w, r)
+		case AdminServiceDeleteCustomerProcedure:
+			adminServiceDeleteCustomerHandler.ServeHTTP(w, r)
 		case AdminServiceGetDashboardStatsProcedure:
 			adminServiceGetDashboardStatsHandler.ServeHTTP(w, r)
 		default:
@@ -379,6 +406,10 @@ func (UnimplementedAdminServiceHandler) UpdateSettings(context.Context, *connect
 
 func (UnimplementedAdminServiceHandler) UpsertCustomer(context.Context, *connect.Request[v1.UpsertCustomerRequest]) (*connect.Response[v1.UpsertCustomerResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.UpsertCustomer is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) DeleteCustomer(context.Context, *connect.Request[v1.DeleteCustomerRequest]) (*connect.Response[v1.DeleteCustomerResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.DeleteCustomer is not implemented"))
 }
 
 func (UnimplementedAdminServiceHandler) GetDashboardStats(context.Context, *connect.Request[v1.GetDashboardStatsRequest]) (*connect.Response[v1.GetDashboardStatsResponse], error) {

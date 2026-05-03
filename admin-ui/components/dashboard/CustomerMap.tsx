@@ -13,7 +13,7 @@ export default function CustomerMap() {
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
-    
+
     async function fetchCustomers() {
       try {
         const resp = await adminClient.getCustomers({});
@@ -49,7 +49,7 @@ export default function CustomerMap() {
 
   if (!mounted || typeof window === "undefined") {
     return (
-      <div className="h-[400px] w-full rounded-[2rem] bg-white/5 animate-pulse flex items-center justify-center">
+      <div className="h-[400px] w-full rounded-4xl bg-white/5 animate-pulse flex items-center justify-center">
         <p className="text-xs font-black uppercase tracking-widest text-muted-foreground">
           Inicializando Mapa...
         </p>
@@ -58,11 +58,11 @@ export default function CustomerMap() {
   }
 
   return (
-    <div className="h-[400px] w-full rounded-[2rem] overflow-hidden border border-white/5 shadow-2xl relative group">
+    <div className="h-[400px] w-full rounded-4xl overflow-hidden border border-white/5 shadow-2xl relative group">
       {/* Visual Filters for Dark Mode Aesthetics */}
-      <div className="absolute inset-0 z-[400] pointer-events-none bg-black/10 mix-blend-overlay border-[40px] border-black/20" />
-      
-      <div className="absolute top-6 left-6 z-[1000] flex items-center gap-3">
+      <div className="absolute inset-0 z-400 pointer-events-none bg-black/10 mix-blend-overlay border-4 border-black/20" />
+
+      <div className="absolute top-6 left-6 z-1000 flex items-center gap-3">
         <div className="bg-black/80 backdrop-blur-xl px-4 py-2 rounded-2xl border border-white/10 shadow-2xl">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
@@ -76,16 +76,19 @@ export default function CustomerMap() {
       <MapContainer
         center={center}
         zoom={15}
+        maxZoom={22}
         scrollWheelZoom={false}
         dragging={false}
         zoomControl={false}
         doubleClickZoom={false}
         touchZoom={false}
-        className="h-full w-full grayscale-[0.6] contrast-[1.1] invert-[0.9] brightness-[0.4]"
+        className="h-full w-full brightness-[0.8] contrast-[1.1]"
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          maxZoom={22}
+          maxNativeZoom={17}
         />
         {customers.map(
           (customer) =>

@@ -30,6 +30,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
   $async.Future<$1.GetSettingsResponse> getSettings($pb.ServerContext ctx, $1.GetSettingsRequest request);
   $async.Future<$1.UpdateSettingsResponse> updateSettings($pb.ServerContext ctx, $1.UpdateSettingsRequest request);
   $async.Future<$1.UpsertCustomerResponse> upsertCustomer($pb.ServerContext ctx, $1.UpsertCustomerRequest request);
+  $async.Future<$1.DeleteCustomerResponse> deleteCustomer($pb.ServerContext ctx, $1.DeleteCustomerRequest request);
   $async.Future<$1.GetDashboardStatsResponse> getDashboardStats($pb.ServerContext ctx, $1.GetDashboardStatsRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
@@ -43,6 +44,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'GetSettings': return $1.GetSettingsRequest();
       case 'UpdateSettings': return $1.UpdateSettingsRequest();
       case 'UpsertCustomer': return $1.UpsertCustomerRequest();
+      case 'DeleteCustomer': return $1.DeleteCustomerRequest();
       case 'GetDashboardStats': return $1.GetDashboardStatsRequest();
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
@@ -59,6 +61,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'GetSettings': return this.getSettings(ctx, request as $1.GetSettingsRequest);
       case 'UpdateSettings': return this.updateSettings(ctx, request as $1.UpdateSettingsRequest);
       case 'UpsertCustomer': return this.upsertCustomer(ctx, request as $1.UpsertCustomerRequest);
+      case 'DeleteCustomer': return this.deleteCustomer(ctx, request as $1.DeleteCustomerRequest);
       case 'GetDashboardStats': return this.getDashboardStats(ctx, request as $1.GetDashboardStatsRequest);
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }

@@ -21,7 +21,9 @@ export default function UsersPage() {
     loading: true,
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<Partial<AdminUser> | null>(null);
+  const [editingUser, setEditingUser] = useState<Partial<AdminUser> | null>(
+    null,
+  );
   const [saving, setSaving] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -96,10 +98,12 @@ export default function UsersPage() {
     <div className="p-8 space-y-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black tracking-tighter uppercase bg-gradient-to-br from-white to-white/40 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-black tracking-tighter uppercase bg-linear-to-br from-white to-white/40 bg-clip-text text-transparent">
             Usuarios del Sistema
           </h1>
-          <p className="text-muted-foreground font-medium">Gestioná el equipo y sus permisos</p>
+          <p className="text-muted-foreground font-medium">
+            Gestioná el equipo y sus permisos
+          </p>
         </div>
         <Button
           onClick={() => handleOpenModal()}
@@ -142,19 +146,27 @@ export default function UsersPage() {
                   ))
                 ) : data.users.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground italic">
+                    <td
+                      colSpan={4}
+                      className="px-6 py-12 text-center text-muted-foreground italic"
+                    >
                       No hay usuarios registrados
                     </td>
                   </tr>
                 ) : (
                   data.users.map((u) => (
-                    <tr key={u.id} className="group hover:bg-white/[0.02] transition-colors">
+                    <tr
+                      key={u.id}
+                      className="group hover:bg-white/2 transition-colors"
+                    >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center border border-white/5">
+                          <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary/20 to-secondary/20 flex items-center justify-center border border-white/5">
                             <User className="w-5 h-5 text-primary" />
                           </div>
-                          <span className="font-bold text-sm tracking-tight">{u.email}</span>
+                          <span className="font-bold text-sm tracking-tight">
+                            {u.email}
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -177,7 +189,8 @@ export default function UsersPage() {
                                 key={sid}
                                 className="text-[10px] font-bold text-muted-foreground bg-white/5 px-2 py-1 rounded border border-white/5"
                               >
-                                {data.sectors.find((s) => s.id === sid)?.name || sid}
+                                {data.sectors.find((s) => s.id === sid)?.name ||
+                                  sid}
                               </span>
                             ))
                           )}
@@ -242,7 +255,9 @@ export default function UsersPage() {
                       type="email"
                       value={editingUser.email}
                       onChange={(e) =>
-                        setEditingUser((prev) => (prev ? { ...prev, email: e.target.value } : null))
+                        setEditingUser((prev) =>
+                          prev ? { ...prev, email: e.target.value } : null,
+                        )
                       }
                       className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl h-11"
                       placeholder="usuario@qarwaqiru.com"
@@ -250,10 +265,15 @@ export default function UsersPage() {
                   </div>
                   <div className="space-y-2">
                     <Label className="text-[10px] font-black uppercase tracking-widest opacity-50">
-                      Contraseña {data.users.find((u) => u.id === editingUser.id) ? "(Opcional)" : ""}
+                      Contraseña{" "}
+                      {data.users.find((u) => u.id === editingUser.id)
+                        ? "(Opcional)"
+                        : ""}
                     </Label>
                     <Input
-                      required={!data.users.find((u) => u.id === editingUser.id)}
+                      required={
+                        !data.users.find((u) => u.id === editingUser.id)
+                      }
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -271,14 +291,25 @@ export default function UsersPage() {
                     value={editingUser.role}
                     onChange={(e) =>
                       setEditingUser((prev) =>
-                        prev ? { ...prev, role: parseInt(e.target.value, 10) as UserRole } : null,
+                        prev
+                          ? {
+                              ...prev,
+                              role: parseInt(e.target.value, 10) as UserRole,
+                            }
+                          : null,
                       )
                     }
                     className="w-full h-11 px-4 bg-white/5 border border-white/5 rounded-xl text-sm font-bold focus:border-primary/30 outline-none transition-all cursor-pointer"
                   >
-                    <option value={UserRole.ADMIN}>Administrador (Acceso Total)</option>
-                    <option value={UserRole.SUPERVISOR}>Supervisor (Lecturas y Reportes)</option>
-                    <option value={UserRole.READER}>Lector (Solo captura de datos)</option>
+                    <option value={UserRole.ADMIN}>
+                      Administrador (Acceso Total)
+                    </option>
+                    <option value={UserRole.SUPERVISOR}>
+                      Supervisor (Lecturas y Reportes)
+                    </option>
+                    <option value={UserRole.READER}>
+                      Lector (Solo captura de datos)
+                    </option>
                   </select>
                 </div>
 
@@ -306,7 +337,8 @@ export default function UsersPage() {
                     ))}
                   </div>
                   <p className="text-[10px] text-muted-foreground/60 italic">
-                    * Si no se seleccionan sectores, el usuario tendrá acceso a todos.
+                    * Si no se seleccionan sectores, el usuario tendrá acceso a
+                    todos.
                   </p>
                 </div>
               </CardContent>

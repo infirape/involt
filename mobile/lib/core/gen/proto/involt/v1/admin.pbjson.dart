@@ -31,6 +31,30 @@ final $typed_data.Uint8List userRoleDescriptor = $convert.base64Decode(
     'CghVc2VyUm9sZRIZChVVU0VSX1JPTEVfVU5TUEVDSUZJRUQQABITCg9VU0VSX1JPTEVfQURNSU'
     '4QARIYChRVU0VSX1JPTEVfU1VQRVJWSVNPUhACEhQKEFVTRVJfUk9MRV9SRUFERVIQAw==');
 
+@$core.Deprecated('Use deleteCustomerRequestDescriptor instead')
+const DeleteCustomerRequest$json = {
+  '1': 'DeleteCustomerRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `DeleteCustomerRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteCustomerRequestDescriptor = $convert.base64Decode(
+    'ChVEZWxldGVDdXN0b21lclJlcXVlc3QSDgoCaWQYASABKAlSAmlk');
+
+@$core.Deprecated('Use deleteCustomerResponseDescriptor instead')
+const DeleteCustomerResponse$json = {
+  '1': 'DeleteCustomerResponse',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+  ],
+};
+
+/// Descriptor for `DeleteCustomerResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteCustomerResponseDescriptor = $convert.base64Decode(
+    'ChZEZWxldGVDdXN0b21lclJlc3BvbnNlEhgKB3N1Y2Nlc3MYASABKAhSB3N1Y2Nlc3M=');
+
 @$core.Deprecated('Use loginRequestDescriptor instead')
 const LoginRequest$json = {
   '1': 'LoginRequest',
@@ -136,26 +160,30 @@ const GetCustomersRequest$json = {
   '2': [
     {'1': 'sector_id', '3': 1, '4': 1, '5': 9, '10': 'sectorId'},
     {'1': 'search_query', '3': 2, '4': 1, '5': 9, '10': 'searchQuery'},
+    {'1': 'page_number', '3': 3, '4': 1, '5': 5, '10': 'pageNumber'},
+    {'1': 'page_size', '3': 4, '4': 1, '5': 5, '10': 'pageSize'},
   ],
 };
 
 /// Descriptor for `GetCustomersRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getCustomersRequestDescriptor = $convert.base64Decode(
     'ChNHZXRDdXN0b21lcnNSZXF1ZXN0EhsKCXNlY3Rvcl9pZBgBIAEoCVIIc2VjdG9ySWQSIQoMc2'
-    'VhcmNoX3F1ZXJ5GAIgASgJUgtzZWFyY2hRdWVyeQ==');
+    'VhcmNoX3F1ZXJ5GAIgASgJUgtzZWFyY2hRdWVyeRIfCgtwYWdlX251bWJlchgDIAEoBVIKcGFn'
+    'ZU51bWJlchIbCglwYWdlX3NpemUYBCABKAVSCHBhZ2VTaXpl');
 
 @$core.Deprecated('Use getCustomersResponseDescriptor instead')
 const GetCustomersResponse$json = {
   '1': 'GetCustomersResponse',
   '2': [
     {'1': 'customers', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.Customer', '10': 'customers'},
+    {'1': 'total_count', '3': 2, '4': 1, '5': 5, '10': 'totalCount'},
   ],
 };
 
 /// Descriptor for `GetCustomersResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getCustomersResponseDescriptor = $convert.base64Decode(
     'ChRHZXRDdXN0b21lcnNSZXNwb25zZRIxCgljdXN0b21lcnMYASADKAsyEy5pbnZvbHQudjEuQ3'
-    'VzdG9tZXJSCWN1c3RvbWVycw==');
+    'VzdG9tZXJSCWN1c3RvbWVycxIfCgt0b3RhbF9jb3VudBgCIAEoBVIKdG90YWxDb3VudA==');
 
 @$core.Deprecated('Use getReadingsRequestDescriptor instead')
 const GetReadingsRequest$json = {
@@ -164,26 +192,31 @@ const GetReadingsRequest$json = {
     {'1': 'customer_id', '3': 1, '4': 1, '5': 9, '10': 'customerId'},
     {'1': 'sector_id', '3': 2, '4': 1, '5': 9, '10': 'sectorId'},
     {'1': 'period', '3': 3, '4': 1, '5': 9, '10': 'period'},
+    {'1': 'page_number', '3': 4, '4': 1, '5': 5, '10': 'pageNumber'},
+    {'1': 'page_size', '3': 5, '4': 1, '5': 5, '10': 'pageSize'},
   ],
 };
 
 /// Descriptor for `GetReadingsRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getReadingsRequestDescriptor = $convert.base64Decode(
     'ChJHZXRSZWFkaW5nc1JlcXVlc3QSHwoLY3VzdG9tZXJfaWQYASABKAlSCmN1c3RvbWVySWQSGw'
-    'oJc2VjdG9yX2lkGAIgASgJUghzZWN0b3JJZBIWCgZwZXJpb2QYAyABKAlSBnBlcmlvZA==');
+    'oJc2VjdG9yX2lkGAIgASgJUghzZWN0b3JJZBIWCgZwZXJpb2QYAyABKAlSBnBlcmlvZBIfCgtw'
+    'YWdlX251bWJlchgEIAEoBVIKcGFnZU51bWJlchIbCglwYWdlX3NpemUYBSABKAVSCHBhZ2VTaX'
+    'pl');
 
 @$core.Deprecated('Use getReadingsResponseDescriptor instead')
 const GetReadingsResponse$json = {
   '1': 'GetReadingsResponse',
   '2': [
     {'1': 'readings', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.Reading', '10': 'readings'},
+    {'1': 'total_count', '3': 2, '4': 1, '5': 5, '10': 'totalCount'},
   ],
 };
 
 /// Descriptor for `GetReadingsResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getReadingsResponseDescriptor = $convert.base64Decode(
     'ChNHZXRSZWFkaW5nc1Jlc3BvbnNlEi4KCHJlYWRpbmdzGAEgAygLMhIuaW52b2x0LnYxLlJlYW'
-    'RpbmdSCHJlYWRpbmdz');
+    'RpbmdSCHJlYWRpbmdzEh8KC3RvdGFsX2NvdW50GAIgASgFUgp0b3RhbENvdW50');
 
 @$core.Deprecated('Use getSettingsRequestDescriptor instead')
 const GetSettingsRequest$json = {
@@ -296,7 +329,10 @@ const GetDashboardStatsResponse$json = {
     {'1': 'total_users', '3': 2, '4': 1, '5': 5, '10': 'totalUsers'},
     {'1': 'total_readings_period', '3': 3, '4': 1, '5': 5, '10': 'totalReadingsPeriod'},
     {'1': 'pending_readings_period', '3': 4, '4': 1, '5': 5, '10': 'pendingReadingsPeriod'},
-    {'1': 'sector_stats', '3': 5, '4': 3, '5': 11, '6': '.involt.v1.SectorStat', '10': 'sectorStats'},
+    {'1': 'total_revenue', '3': 5, '4': 1, '5': 1, '10': 'totalRevenue'},
+    {'1': 'total_consumption_kwh', '3': 6, '4': 1, '5': 1, '10': 'totalConsumptionKwh'},
+    {'1': 'previous_consumption_kwh', '3': 7, '4': 1, '5': 1, '10': 'previousConsumptionKwh'},
+    {'1': 'sector_stats', '3': 8, '4': 3, '5': 11, '6': '.involt.v1.SectorStat', '10': 'sectorStats'},
   ],
 };
 
@@ -305,8 +341,11 @@ final $typed_data.Uint8List getDashboardStatsResponseDescriptor = $convert.base6
     'ChlHZXREYXNoYm9hcmRTdGF0c1Jlc3BvbnNlEicKD3RvdGFsX2N1c3RvbWVycxgBIAEoBVIOdG'
     '90YWxDdXN0b21lcnMSHwoLdG90YWxfdXNlcnMYAiABKAVSCnRvdGFsVXNlcnMSMgoVdG90YWxf'
     'cmVhZGluZ3NfcGVyaW9kGAMgASgFUhN0b3RhbFJlYWRpbmdzUGVyaW9kEjYKF3BlbmRpbmdfcm'
-    'VhZGluZ3NfcGVyaW9kGAQgASgFUhVwZW5kaW5nUmVhZGluZ3NQZXJpb2QSOAoMc2VjdG9yX3N0'
-    'YXRzGAUgAygLMhUuaW52b2x0LnYxLlNlY3RvclN0YXRSC3NlY3RvclN0YXRz');
+    'VhZGluZ3NfcGVyaW9kGAQgASgFUhVwZW5kaW5nUmVhZGluZ3NQZXJpb2QSIwoNdG90YWxfcmV2'
+    'ZW51ZRgFIAEoAVIMdG90YWxSZXZlbnVlEjIKFXRvdGFsX2NvbnN1bXB0aW9uX2t3aBgGIAEoAV'
+    'ITdG90YWxDb25zdW1wdGlvbkt3aBI4ChhwcmV2aW91c19jb25zdW1wdGlvbl9rd2gYByABKAFS'
+    'FnByZXZpb3VzQ29uc3VtcHRpb25Ld2gSOAoMc2VjdG9yX3N0YXRzGAggAygLMhUuaW52b2x0Ln'
+    'YxLlNlY3RvclN0YXRSC3NlY3RvclN0YXRz');
 
 @$core.Deprecated('Use sectorStatDescriptor instead')
 const SectorStat$json = {
@@ -341,6 +380,7 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'GetSettings', '2': '.involt.v1.GetSettingsRequest', '3': '.involt.v1.GetSettingsResponse'},
     {'1': 'UpdateSettings', '2': '.involt.v1.UpdateSettingsRequest', '3': '.involt.v1.UpdateSettingsResponse'},
     {'1': 'UpsertCustomer', '2': '.involt.v1.UpsertCustomerRequest', '3': '.involt.v1.UpsertCustomerResponse'},
+    {'1': 'DeleteCustomer', '2': '.involt.v1.DeleteCustomerRequest', '3': '.involt.v1.DeleteCustomerResponse'},
     {'1': 'GetDashboardStats', '2': '.involt.v1.GetDashboardStatsRequest', '3': '.involt.v1.GetDashboardStatsResponse'},
   ],
 };
@@ -370,6 +410,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.UpdateSettingsResponse': UpdateSettingsResponse$json,
   '.involt.v1.UpsertCustomerRequest': UpsertCustomerRequest$json,
   '.involt.v1.UpsertCustomerResponse': UpsertCustomerResponse$json,
+  '.involt.v1.DeleteCustomerRequest': DeleteCustomerRequest$json,
+  '.involt.v1.DeleteCustomerResponse': DeleteCustomerResponse$json,
   '.involt.v1.GetDashboardStatsRequest': GetDashboardStatsRequest$json,
   '.involt.v1.GetDashboardStatsResponse': GetDashboardStatsResponse$json,
   '.involt.v1.SectorStat': SectorStat$json,
@@ -389,7 +431,8 @@ final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
     '4uaW52b2x0LnYxLkdldFNldHRpbmdzUmVzcG9uc2USVQoOVXBkYXRlU2V0dGluZ3MSIC5pbnZv'
     'bHQudjEuVXBkYXRlU2V0dGluZ3NSZXF1ZXN0GiEuaW52b2x0LnYxLlVwZGF0ZVNldHRpbmdzUm'
     'VzcG9uc2USVQoOVXBzZXJ0Q3VzdG9tZXISIC5pbnZvbHQudjEuVXBzZXJ0Q3VzdG9tZXJSZXF1'
-    'ZXN0GiEuaW52b2x0LnYxLlVwc2VydEN1c3RvbWVyUmVzcG9uc2USXgoRR2V0RGFzaGJvYXJkU3'
-    'RhdHMSIy5pbnZvbHQudjEuR2V0RGFzaGJvYXJkU3RhdHNSZXF1ZXN0GiQuaW52b2x0LnYxLkdl'
-    'dERhc2hib2FyZFN0YXRzUmVzcG9uc2U=');
+    'ZXN0GiEuaW52b2x0LnYxLlVwc2VydEN1c3RvbWVyUmVzcG9uc2USVQoORGVsZXRlQ3VzdG9tZX'
+    'ISIC5pbnZvbHQudjEuRGVsZXRlQ3VzdG9tZXJSZXF1ZXN0GiEuaW52b2x0LnYxLkRlbGV0ZUN1'
+    'c3RvbWVyUmVzcG9uc2USXgoRR2V0RGFzaGJvYXJkU3RhdHMSIy5pbnZvbHQudjEuR2V0RGFzaG'
+    'JvYXJkU3RhdHNSZXF1ZXN0GiQuaW52b2x0LnYxLkdldERhc2hib2FyZFN0YXRzUmVzcG9uc2U=');
 

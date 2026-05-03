@@ -38,7 +38,8 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (err: unknown) {
       console.error("Login failed:", err);
-      const errorMessage = err instanceof Error ? err.message : "Credenciales inválidas";
+      const errorMessage =
+        err instanceof Error ? err.message : "Credenciales inválidas";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -51,7 +52,7 @@ export default function LoginPage() {
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-6">
             <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-primary/20 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
+              <div className="absolute -inset-1 bg-linear-to-r from-primary/50 to-primary/20 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
               <div className="relative p-1 rounded-2xl bg-black/40 border border-white/5 shadow-inner">
                 <Image
                   src="/assets/logo.png"
@@ -63,7 +64,7 @@ export default function LoginPage() {
               </div>
             </div>
           </div>
-          <CardTitle className="text-3xl font-black tracking-tighter bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent uppercase leading-tight">
+          <CardTitle className="text-3xl font-black tracking-tighter bg-linear-to-br from-white to-white/60 bg-clip-text text-transparent uppercase leading-tight">
             Hidroeléctrica <br />
             <span className="text-primary tracking-normal">QARWAQIRU</span>
           </CardTitle>
@@ -127,15 +128,15 @@ export default function LoginPage() {
                   <Zap className="w-4 h-4 fill-current transition-transform group-hover:rotate-12 group-hover:scale-125" />
                 )}
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-primary opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-linear-to-r from-primary via-primary/90 to-primary opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
             </Button>
           </CardFooter>
         </form>
       </Card>
 
       <div className="fixed bottom-8 text-center text-[10px] uppercase tracking-[0.2em] text-muted-foreground/30 font-black">
-        Powered by <span className="text-white/60">InVolt</span> / Energía Rural Inteligente &copy;
-        2026
+        Powered by <span className="text-white/60">InVolt</span> / Energía Rural
+        Inteligente &copy; 2026
       </div>
     </div>
   );

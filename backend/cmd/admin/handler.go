@@ -104,6 +104,8 @@ func (h *AdminHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.CustomerReceipt(w, r)
 	case strings.HasPrefix(path, "/admin/customers/edit/"):
 		h.CustomerEdit(w, r)
+	case strings.HasPrefix(path, "/admin/readings/pdf/"):
+		h.DownloadReadingPDF(w, r)
 	case path == "/admin/set-period":
 		h.SetPeriod(w, r)
 	case path == "/admin/customers/save":
@@ -670,6 +672,62 @@ func (h *AdminHandler) DownloadReceipt(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/pdf")
 	w.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=recibo_%s.pdf", customerCode))
+	w.Write(pdfData)
+}
+
+func (h *AdminHandler) DownloadReadingPDF(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	readingID := r.URL.Path[20:] // After /admin/readings/pdf/
+
+	reading, err := h.readingRepo.GetByID(ctx, readingID)
+	if err != nil {
+		log.Printf("Error getting reading %s: %v", readingID, err)
+		http.Error(w, "Reading not found", http.StatusNotFound)
+		return
+	}
+
+	customer, err := h.customerRepo.GetByID(ctx, reading.CustomerID)
+	if err != nil {
+		log.Printf("Error getting customer %s: %v", reading.CustomerID, err)
+		http.Error(w, "Customer not found", http.StatusNotFound)
+		return
+	}
+
+	settings, _ := h.metadataRepo.GetSettings(ctx)
+	if settings == nil {
+		settings = &domain.Settings{}
+	}
+
+	communities, _ := h.metadataRepo.ListCommunities(ctx)
+	sectors, _ := h.metadataRepo.ListSectors(ctx)
+
+	h.populateReadingDetails(reading, settings)
+
+	commName := ""
+	for _, c := range communities {
+		if c.ID == customer.CommunityID {
+			commName = c.Name
+			break
+		}
+	}
+
+	sectName := ""
+	for _, s := range sectors {
+		if s.ID == customer.SectorID {
+			sectName = s.Name
+			break
+		}
+	}
+
+	pdfData, err := h.pdfGen.Generate(ctx, reading, customer, settings, commName, sectName)
+	if err != nil {
+		log.Printf("Error generating PDF for reading %s: %v", readingID, err)
+		http.Error(w, "Error generating PDF", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/pdf")
+	w.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=recibo_%s.pdf", readingID))
 	w.Write(pdfData)
 }
 

@@ -4,7 +4,13 @@ import { Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Settings } from "@/app/gen/involt/v1/models_pb";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -30,7 +36,9 @@ export default function SettingsPage() {
       }
     }
     fetchSettings();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -59,7 +67,7 @@ export default function SettingsPage() {
     <div className="p-8 space-y-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black tracking-tighter uppercase bg-gradient-to-br from-white to-white/40 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-black tracking-tighter uppercase bg-linear-to-br from-white to-white/40 bg-clip-text text-transparent">
             Configuración
           </h1>
           <p className="text-muted-foreground font-medium">
@@ -73,8 +81,12 @@ export default function SettingsPage() {
           {/* Institutional Info */}
           <Card className="border-white/5 bg-card/20 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-xl font-bold tracking-tight">Institución</CardTitle>
-              <CardDescription>Datos que aparecerán en los recibos y reportes</CardDescription>
+              <CardTitle className="text-xl font-bold tracking-tight">
+                Institución
+              </CardTitle>
+              <CardDescription>
+                Datos que aparecerán en los recibos y reportes
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -98,7 +110,9 @@ export default function SettingsPage() {
                 <Input
                   value={settings?.empresa || ""}
                   onChange={(e) =>
-                    setSettings((prev) => (prev ? { ...prev, empresa: e.target.value } : null))
+                    setSettings((prev) =>
+                      prev ? { ...prev, empresa: e.target.value } : null,
+                    )
                   }
                   className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
                 />
@@ -111,7 +125,9 @@ export default function SettingsPage() {
                   <Input
                     value={settings?.ruc || ""}
                     onChange={(e) =>
-                      setSettings((prev) => (prev ? { ...prev, ruc: e.target.value } : null))
+                      setSettings((prev) =>
+                        prev ? { ...prev, ruc: e.target.value } : null,
+                      )
                     }
                     className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
                   />
@@ -123,7 +139,9 @@ export default function SettingsPage() {
                   <Input
                     value={settings?.telefono || ""}
                     onChange={(e) =>
-                      setSettings((prev) => (prev ? { ...prev, telefono: e.target.value } : null))
+                      setSettings((prev) =>
+                        prev ? { ...prev, telefono: e.target.value } : null,
+                      )
                     }
                     className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
                   />
@@ -136,7 +154,9 @@ export default function SettingsPage() {
                 <Input
                   value={settings?.direccion || ""}
                   onChange={(e) =>
-                    setSettings((prev) => (prev ? { ...prev, direccion: e.target.value } : null))
+                    setSettings((prev) =>
+                      prev ? { ...prev, direccion: e.target.value } : null,
+                    )
                   }
                   className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
                 />
@@ -147,7 +167,9 @@ export default function SettingsPage() {
           {/* Billing Parameters */}
           <Card className="border-white/5 bg-card/20 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-xl font-bold tracking-tight">Facturación</CardTitle>
+              <CardTitle className="text-xl font-bold tracking-tight">
+                Facturación
+              </CardTitle>
               <CardDescription>Tarifas y parámetros de cálculo</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -162,7 +184,9 @@ export default function SettingsPage() {
                     value={settings?.tarifaKwh || 0}
                     onChange={(e) =>
                       setSettings((prev) =>
-                        prev ? { ...prev, tarifaKwh: parseFloat(e.target.value) } : null,
+                        prev
+                          ? { ...prev, tarifaKwh: parseFloat(e.target.value) }
+                          : null,
                       )
                     }
                     className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
@@ -178,7 +202,9 @@ export default function SettingsPage() {
                     value={settings?.cargoFijo || 0}
                     onChange={(e) =>
                       setSettings((prev) =>
-                        prev ? { ...prev, cargoFijo: parseFloat(e.target.value) } : null,
+                        prev
+                          ? { ...prev, cargoFijo: parseFloat(e.target.value) }
+                          : null,
                       )
                     }
                     className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
@@ -196,7 +222,9 @@ export default function SettingsPage() {
                     value={settings?.alumbrado || 0}
                     onChange={(e) =>
                       setSettings((prev) =>
-                        prev ? { ...prev, alumbrado: parseFloat(e.target.value) } : null,
+                        prev
+                          ? { ...prev, alumbrado: parseFloat(e.target.value) }
+                          : null,
                       )
                     }
                     className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
@@ -211,7 +239,12 @@ export default function SettingsPage() {
                     value={settings?.diasVencimiento || 0}
                     onChange={(e) =>
                       setSettings((prev) =>
-                        prev ? { ...prev, diasVencimiento: parseInt(e.target.value, 10) } : null,
+                        prev
+                          ? {
+                              ...prev,
+                              diasVencimiento: parseInt(e.target.value, 10),
+                            }
+                          : null,
                       )
                     }
                     className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
@@ -230,7 +263,9 @@ export default function SettingsPage() {
                 <Switch
                   checked={settings?.igv || false}
                   onCheckedChange={(checked) =>
-                    setSettings((prev) => (prev ? { ...prev, igv: checked } : null))
+                    setSettings((prev) =>
+                      prev ? { ...prev, igv: checked } : null,
+                    )
                   }
                 />
               </div>

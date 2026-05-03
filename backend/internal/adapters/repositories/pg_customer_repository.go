@@ -42,6 +42,62 @@ func (r *PostgresCustomerRepository) GetByID(ctx context.Context, id string) (*d
 	return &customer, nil
 }
 
+func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int) ([]domain.Customer, int, error) {
+	var customers []domain.Customer
+	var total int
+
+	where := "1=1"
+	args := map[string]interface{}{
+		"limit":  limit,
+		"offset": offset,
+	}
+
+	if len(allowedSectorIDs) > 0 {
+		where += " AND sector_id IN (:allowed_sector_ids)"
+		args["allowed_sector_ids"] = allowedSectorIDs
+	}
+
+	if searchQuery != "" {
+		where += " AND (name ILIKE :search OR code ILIKE :search)"
+		args["search"] = "%" + searchQuery + "%"
+	}
+
+	// Use sqlx.Named and sqlx.In for complex queries
+	countQuery, countArgs, err := sqlx.Named(fmt.Sprintf("SELECT COUNT(*) FROM customers WHERE %s", where), args)
+	if err != nil {
+		return nil, 0, err
+	}
+	countQuery, countArgs, err = sqlx.In(countQuery, countArgs...)
+	if err != nil {
+		return nil, 0, err
+	}
+	countQuery = r.db.Rebind(countQuery)
+	err = r.db.GetContext(ctx, &total, countQuery, countArgs...)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Get paginated data
+	selectQuery, selectArgs, err := sqlx.Named(fmt.Sprintf(`SELECT id, code, name, community_id, sector_id, address, 
+	          connection_type, tariff, meter_number,
+	          latitude, longitude, initial_reading, last_reading_value
+	          FROM customers WHERE %s ORDER BY code ASC LIMIT :limit OFFSET :offset`, where), args)
+	if err != nil {
+		return nil, 0, err
+	}
+	selectQuery, selectArgs, err = sqlx.In(selectQuery, selectArgs...)
+	if err != nil {
+		return nil, 0, err
+	}
+	selectQuery = r.db.Rebind(selectQuery)
+	err = r.db.SelectContext(ctx, &customers, selectQuery, selectArgs...)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return customers, total, nil
+}
+
 func (r *PostgresCustomerRepository) ListAll(ctx context.Context) ([]domain.Customer, error) {
 	var customers []domain.Customer
 	query := `SELECT id, code, name, community_id, sector_id, address, 
@@ -93,6 +149,12 @@ func (r *PostgresCustomerRepository) Save(ctx context.Context, c *domain.Custome
 	_, err := r.db.ExecContext(ctx, query,
 		c.ID, c.Code, c.Name, c.CommunityID, c.SectorID, c.Address, c.ConnectionType,
 		c.Tariff, c.MeterNumber, c.Latitude, c.Longitude, c.InitialReading, c.LastReadingValue)
+	return err
+}
+
+func (r *PostgresCustomerRepository) Delete(ctx context.Context, id string) error {
+	query := `DELETE FROM customers WHERE id = $1`
+	_, err := r.db.ExecContext(ctx, query, id)
 	return err
 }
 
