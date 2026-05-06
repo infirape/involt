@@ -17,15 +17,10 @@ func NewPostgresCustomerRepository(db *sqlx.DB) *PostgresCustomerRepository {
 }
 
 func (r *PostgresCustomerRepository) GetByCode(ctx context.Context, code string) (*domain.Customer, error) {
-	var customer domain.Customer
-query := `SELECT id, code, name, community_id, sector_id, address, 
+var customer domain.Customer
+	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
-	          latitude, longitude, initial_reading,
-			  COALESCE((
-				  SELECT current_value FROM readings 
-				  WHERE customer_id = customers.id 
-				  ORDER BY timestamp DESC LIMIT 1
-			  ), initial_reading) as last_reading_value
+	          latitude, longitude, initial_reading
 	          FROM customers WHERE code = $1`
 	err := r.db.GetContext(ctx, &customer, query, code)
 	if err != nil {
@@ -38,12 +33,7 @@ func (r *PostgresCustomerRepository) GetByID(ctx context.Context, id string) (*d
 	var customer domain.Customer
 	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
-	          latitude, longitude, initial_reading,
-		       COALESCE((
-		           SELECT current_value FROM readings 
-		           WHERE customer_id = customers.id 
-		           ORDER BY timestamp DESC LIMIT 1
-		       ), initial_reading) as last_reading_value
+	          latitude, longitude, initial_reading
 	          FROM customers WHERE id = $1`
 	err := r.db.GetContext(ctx, &customer, query, id)
 	if err != nil {
@@ -92,13 +82,7 @@ func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs 
 	selectQuery, selectArgs, err := sqlx.Named(fmt.Sprintf(`
 		SELECT id, code, name, community_id, sector_id, address, 
 		       connection_type, tariff, meter_number,
-		       latitude, longitude, initial_reading,
-		       COALESCE((
-		           SELECT current_value FROM readings 
-		           WHERE customer_id = customers.id 
-		           AND (:exclude_period_id = '' OR period != :exclude_period_id)
-		           ORDER BY timestamp DESC LIMIT 1
-		       ), initial_reading) as last_reading_value
+		       latitude, longitude, initial_reading
 		FROM customers WHERE %s 
 		ORDER BY code ASC LIMIT :limit OFFSET :offset`, where), args)
 	if err != nil {
@@ -121,12 +105,7 @@ func (r *PostgresCustomerRepository) ListAll(ctx context.Context) ([]domain.Cust
 	var customers []domain.Customer
 	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
-	          latitude, longitude, initial_reading,
-		       COALESCE((
-		           SELECT timestamp FROM readings 
-		           WHERE customer_id = customers.id 
-		           ORDER BY timestamp DESC LIMIT 1
-		       ), initial_reading) as last_reading_value
+	          latitude, longitude, initial_reading
 	          FROM customers ORDER BY code ASC`
 	err := r.db.SelectContext(ctx, &customers, query)
 	if err != nil {
