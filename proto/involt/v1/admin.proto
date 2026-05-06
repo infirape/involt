@@ -98,6 +98,7 @@ message GetCustomersRequest {
   string search_query = 2;
   int32 page_number = 3;
   int32 page_size = 4;
+  string exclude_period_id = 5;
 }
 
 message GetCustomersResponse {

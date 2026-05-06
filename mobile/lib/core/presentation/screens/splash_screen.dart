@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:involt/core/presentation/theme/app_colors.dart';
 import 'package:involt/core/data/database.dart';
-import 'package:involt/core/data/services/sync_service.dart';
-import 'package:involt/core/config/app_config.dart';
 import 'package:involt/main.dart'; // To access MainNavigationScreen
 
 class SplashScreen extends StatefulWidget {
@@ -13,7 +11,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _shimmerPosition;
   late Animation<double> _fullFillIntensity;
@@ -23,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    
+
     // Main animation controller (5 seconds loop for better timing)
     _animationController = AnimationController(
       vsync: this,
@@ -38,10 +37,22 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
     // 2. Full Yellow Fill (Power Up) - Starts after the burst
     _fullFillIntensity = TweenSequence<double>([
-      TweenSequenceItem(tween: ConstantTween(0.0), weight: 40), // Wait for burst to reach half
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 15), // Powering up
-      TweenSequenceItem(tween: ConstantTween(1.0), weight: 25), // FULL ON - HOLD
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 10), // Shutting down
+      TweenSequenceItem(
+        tween: ConstantTween(0.0),
+        weight: 40,
+      ), // Wait for burst to reach half
+      TweenSequenceItem(
+        tween: Tween(begin: 0.0, end: 1.0),
+        weight: 15,
+      ), // Powering up
+      TweenSequenceItem(
+        tween: ConstantTween(1.0),
+        weight: 25,
+      ), // FULL ON - HOLD
+      TweenSequenceItem(
+        tween: Tween(begin: 1.0, end: 0.0),
+        weight: 10,
+      ), // Shutting down
       TweenSequenceItem(tween: ConstantTween(0.0), weight: 10), // Pause
     ]).animate(_animationController);
 
@@ -50,7 +61,10 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_fadeController);
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(_fadeController);
 
     _fadeController.forward();
     _initializeApp();
@@ -65,20 +79,17 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
   Future<void> _initializeApp() async {
     final startTime = DateTime.now();
-    try {
-      final syncService = SyncService(db: widget.db, baseUrl: AppConfig.baseUrl);
-      await syncService.pullMetadata();
-    } catch (e) {
-      debugPrint('🌱 Initialization error: $e');
-    }
     final elapsed = DateTime.now().difference(startTime);
     if (elapsed.inMilliseconds < 5000) {
-      await Future.delayed(Duration(milliseconds: 5000 - elapsed.inMilliseconds));
+      await Future.delayed(
+        Duration(milliseconds: 5000 - elapsed.inMilliseconds),
+      );
     }
     if (mounted) {
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => MainNavigationScreen(db: widget.db),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              MainNavigationScreen(db: widget.db),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           },
@@ -103,14 +114,14 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               // REAL LOGO
               Image.asset('assets/logo.png', width: 140, height: 140),
               const SizedBox(height: 40),
-              
+
               // Animated InVolt Text (ELECTRIC SHADER)
               AnimatedBuilder(
                 animation: _animationController,
                 builder: (context, child) {
                   final fillIntensity = _fullFillIntensity.value;
                   final shimmerPos = _shimmerPosition.value;
-                  
+
                   // The "Burst" color is bright yellow/white
                   // The "Full" color is the brand electric yellow
                   return ShaderMask(
@@ -120,13 +131,29 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                         end: Alignment.centerRight,
                         colors: [
                           // Base color interpolates from grey (offline) to yellow (powered)
-                          Color.lerp(Colors.white10, Colors.yellow, fillIntensity)!,
-                          Color.lerp(Colors.white10, Colors.yellow, fillIntensity)!,
+                          Color.lerp(
+                            Colors.white10,
+                            Colors.yellow,
+                            fillIntensity,
+                          )!,
+                          Color.lerp(
+                            Colors.white10,
+                            Colors.yellow,
+                            fillIntensity,
+                          )!,
                           Colors.yellowAccent, // Electric glow
-                          Colors.white,        // Spark core
+                          Colors.white, // Spark core
                           Colors.yellowAccent, // Electric glow
-                          Color.lerp(Colors.white10, Colors.yellow, fillIntensity)!,
-                          Color.lerp(Colors.white10, Colors.yellow, fillIntensity)!,
+                          Color.lerp(
+                            Colors.white10,
+                            Colors.yellow,
+                            fillIntensity,
+                          )!,
+                          Color.lerp(
+                            Colors.white10,
+                            Colors.yellow,
+                            fillIntensity,
+                          )!,
                         ],
                         stops: [
                           0.0,
@@ -140,7 +167,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                       ).createShader(bounds);
                     },
                     child: const Text(
-                      'InVolt',
+                      'QARWAQIRU',
                       style: TextStyle(
                         fontSize: 64,
                         fontWeight: FontWeight.w900,
@@ -151,7 +178,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   );
                 },
               ),
-              
+
               const SizedBox(height: 10),
               Text(
                 'SISTEMA DE GESTIÓN ELÉCTRICA',
@@ -163,9 +190,24 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                 ),
               ),
               const Spacer(flex: 2),
-              const Text('Desarrollado por', style: TextStyle(color: Colors.white10, fontSize: 10, letterSpacing: 2)),
+              const Text(
+                'Desarrollado por',
+                style: TextStyle(
+                  color: Colors.white10,
+                  fontSize: 10,
+                  letterSpacing: 2,
+                ),
+              ),
               const SizedBox(height: 8),
-              const Text('INFIRA', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 8)),
+              const Text(
+                'INFIRA',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 8,
+                ),
+              ),
               const SizedBox(height: 60),
             ],
           ),

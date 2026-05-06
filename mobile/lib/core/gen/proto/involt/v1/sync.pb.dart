@@ -184,6 +184,7 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     $0.AppConfig? config,
     $0.Settings? settings,
     $0.Period? currentPeriod,
+    $core.Iterable<$0.Operator>? operators,
   }) {
     final $result = create();
     if (communities != null) {
@@ -207,6 +208,9 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     if (currentPeriod != null) {
       $result.currentPeriod = currentPeriod;
     }
+    if (operators != null) {
+      $result.operators.addAll(operators);
+    }
     return $result;
   }
   PullMetadataResponse._() : super();
@@ -221,6 +225,7 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
     ..aOM<$0.AppConfig>(5, _omitFieldNames ? '' : 'config', subBuilder: $0.AppConfig.create)
     ..aOM<$0.Settings>(6, _omitFieldNames ? '' : 'settings', subBuilder: $0.Settings.create)
     ..aOM<$0.Period>(7, _omitFieldNames ? '' : 'currentPeriod', subBuilder: $0.Period.create)
+    ..pc<$0.Operator>(8, _omitFieldNames ? '' : 'operators', $pb.PbFieldType.PM, subBuilder: $0.Operator.create)
     ..hasRequiredFields = false
   ;
 
@@ -289,6 +294,9 @@ class PullMetadataResponse extends $pb.GeneratedMessage {
   void clearCurrentPeriod() => clearField(7);
   @$pb.TagNumber(7)
   $0.Period ensureCurrentPeriod() => $_ensure(6);
+
+  @$pb.TagNumber(8)
+  $core.List<$0.Operator> get operators => $_getList(7);
 }
 
 class UploadPhotoRequest extends $pb.GeneratedMessage {

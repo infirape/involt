@@ -18,9 +18,14 @@ func NewPostgresCustomerRepository(db *sqlx.DB) *PostgresCustomerRepository {
 
 func (r *PostgresCustomerRepository) GetByCode(ctx context.Context, code string) (*domain.Customer, error) {
 	var customer domain.Customer
-	query := `SELECT id, code, name, community_id, sector_id, address, 
+query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
-	          latitude, longitude, initial_reading, last_reading_value
+	          latitude, longitude, initial_reading,
+			  COALESCE((
+				  SELECT current_value FROM readings 
+				  WHERE customer_id = customers.id 
+				  ORDER BY timestamp DESC LIMIT 1
+			  ), initial_reading) as last_reading_value
 	          FROM customers WHERE code = $1`
 	err := r.db.GetContext(ctx, &customer, query, code)
 	if err != nil {
@@ -33,7 +38,12 @@ func (r *PostgresCustomerRepository) GetByID(ctx context.Context, id string) (*d
 	var customer domain.Customer
 	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
-	          latitude, longitude, initial_reading, last_reading_value
+	          latitude, longitude, initial_reading,
+		       COALESCE((
+		           SELECT current_value FROM readings 
+		           WHERE customer_id = customers.id 
+		           ORDER BY timestamp DESC LIMIT 1
+		       ), initial_reading) as last_reading_value
 	          FROM customers WHERE id = $1`
 	err := r.db.GetContext(ctx, &customer, query, id)
 	if err != nil {
@@ -42,14 +52,15 @@ func (r *PostgresCustomerRepository) GetByID(ctx context.Context, id string) (*d
 	return &customer, nil
 }
 
-func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int) ([]domain.Customer, int, error) {
+func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int, excludePeriodID string) ([]domain.Customer, int, error) {
 	var customers []domain.Customer
 	var total int
 
 	where := "1=1"
 	args := map[string]interface{}{
-		"limit":  limit,
-		"offset": offset,
+		"limit":             limit,
+		"offset":            offset,
+		"exclude_period_id": excludePeriodID,
 	}
 
 	if len(allowedSectorIDs) > 0 {
@@ -77,11 +88,19 @@ func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs 
 		return nil, 0, err
 	}
 
-	// Get paginated data
-	selectQuery, selectArgs, err := sqlx.Named(fmt.Sprintf(`SELECT id, code, name, community_id, sector_id, address, 
-	          connection_type, tariff, meter_number,
-	          latitude, longitude, initial_reading, last_reading_value
-	          FROM customers WHERE %s ORDER BY code ASC LIMIT :limit OFFSET :offset`, where), args)
+	// Get paginated data with dynamic latest reading, potentially excluding current period
+	selectQuery, selectArgs, err := sqlx.Named(fmt.Sprintf(`
+		SELECT id, code, name, community_id, sector_id, address, 
+		       connection_type, tariff, meter_number,
+		       latitude, longitude, initial_reading,
+		       COALESCE((
+		           SELECT current_value FROM readings 
+		           WHERE customer_id = customers.id 
+		           AND (:exclude_period_id = '' OR period != :exclude_period_id)
+		           ORDER BY timestamp DESC LIMIT 1
+		       ), initial_reading) as last_reading_value
+		FROM customers WHERE %s 
+		ORDER BY code ASC LIMIT :limit OFFSET :offset`, where), args)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -102,7 +121,12 @@ func (r *PostgresCustomerRepository) ListAll(ctx context.Context) ([]domain.Cust
 	var customers []domain.Customer
 	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
-	          latitude, longitude, initial_reading, last_reading_value
+	          latitude, longitude, initial_reading,
+		       COALESCE((
+		           SELECT timestamp FROM readings 
+		           WHERE customer_id = customers.id 
+		           ORDER BY timestamp DESC LIMIT 1
+		       ), initial_reading) as last_reading_value
 	          FROM customers ORDER BY code ASC`
 	err := r.db.SelectContext(ctx, &customers, query)
 	if err != nil {
@@ -114,19 +138,18 @@ func (r *PostgresCustomerRepository) ListAll(ctx context.Context) ([]domain.Cust
 func (r *PostgresCustomerRepository) SaveBatch(ctx context.Context, customers []domain.Customer) error {
 	query := `INSERT INTO customers (
 				id, code, name, community_id, sector_id, address, connection_type, 
-				tariff, meter_number, latitude, longitude, initial_reading, last_reading_value
+				tariff, meter_number, latitude, longitude, initial_reading
 			  ) 
 	          VALUES (
 				:id, :code, :name, :community_id, :sector_id, :address, :connection_type, 
-				:tariff, :meter_number, :latitude, :longitude, :initial_reading, :last_reading_value
+				:tariff, :meter_number, :latitude, :longitude, :initial_reading
 			  ) 
 	          ON CONFLICT (id) DO UPDATE SET 
 	          code = EXCLUDED.code, name = EXCLUDED.name, community_id = EXCLUDED.community_id, 
 	          sector_id = EXCLUDED.sector_id, address = EXCLUDED.address, connection_type = EXCLUDED.connection_type, 
 	          tariff = EXCLUDED.tariff, meter_number = EXCLUDED.meter_number,
 	          latitude = EXCLUDED.latitude, longitude = EXCLUDED.longitude, 
-	          initial_reading = EXCLUDED.initial_reading,
-			  last_reading_value = EXCLUDED.last_reading_value`
+	          initial_reading = EXCLUDED.initial_reading`
 	_, err := r.db.NamedExecContext(ctx, query, customers)
 	return err
 }
@@ -134,21 +157,20 @@ func (r *PostgresCustomerRepository) SaveBatch(ctx context.Context, customers []
 func (r *PostgresCustomerRepository) Save(ctx context.Context, c *domain.Customer) error {
 	query := `INSERT INTO customers (
 				id, code, name, community_id, sector_id, address, connection_type, 
-				tariff, meter_number, latitude, longitude, initial_reading, last_reading_value
+				tariff, meter_number, latitude, longitude, initial_reading
 			  ) 
 	          VALUES (
-				$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
+				$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
 			  ) 
 	          ON CONFLICT (id) DO UPDATE SET 
 	          code = EXCLUDED.code, name = EXCLUDED.name, community_id = EXCLUDED.community_id, 
 	          sector_id = EXCLUDED.sector_id, address = EXCLUDED.address, connection_type = EXCLUDED.connection_type, 
 	          tariff = EXCLUDED.tariff, meter_number = EXCLUDED.meter_number,
 	          latitude = EXCLUDED.latitude, longitude = EXCLUDED.longitude, 
-	          initial_reading = EXCLUDED.initial_reading,
-			  last_reading_value = EXCLUDED.last_reading_value`
+	          initial_reading = EXCLUDED.initial_reading`
 	_, err := r.db.ExecContext(ctx, query,
 		c.ID, c.Code, c.Name, c.CommunityID, c.SectorID, c.Address, c.ConnectionType,
-		c.Tariff, c.MeterNumber, c.Latitude, c.Longitude, c.InitialReading, c.LastReadingValue)
+		c.Tariff, c.MeterNumber, c.Latitude, c.Longitude, c.InitialReading)
 	return err
 }
 
@@ -162,5 +184,6 @@ func (r *PostgresCustomerRepository) CountBySector(ctx context.Context, sectorID
 	var count int
 	query := `SELECT COUNT(*) FROM customers WHERE sector_id = $1`
 	err := r.db.GetContext(ctx, &count, query, sectorID)
+	fmt.Printf("📊 CountBySector: sector=%s, count=%d, err=%v\n", sectorID, count, err)
 	return count, err
 }

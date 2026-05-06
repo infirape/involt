@@ -53,7 +53,6 @@ CREATE TABLE IF NOT EXISTS customers (
     latitude DOUBLE PRECISION NOT NULL DEFAULT 0,
     longitude DOUBLE PRECISION NOT NULL DEFAULT 0,
     initial_reading DOUBLE PRECISION DEFAULT 0,
-    last_reading_value DOUBLE PRECISION DEFAULT 0,
     contract_start DATE,  -- Fecha de inicio de contrato
     created_at TIMESTAMPTZ DEFAULT NOW()
 );

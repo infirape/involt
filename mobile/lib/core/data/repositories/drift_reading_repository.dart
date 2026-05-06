@@ -9,13 +9,7 @@ class DriftReadingRepository implements ReadingRepository {
 
   @override
   Future<void> saveReading(Reading reading) async {
-    await db.transaction(() async {
-      await db.into(db.readings).insertOnConflictUpdate(reading);
-      
-      // Update local customer state immediately for UI refresh
-      await (db.update(db.customers)..where((t) => t.id.equals(reading.customerId)))
-          .write(CustomersCompanion(lastReadingValue: Value(reading.currentValue)));
-    });
+    await db.into(db.readings).insertOnConflictUpdate(reading);
   }
 
   @override

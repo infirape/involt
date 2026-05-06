@@ -147,7 +147,7 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 				text.New(fmt.Sprintf("%.2f", reading.CurrentValue), props.Text{Top: 18, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
 				
 				text.New("Consumo:", props.Text{Left: 3, Top: 25, Size: fontNormal, Style: fontstyle.Bold}),
-				text.New(fmt.Sprintf("%.0f kWh", reading.Consumption), props.Text{Top: 25, Size: fontNormal, Align: align.Right, Style: fontstyle.Bold}),
+				text.New(fmt.Sprintf("%.2f kWh", reading.Consumption), props.Text{Top: 25, Size: fontNormal, Align: align.Right, Style: fontstyle.Bold}),
 				
 				text.New("Fecha de Emisión:", props.Text{Left: 3, Top: 28, Size: fontSmall}),
 				text.New(formatDate(reading.Timestamp), props.Text{Top: 28, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),

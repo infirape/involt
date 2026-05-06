@@ -12,13 +12,11 @@ import {
   BarChart3,
 } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { adminClient } from "@/lib/rpc";
 import { useRouter } from "next/navigation";
-import type { GetDashboardStatsResponse } from "@/app/gen/involt/v1/admin_pb";
 import { PeriodStatus } from "@/app/gen/involt/v1/models_pb";
-import type { Period } from "@/app/gen/involt/v1/models_pb";
+import { useDashboard } from "./hooks/useDashboard";
 
 const CustomerMap = dynamic(
   () => import("@/components/dashboard/CustomerMap"),
@@ -39,58 +37,13 @@ const CustomerMap = dynamic(
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [data, setData] = useState<{
-    stats: GetDashboardStatsResponse | null;
-    loading: boolean;
-  }>({
-    stats: null,
-    loading: true,
-  });
-
-  const [periods, setPeriods] = useState<Period[]>([]);
-  const [selectedPeriod, setSelectedPeriod] = useState<string | null>(null);
-
-  const fetchStats = useCallback(async () => {
-    if (!selectedPeriod) return;
-    setData((prev) => ({ ...prev, loading: true }));
-    try {
-      const resp = await adminClient.getDashboardStats({
-        period: selectedPeriod,
-      });
-      setData({
-        stats: resp,
-        loading: false,
-      });
-    } catch (err) {
-      console.error("Failed to fetch dashboard stats:", err);
-      setData((prev) => ({ ...prev, loading: false }));
-    }
-  }, [selectedPeriod]);
-
-  useEffect(() => {
-    async function init() {
-      try {
-        const resp = await adminClient.listPeriods({});
-        setPeriods(resp.periods);
-        const current =
-          resp.periods.find((p) => p.status === PeriodStatus.OPEN) ||
-          resp.periods[0];
-        if (current) {
-          setSelectedPeriod(current.id);
-        } else {
-          // Fallback to today if no periods exist
-          setSelectedPeriod(new Date().toISOString().slice(0, 7));
-        }
-      } catch (err) {
-        console.error("Failed to list periods:", err);
-      }
-    }
-    init();
-  }, []);
-
-  useEffect(() => {
-    if (selectedPeriod) fetchStats();
-  }, [selectedPeriod, fetchStats]);
+  const {
+    data,
+    periods,
+    selectedPeriod,
+    setSelectedPeriod,
+    consumptionDelta,
+  } = useDashboard();
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   useEffect(() => {
@@ -100,15 +53,6 @@ export default function DashboardPage() {
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
-
-  const consumptionDelta = useMemo(() => {
-    if (!data.stats || data.stats.previousConsumptionKwh === 0) return 0;
-    return (
-      ((data.stats.totalConsumptionKwh - data.stats.previousConsumptionKwh) /
-        data.stats.previousConsumptionKwh) *
-      100
-    );
-  }, [data.stats]);
 
   const cards = [
     {

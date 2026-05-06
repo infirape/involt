@@ -11,10 +11,11 @@ func MapProtoToReading(p *involtv1.Reading) *Reading {
 	if p == nil {
 		return nil
 	}
-	t, _ := time.Parse(time.RFC3339, p.Timestamp)
-	ps, _ := time.Parse(time.RFC3339, p.PeriodStart)
-	pe, _ := time.Parse(time.RFC3339, p.PeriodEnd)
-	ed, _ := time.Parse(time.RFC3339, p.ExpirationDate)
+	t, _ := parseTime(p.Timestamp)
+	ps, _ := parseTime(p.PeriodStart)
+	pe, _ := parseTime(p.PeriodEnd)
+	ed, _ := parseTime(p.ExpirationDate)
+	period := deriveReadingPeriod(p.Period, ps, t, p.Id)
 
 	return &Reading{
 		ID:               p.Id,
@@ -39,6 +40,7 @@ func MapProtoToReading(p *involtv1.Reading) *Reading {
 		PreviousBalance:  p.PreviousBalance,
 		OverdueTotal:     p.OverdueTotal,
 		ExpirationDate:   ed,
+		Period:           period,
 	}
 }
 
@@ -47,6 +49,8 @@ func MapReadingToProto(d *Reading) *involtv1.Reading {
 	if d == nil {
 		return nil
 	}
+	period := deriveReadingPeriod(d.Period, d.PeriodStart, d.Timestamp, d.ID)
+
 	return &involtv1.Reading{
 		Id:               d.ID,
 		CustomerId:       d.CustomerID,
@@ -70,7 +74,48 @@ func MapReadingToProto(d *Reading) *involtv1.Reading {
 		PreviousBalance:  d.PreviousBalance,
 		OverdueTotal:     d.OverdueTotal,
 		ExpirationDate:   d.ExpirationDate.Format(time.RFC3339),
+		Period:           period,
 	}
+}
+
+func parseTime(s string) (time.Time, error) {
+	if s == "" {
+		return time.Time{}, nil
+	}
+	// Try multiple formats
+	formats := []string{
+		time.RFC3339,
+		"2006-01-02T15:04:05.999999999Z07:00",
+		"2006-01-02T15:04:05.999999999",
+		"2006-01-02 15:04:05",
+		time.RFC3339Nano,
+	}
+	for _, f := range formats {
+		if t, err := time.Parse(f, s); err == nil {
+			return t, nil
+		}
+	}
+	return time.Parse(time.RFC3339, s) // Fallback to return original error if any
+}
+
+func deriveReadingPeriod(period string, periodStart time.Time, timestamp time.Time, id string) string {
+	var result string
+	if period != "" {
+		result = period
+	} else if !periodStart.IsZero() {
+		result = periodStart.Format("2006-01")
+	} else if len(id) >= len("2006-01") {
+		suffix := id[len(id)-len("2006-01"):]
+		if _, err := time.Parse("2006-01", suffix); err == nil {
+			result = suffix
+		} else if !timestamp.IsZero() {
+			result = timestamp.Format("2006-01")
+		}
+	} else if !timestamp.IsZero() {
+		result = timestamp.Format("2006-01")
+	}
+
+	return result
 }
 
 // MapProtoToCustomer converts a Protobuf customer to a Domain customer.
@@ -78,7 +123,7 @@ func MapProtoToCustomer(p *involtv1.Customer) *Customer {
 	if p == nil {
 		return nil
 	}
-	
+
 	connType := ConnectionTypeMonofasica
 	if p.ConnectionType == involtv1.ConnectionType_CONNECTION_TYPE_TRIFASICA {
 		connType = ConnectionTypeTrifasica
@@ -147,9 +192,22 @@ func MapPeriodToProto(d *Period) *involtv1.Period {
 	}
 
 	return &involtv1.Period{
-		Id:        d.ID,
-		StartDate: d.StartDate.Format("2006-01-02"),
-		EndDate:   d.EndDate.Format("2006-01-02"),
-		Status:    status,
+		Id:              d.ID,
+		StartDate:       d.StartDate.Format("2006-01-02"),
+		EndDate:         d.EndDate.Format("2006-01-02"),
+		Status:          status,
+		IsBillingPeriod: d.IsBillingPeriod,
+	}
+}
+// MapUserToOperatorProto converts a Domain user to an Operator Protobuf.
+func MapUserToOperatorProto(d *User) *involtv1.Operator {
+	if d == nil {
+		return nil
+	}
+	return &involtv1.Operator{
+		Id:           d.ID,
+		Email:        d.Email,
+		PasswordHash: d.PasswordHash,
+		Role:         string(d.Role),
 	}
 }

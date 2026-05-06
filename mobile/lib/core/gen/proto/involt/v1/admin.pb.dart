@@ -525,6 +525,7 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
     $core.String? searchQuery,
     $core.int? pageNumber,
     $core.int? pageSize,
+    $core.String? excludePeriodId,
   }) {
     final $result = create();
     if (sectorId != null) {
@@ -539,6 +540,9 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
     if (pageSize != null) {
       $result.pageSize = pageSize;
     }
+    if (excludePeriodId != null) {
+      $result.excludePeriodId = excludePeriodId;
+    }
     return $result;
   }
   GetCustomersRequest._() : super();
@@ -550,6 +554,7 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
     ..aOS(2, _omitFieldNames ? '' : 'searchQuery')
     ..a<$core.int>(3, _omitFieldNames ? '' : 'pageNumber', $pb.PbFieldType.O3)
     ..a<$core.int>(4, _omitFieldNames ? '' : 'pageSize', $pb.PbFieldType.O3)
+    ..aOS(5, _omitFieldNames ? '' : 'excludePeriodId')
     ..hasRequiredFields = false
   ;
 
@@ -609,6 +614,15 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
   $core.bool hasPageSize() => $_has(3);
   @$pb.TagNumber(4)
   void clearPageSize() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get excludePeriodId => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set excludePeriodId($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasExcludePeriodId() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearExcludePeriodId() => clearField(5);
 }
 
 class GetCustomersResponse extends $pb.GeneratedMessage {

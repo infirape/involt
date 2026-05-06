@@ -1,29 +1,47 @@
 "use client";
 
-import { LayoutDashboard, LogOut, Settings, Users, Zap, Calendar } from "lucide-react";
+import {
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  Users,
+  Zap,
+  Calendar,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAdmin } = useAuth();
+  const { isAdmin } = useAuth();
 
   const menuItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/customers", label: "Clientes", icon: Users },
     { href: "/dashboard/readings", label: "Lecturas", icon: Zap },
-    ...(isAdmin ? [
-      { href: "/dashboard/users", label: "Usuarios", icon: Users },
-      { href: "/dashboard/periods", label: "Periodos", icon: Calendar },
-      { href: "/dashboard/settings", label: "Configuración", icon: Settings },
-    ] : []),
+    ...(isAdmin
+      ? [
+          { href: "/dashboard/users", label: "Usuarios", icon: Users },
+          { href: "/dashboard/periods", label: "Periodos", icon: Calendar },
+          {
+            href: "/dashboard/settings",
+            label: "Configuración",
+            icon: Settings,
+          },
+        ]
+      : []),
   ];
 
   const handleLogout = () => {
-    document.cookie = "admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    document.cookie =
+      "admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
     localStorage.removeItem("admin_user");
     router.push("/login");
   };
@@ -33,9 +51,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Sidebar */}
       <aside className="w-72 border-r border-white/5 bg-card/20 backdrop-blur-xl flex flex-col sticky top-0 h-screen">
         <div className="p-8 flex items-center gap-3">
-          <Image src="/assets/logo.png" alt="Logo" width={40} height={40} className="rounded-lg" />
+          <Image
+            src="/assets/logo.png"
+            alt="Logo"
+            width={40}
+            height={40}
+            className="rounded-lg"
+          />
           <div className="flex flex-col">
-            <span className="font-black tracking-tighter text-sm uppercase">QARWAQIRU</span>
+            <span className="font-black tracking-tighter text-sm uppercase">
+              QARWAQIRU
+            </span>
             <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
               Admin Panel
             </span>
@@ -60,7 +86,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     isActive ? "scale-110" : "group-hover:scale-110"
                   }`}
                 />
-                <span className="font-bold tracking-tight text-sm uppercase">{item.label}</span>
+                <span className="font-bold tracking-tight text-sm uppercase">
+                  {item.label}
+                </span>
                 {isActive && (
                   <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(255,230,0,0.8)]" />
                 )}

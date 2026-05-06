@@ -2,12 +2,12 @@
 
 import { X, Download, FileText } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import type { Sector } from "@/app/gen/involt/v1/models_pb";
+import type { Sector, Period } from "@/app/gen/involt/v1/models_pb";
 
 interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
-  periods: string[];
+  periods: Period[];
   sectors: Sector[];
   filters: {
     period: string;
@@ -55,12 +55,20 @@ export function ExportModal({
               <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
                 Periodo de Facturación
               </label>
-              <input
-                type="month"
+              <select
                 value={filters.period}
                 onChange={(e) => onFilterChange({ ...filters, period: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-sm font-bold focus:outline-none focus:border-primary/50 transition-all appearance-none text-white scheme-dark"
-              />
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-sm font-bold focus:outline-none focus:border-primary/50 transition-all appearance-none text-white"
+              >
+                <option value="" className="bg-zinc-900 text-white">
+                  Seleccionar periodo
+                </option>
+                {periods.map((p) => (
+                  <option key={p.id} value={p.id} className="bg-zinc-900 text-white">
+                    {p.id}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-2">

@@ -36,10 +36,10 @@ message Customer {
   string meter_number = 8;
   double latitude = 9;
   double longitude = 10;
-  double last_reading_value = 11;
-  double initial_reading = 12;
-  string address = 13;
-  string contract_start = 14; // ISO 8601 string
+  double initial_reading = 11;
+  string address = 12;
+  string contract_start = 13;
+  double last_reading_value = 14;
 }
 
 // Reading represents a captured meter value at a point in time.
@@ -72,6 +72,7 @@ message Reading {
   double previous_balance = 20;
   double overdue_total = 21;
   string expiration_date = 22;
+  string period = 23;
 }
 // AppConfig contains remote configuration for the mobile application.
 message AppConfig {
@@ -105,4 +106,14 @@ message Period {
   string start_date = 2;
   string end_date = 3;
   PeriodStatus status = 4;
+  bool is_billing_period = 5;
+}
+
+// Operator represents a field user that can log into the mobile app.
+// The password_hash is synced so login can work offline.
+message Operator {
+  string id = 1;
+  string email = 2;
+  string password_hash = 3;
+  string role = 4;
 }

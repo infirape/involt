@@ -174,10 +174,10 @@ class Customer extends $pb.GeneratedMessage {
     $core.String? meterNumber,
     $core.double? latitude,
     $core.double? longitude,
-    $core.double? lastReadingValue,
     $core.double? initialReading,
     $core.String? address,
     $core.String? contractStart,
+    $core.double? lastReadingValue,
   }) {
     final $result = create();
     if (id != null) {
@@ -210,9 +210,6 @@ class Customer extends $pb.GeneratedMessage {
     if (longitude != null) {
       $result.longitude = longitude;
     }
-    if (lastReadingValue != null) {
-      $result.lastReadingValue = lastReadingValue;
-    }
     if (initialReading != null) {
       $result.initialReading = initialReading;
     }
@@ -221,6 +218,9 @@ class Customer extends $pb.GeneratedMessage {
     }
     if (contractStart != null) {
       $result.contractStart = contractStart;
+    }
+    if (lastReadingValue != null) {
+      $result.lastReadingValue = lastReadingValue;
     }
     return $result;
   }
@@ -239,10 +239,10 @@ class Customer extends $pb.GeneratedMessage {
     ..aOS(8, _omitFieldNames ? '' : 'meterNumber')
     ..a<$core.double>(9, _omitFieldNames ? '' : 'latitude', $pb.PbFieldType.OD)
     ..a<$core.double>(10, _omitFieldNames ? '' : 'longitude', $pb.PbFieldType.OD)
-    ..a<$core.double>(11, _omitFieldNames ? '' : 'lastReadingValue', $pb.PbFieldType.OD)
-    ..a<$core.double>(12, _omitFieldNames ? '' : 'initialReading', $pb.PbFieldType.OD)
-    ..aOS(13, _omitFieldNames ? '' : 'address')
-    ..aOS(14, _omitFieldNames ? '' : 'contractStart')
+    ..a<$core.double>(11, _omitFieldNames ? '' : 'initialReading', $pb.PbFieldType.OD)
+    ..aOS(12, _omitFieldNames ? '' : 'address')
+    ..aOS(13, _omitFieldNames ? '' : 'contractStart')
+    ..a<$core.double>(14, _omitFieldNames ? '' : 'lastReadingValue', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -358,40 +358,40 @@ class Customer extends $pb.GeneratedMessage {
   void clearLongitude() => clearField(10);
 
   @$pb.TagNumber(11)
-  $core.double get lastReadingValue => $_getN(10);
+  $core.double get initialReading => $_getN(10);
   @$pb.TagNumber(11)
-  set lastReadingValue($core.double v) { $_setDouble(10, v); }
+  set initialReading($core.double v) { $_setDouble(10, v); }
   @$pb.TagNumber(11)
-  $core.bool hasLastReadingValue() => $_has(10);
+  $core.bool hasInitialReading() => $_has(10);
   @$pb.TagNumber(11)
-  void clearLastReadingValue() => clearField(11);
+  void clearInitialReading() => clearField(11);
 
   @$pb.TagNumber(12)
-  $core.double get initialReading => $_getN(11);
+  $core.String get address => $_getSZ(11);
   @$pb.TagNumber(12)
-  set initialReading($core.double v) { $_setDouble(11, v); }
+  set address($core.String v) { $_setString(11, v); }
   @$pb.TagNumber(12)
-  $core.bool hasInitialReading() => $_has(11);
+  $core.bool hasAddress() => $_has(11);
   @$pb.TagNumber(12)
-  void clearInitialReading() => clearField(12);
+  void clearAddress() => clearField(12);
 
   @$pb.TagNumber(13)
-  $core.String get address => $_getSZ(12);
+  $core.String get contractStart => $_getSZ(12);
   @$pb.TagNumber(13)
-  set address($core.String v) { $_setString(12, v); }
+  set contractStart($core.String v) { $_setString(12, v); }
   @$pb.TagNumber(13)
-  $core.bool hasAddress() => $_has(12);
+  $core.bool hasContractStart() => $_has(12);
   @$pb.TagNumber(13)
-  void clearAddress() => clearField(13);
+  void clearContractStart() => clearField(13);
 
   @$pb.TagNumber(14)
-  $core.String get contractStart => $_getSZ(13);
+  $core.double get lastReadingValue => $_getN(13);
   @$pb.TagNumber(14)
-  set contractStart($core.String v) { $_setString(13, v); }
+  set lastReadingValue($core.double v) { $_setDouble(13, v); }
   @$pb.TagNumber(14)
-  $core.bool hasContractStart() => $_has(13);
+  $core.bool hasLastReadingValue() => $_has(13);
   @$pb.TagNumber(14)
-  void clearContractStart() => clearField(14);
+  void clearLastReadingValue() => clearField(14);
 }
 
 /// Reading represents a captured meter value at a point in time.
@@ -419,6 +419,7 @@ class Reading extends $pb.GeneratedMessage {
     $core.double? previousBalance,
     $core.double? overdueTotal,
     $core.String? expirationDate,
+    $core.String? period,
   }) {
     final $result = create();
     if (id != null) {
@@ -487,6 +488,9 @@ class Reading extends $pb.GeneratedMessage {
     if (expirationDate != null) {
       $result.expirationDate = expirationDate;
     }
+    if (period != null) {
+      $result.period = period;
+    }
     return $result;
   }
   Reading._() : super();
@@ -516,6 +520,7 @@ class Reading extends $pb.GeneratedMessage {
     ..a<$core.double>(20, _omitFieldNames ? '' : 'previousBalance', $pb.PbFieldType.OD)
     ..a<$core.double>(21, _omitFieldNames ? '' : 'overdueTotal', $pb.PbFieldType.OD)
     ..aOS(22, _omitFieldNames ? '' : 'expirationDate')
+    ..aOS(23, _omitFieldNames ? '' : 'period')
     ..hasRequiredFields = false
   ;
 
@@ -740,6 +745,15 @@ class Reading extends $pb.GeneratedMessage {
   $core.bool hasExpirationDate() => $_has(21);
   @$pb.TagNumber(22)
   void clearExpirationDate() => clearField(22);
+
+  @$pb.TagNumber(23)
+  $core.String get period => $_getSZ(22);
+  @$pb.TagNumber(23)
+  set period($core.String v) { $_setString(22, v); }
+  @$pb.TagNumber(23)
+  $core.bool hasPeriod() => $_has(22);
+  @$pb.TagNumber(23)
+  void clearPeriod() => clearField(23);
 }
 
 /// AppConfig contains remote configuration for the mobile application.
@@ -1017,6 +1031,7 @@ class Period extends $pb.GeneratedMessage {
     $core.String? startDate,
     $core.String? endDate,
     PeriodStatus? status,
+    $core.bool? isBillingPeriod,
   }) {
     final $result = create();
     if (id != null) {
@@ -1031,6 +1046,9 @@ class Period extends $pb.GeneratedMessage {
     if (status != null) {
       $result.status = status;
     }
+    if (isBillingPeriod != null) {
+      $result.isBillingPeriod = isBillingPeriod;
+    }
     return $result;
   }
   Period._() : super();
@@ -1042,6 +1060,7 @@ class Period extends $pb.GeneratedMessage {
     ..aOS(2, _omitFieldNames ? '' : 'startDate')
     ..aOS(3, _omitFieldNames ? '' : 'endDate')
     ..e<PeriodStatus>(4, _omitFieldNames ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: PeriodStatus.PERIOD_STATUS_UNSPECIFIED, valueOf: PeriodStatus.valueOf, enumValues: PeriodStatus.values)
+    ..aOB(5, _omitFieldNames ? '' : 'isBillingPeriod')
     ..hasRequiredFields = false
   ;
 
@@ -1101,6 +1120,109 @@ class Period extends $pb.GeneratedMessage {
   $core.bool hasStatus() => $_has(3);
   @$pb.TagNumber(4)
   void clearStatus() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.bool get isBillingPeriod => $_getBF(4);
+  @$pb.TagNumber(5)
+  set isBillingPeriod($core.bool v) { $_setBool(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasIsBillingPeriod() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearIsBillingPeriod() => clearField(5);
+}
+
+/// Operator represents a field user that can log into the mobile app.
+/// The password_hash is synced so login can work offline.
+class Operator extends $pb.GeneratedMessage {
+  factory Operator({
+    $core.String? id,
+    $core.String? email,
+    $core.String? passwordHash,
+    $core.String? role,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    if (email != null) {
+      $result.email = email;
+    }
+    if (passwordHash != null) {
+      $result.passwordHash = passwordHash;
+    }
+    if (role != null) {
+      $result.role = role;
+    }
+    return $result;
+  }
+  Operator._() : super();
+  factory Operator.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Operator.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Operator', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..aOS(2, _omitFieldNames ? '' : 'email')
+    ..aOS(3, _omitFieldNames ? '' : 'passwordHash')
+    ..aOS(4, _omitFieldNames ? '' : 'role')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Operator clone() => Operator()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Operator copyWith(void Function(Operator) updates) => super.copyWith((message) => updates(message as Operator)) as Operator;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Operator create() => Operator._();
+  Operator createEmptyInstance() => create();
+  static $pb.PbList<Operator> createRepeated() => $pb.PbList<Operator>();
+  @$core.pragma('dart2js:noInline')
+  static Operator getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Operator>(create);
+  static Operator? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get email => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set email($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasEmail() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearEmail() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get passwordHash => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set passwordHash($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPasswordHash() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearPasswordHash() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get role => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set role($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasRole() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearRole() => clearField(4);
 }
 
 

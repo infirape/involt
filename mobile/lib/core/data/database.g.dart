@@ -2326,6 +2326,317 @@ class SettingsCompanion extends UpdateCompanion<Setting> {
   }
 }
 
+class $OperatorsTable extends Operators
+    with TableInfo<$OperatorsTable, Operator> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OperatorsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _passwordHashMeta = const VerificationMeta(
+    'passwordHash',
+  );
+  @override
+  late final GeneratedColumn<String> passwordHash = GeneratedColumn<String>(
+    'password_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+  @override
+  late final GeneratedColumn<String> role = GeneratedColumn<String>(
+    'role',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, email, passwordHash, role];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'operators';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Operator> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_emailMeta);
+    }
+    if (data.containsKey('password_hash')) {
+      context.handle(
+        _passwordHashMeta,
+        passwordHash.isAcceptableOrUnknown(
+          data['password_hash']!,
+          _passwordHashMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_passwordHashMeta);
+    }
+    if (data.containsKey('role')) {
+      context.handle(
+        _roleMeta,
+        role.isAcceptableOrUnknown(data['role']!, _roleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_roleMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Operator map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Operator(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      )!,
+      passwordHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}password_hash'],
+      )!,
+      role: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}role'],
+      )!,
+    );
+  }
+
+  @override
+  $OperatorsTable createAlias(String alias) {
+    return $OperatorsTable(attachedDatabase, alias);
+  }
+}
+
+class Operator extends DataClass implements Insertable<Operator> {
+  final String id;
+  final String email;
+  final String passwordHash;
+  final String role;
+  const Operator({
+    required this.id,
+    required this.email,
+    required this.passwordHash,
+    required this.role,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['email'] = Variable<String>(email);
+    map['password_hash'] = Variable<String>(passwordHash);
+    map['role'] = Variable<String>(role);
+    return map;
+  }
+
+  OperatorsCompanion toCompanion(bool nullToAbsent) {
+    return OperatorsCompanion(
+      id: Value(id),
+      email: Value(email),
+      passwordHash: Value(passwordHash),
+      role: Value(role),
+    );
+  }
+
+  factory Operator.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Operator(
+      id: serializer.fromJson<String>(json['id']),
+      email: serializer.fromJson<String>(json['email']),
+      passwordHash: serializer.fromJson<String>(json['passwordHash']),
+      role: serializer.fromJson<String>(json['role']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'email': serializer.toJson<String>(email),
+      'passwordHash': serializer.toJson<String>(passwordHash),
+      'role': serializer.toJson<String>(role),
+    };
+  }
+
+  Operator copyWith({
+    String? id,
+    String? email,
+    String? passwordHash,
+    String? role,
+  }) => Operator(
+    id: id ?? this.id,
+    email: email ?? this.email,
+    passwordHash: passwordHash ?? this.passwordHash,
+    role: role ?? this.role,
+  );
+  Operator copyWithCompanion(OperatorsCompanion data) {
+    return Operator(
+      id: data.id.present ? data.id.value : this.id,
+      email: data.email.present ? data.email.value : this.email,
+      passwordHash: data.passwordHash.present
+          ? data.passwordHash.value
+          : this.passwordHash,
+      role: data.role.present ? data.role.value : this.role,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Operator(')
+          ..write('id: $id, ')
+          ..write('email: $email, ')
+          ..write('passwordHash: $passwordHash, ')
+          ..write('role: $role')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, email, passwordHash, role);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Operator &&
+          other.id == this.id &&
+          other.email == this.email &&
+          other.passwordHash == this.passwordHash &&
+          other.role == this.role);
+}
+
+class OperatorsCompanion extends UpdateCompanion<Operator> {
+  final Value<String> id;
+  final Value<String> email;
+  final Value<String> passwordHash;
+  final Value<String> role;
+  final Value<int> rowid;
+  const OperatorsCompanion({
+    this.id = const Value.absent(),
+    this.email = const Value.absent(),
+    this.passwordHash = const Value.absent(),
+    this.role = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OperatorsCompanion.insert({
+    required String id,
+    required String email,
+    required String passwordHash,
+    required String role,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       email = Value(email),
+       passwordHash = Value(passwordHash),
+       role = Value(role);
+  static Insertable<Operator> custom({
+    Expression<String>? id,
+    Expression<String>? email,
+    Expression<String>? passwordHash,
+    Expression<String>? role,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (email != null) 'email': email,
+      if (passwordHash != null) 'password_hash': passwordHash,
+      if (role != null) 'role': role,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OperatorsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? email,
+    Value<String>? passwordHash,
+    Value<String>? role,
+    Value<int>? rowid,
+  }) {
+    return OperatorsCompanion(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      passwordHash: passwordHash ?? this.passwordHash,
+      role: role ?? this.role,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (passwordHash.present) {
+      map['password_hash'] = Variable<String>(passwordHash.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(role.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OperatorsCompanion(')
+          ..write('id: $id, ')
+          ..write('email: $email, ')
+          ..write('passwordHash: $passwordHash, ')
+          ..write('role: $role, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2334,6 +2645,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CustomersTable customers = $CustomersTable(this);
   late final $ReadingsTable readings = $ReadingsTable(this);
   late final $SettingsTable settings = $SettingsTable(this);
+  late final $OperatorsTable operators = $OperatorsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2344,6 +2656,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     customers,
     readings,
     settings,
+    operators,
   ];
 }
 
@@ -4374,6 +4687,183 @@ typedef $$SettingsTableProcessedTableManager =
       Setting,
       PrefetchHooks Function()
     >;
+typedef $$OperatorsTableCreateCompanionBuilder =
+    OperatorsCompanion Function({
+      required String id,
+      required String email,
+      required String passwordHash,
+      required String role,
+      Value<int> rowid,
+    });
+typedef $$OperatorsTableUpdateCompanionBuilder =
+    OperatorsCompanion Function({
+      Value<String> id,
+      Value<String> email,
+      Value<String> passwordHash,
+      Value<String> role,
+      Value<int> rowid,
+    });
+
+class $$OperatorsTableFilterComposer
+    extends Composer<_$AppDatabase, $OperatorsTable> {
+  $$OperatorsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get passwordHash => $composableBuilder(
+    column: $table.passwordHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$OperatorsTableOrderingComposer
+    extends Composer<_$AppDatabase, $OperatorsTable> {
+  $$OperatorsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get passwordHash => $composableBuilder(
+    column: $table.passwordHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$OperatorsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OperatorsTable> {
+  $$OperatorsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get passwordHash => $composableBuilder(
+    column: $table.passwordHash,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get role =>
+      $composableBuilder(column: $table.role, builder: (column) => column);
+}
+
+class $$OperatorsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OperatorsTable,
+          Operator,
+          $$OperatorsTableFilterComposer,
+          $$OperatorsTableOrderingComposer,
+          $$OperatorsTableAnnotationComposer,
+          $$OperatorsTableCreateCompanionBuilder,
+          $$OperatorsTableUpdateCompanionBuilder,
+          (Operator, BaseReferences<_$AppDatabase, $OperatorsTable, Operator>),
+          Operator,
+          PrefetchHooks Function()
+        > {
+  $$OperatorsTableTableManager(_$AppDatabase db, $OperatorsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OperatorsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OperatorsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$OperatorsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> email = const Value.absent(),
+                Value<String> passwordHash = const Value.absent(),
+                Value<String> role = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OperatorsCompanion(
+                id: id,
+                email: email,
+                passwordHash: passwordHash,
+                role: role,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String email,
+                required String passwordHash,
+                required String role,
+                Value<int> rowid = const Value.absent(),
+              }) => OperatorsCompanion.insert(
+                id: id,
+                email: email,
+                passwordHash: passwordHash,
+                role: role,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$OperatorsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OperatorsTable,
+      Operator,
+      $$OperatorsTableFilterComposer,
+      $$OperatorsTableOrderingComposer,
+      $$OperatorsTableAnnotationComposer,
+      $$OperatorsTableCreateCompanionBuilder,
+      $$OperatorsTableUpdateCompanionBuilder,
+      (Operator, BaseReferences<_$AppDatabase, $OperatorsTable, Operator>),
+      Operator,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4388,4 +4878,6 @@ class $AppDatabaseManager {
       $$ReadingsTableTableManager(_db, _db.readings);
   $$SettingsTableTableManager get settings =>
       $$SettingsTableTableManager(_db, _db.settings);
+  $$OperatorsTableTableManager get operators =>
+      $$OperatorsTableTableManager(_db, _db.operators);
 }

@@ -86,10 +86,10 @@ const Customer$json = {
     {'1': 'meter_number', '3': 8, '4': 1, '5': 9, '10': 'meterNumber'},
     {'1': 'latitude', '3': 9, '4': 1, '5': 1, '10': 'latitude'},
     {'1': 'longitude', '3': 10, '4': 1, '5': 1, '10': 'longitude'},
-    {'1': 'last_reading_value', '3': 11, '4': 1, '5': 1, '10': 'lastReadingValue'},
-    {'1': 'initial_reading', '3': 12, '4': 1, '5': 1, '10': 'initialReading'},
-    {'1': 'address', '3': 13, '4': 1, '5': 9, '10': 'address'},
-    {'1': 'contract_start', '3': 14, '4': 1, '5': 9, '10': 'contractStart'},
+    {'1': 'initial_reading', '3': 11, '4': 1, '5': 1, '10': 'initialReading'},
+    {'1': 'address', '3': 12, '4': 1, '5': 9, '10': 'address'},
+    {'1': 'contract_start', '3': 13, '4': 1, '5': 9, '10': 'contractStart'},
+    {'1': 'last_reading_value', '3': 14, '4': 1, '5': 1, '10': 'lastReadingValue'},
   ],
 };
 
@@ -100,10 +100,10 @@ final $typed_data.Uint8List customerDescriptor = $convert.base64Decode(
     'X2lkGAUgASgJUghzZWN0b3JJZBJCCg9jb25uZWN0aW9uX3R5cGUYBiABKA4yGS5pbnZvbHQudj'
     'EuQ29ubmVjdGlvblR5cGVSDmNvbm5lY3Rpb25UeXBlEhYKBnRhcmlmZhgHIAEoAVIGdGFyaWZm'
     'EiEKDG1ldGVyX251bWJlchgIIAEoCVILbWV0ZXJOdW1iZXISGgoIbGF0aXR1ZGUYCSABKAFSCG'
-    'xhdGl0dWRlEhwKCWxvbmdpdHVkZRgKIAEoAVIJbG9uZ2l0dWRlEiwKEmxhc3RfcmVhZGluZ192'
-    'YWx1ZRgLIAEoAVIQbGFzdFJlYWRpbmdWYWx1ZRInCg9pbml0aWFsX3JlYWRpbmcYDCABKAFSDm'
-    'luaXRpYWxSZWFkaW5nEhgKB2FkZHJlc3MYDSABKAlSB2FkZHJlc3MSJQoOY29udHJhY3Rfc3Rh'
-    'cnQYDiABKAlSDWNvbnRyYWN0U3RhcnQ=');
+    'xhdGl0dWRlEhwKCWxvbmdpdHVkZRgKIAEoAVIJbG9uZ2l0dWRlEicKD2luaXRpYWxfcmVhZGlu'
+    'ZxgLIAEoAVIOaW5pdGlhbFJlYWRpbmcSGAoHYWRkcmVzcxgMIAEoCVIHYWRkcmVzcxIlCg5jb2'
+    '50cmFjdF9zdGFydBgNIAEoCVINY29udHJhY3RTdGFydBIsChJsYXN0X3JlYWRpbmdfdmFsdWUY'
+    'DiABKAFSEGxhc3RSZWFkaW5nVmFsdWU=');
 
 @$core.Deprecated('Use readingDescriptor instead')
 const Reading$json = {
@@ -131,6 +131,7 @@ const Reading$json = {
     {'1': 'previous_balance', '3': 20, '4': 1, '5': 1, '10': 'previousBalance'},
     {'1': 'overdue_total', '3': 21, '4': 1, '5': 1, '10': 'overdueTotal'},
     {'1': 'expiration_date', '3': 22, '4': 1, '5': 9, '10': 'expirationDate'},
+    {'1': 'period', '3': 23, '4': 1, '5': 9, '10': 'period'},
   ],
 };
 
@@ -149,7 +150,8 @@ final $typed_data.Uint8List readingDescriptor = $convert.base64Decode(
     'ASgBUgphZGp1c3RtZW50EhoKCHN1YnRvdGFsGBIgASgBUghzdWJ0b3RhbBIpChByb3VuZF9kaW'
     'ZmZXJlbmNlGBMgASgBUg9yb3VuZERpZmZlcmVuY2USKQoQcHJldmlvdXNfYmFsYW5jZRgUIAEo'
     'AVIPcHJldmlvdXNCYWxhbmNlEiMKDW92ZXJkdWVfdG90YWwYFSABKAFSDG92ZXJkdWVUb3RhbB'
-    'InCg9leHBpcmF0aW9uX2RhdGUYFiABKAlSDmV4cGlyYXRpb25EYXRl');
+    'InCg9leHBpcmF0aW9uX2RhdGUYFiABKAlSDmV4cGlyYXRpb25EYXRlEhYKBnBlcmlvZBgXIAEo'
+    'CVIGcGVyaW9k');
 
 @$core.Deprecated('Use appConfigDescriptor instead')
 const AppConfig$json = {
@@ -202,6 +204,7 @@ const Period$json = {
     {'1': 'start_date', '3': 2, '4': 1, '5': 9, '10': 'startDate'},
     {'1': 'end_date', '3': 3, '4': 1, '5': 9, '10': 'endDate'},
     {'1': 'status', '3': 4, '4': 1, '5': 14, '6': '.involt.v1.PeriodStatus', '10': 'status'},
+    {'1': 'is_billing_period', '3': 5, '4': 1, '5': 8, '10': 'isBillingPeriod'},
   ],
 };
 
@@ -209,5 +212,22 @@ const Period$json = {
 final $typed_data.Uint8List periodDescriptor = $convert.base64Decode(
     'CgZQZXJpb2QSDgoCaWQYASABKAlSAmlkEh0KCnN0YXJ0X2RhdGUYAiABKAlSCXN0YXJ0RGF0ZR'
     'IZCghlbmRfZGF0ZRgDIAEoCVIHZW5kRGF0ZRIvCgZzdGF0dXMYBCABKA4yFy5pbnZvbHQudjEu'
-    'UGVyaW9kU3RhdHVzUgZzdGF0dXM=');
+    'UGVyaW9kU3RhdHVzUgZzdGF0dXMSKgoRaXNfYmlsbGluZ19wZXJpb2QYBSABKAhSD2lzQmlsbG'
+    'luZ1BlcmlvZA==');
+
+@$core.Deprecated('Use operatorDescriptor instead')
+const Operator$json = {
+  '1': 'Operator',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'email', '3': 2, '4': 1, '5': 9, '10': 'email'},
+    {'1': 'password_hash', '3': 3, '4': 1, '5': 9, '10': 'passwordHash'},
+    {'1': 'role', '3': 4, '4': 1, '5': 9, '10': 'role'},
+  ],
+};
+
+/// Descriptor for `Operator`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List operatorDescriptor = $convert.base64Decode(
+    'CghPcGVyYXRvchIOCgJpZBgBIAEoCVICaWQSFAoFZW1haWwYAiABKAlSBWVtYWlsEiMKDXBhc3'
+    'N3b3JkX2hhc2gYAyABKAlSDHBhc3N3b3JkSGFzaBISCgRyb2xlGAQgASgJUgRyb2xl');
 

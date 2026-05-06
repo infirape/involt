@@ -1,8 +1,7 @@
 "use client";
 
 import { Save } from "lucide-react";
-import { useEffect, useState } from "react";
-import type { Settings } from "@/app/gen/involt/v1/models_pb";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,57 +13,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { adminClient } from "@/lib/rpc";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { useSettings } from "./hooks/useSettings";
 
 export default function SettingsPage() {
   const { isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [settings, setSettings] = useState<Settings | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const {
+    settings,
+    setSettings,
+    loading,
+    saving,
+    handleSave,
+  } = useSettings();
 
   useEffect(() => {
     if (!authLoading && !isAdmin) {
       router.push("/dashboard");
     }
   }, [authLoading, isAdmin, router]);
-
-  useEffect(() => {
-    if (!isAdmin) return;
-    let isMounted = true;
-    async function fetchSettings() {
-      // Force to next microtask to avoid synchronous setState warning in React 19
-      await Promise.resolve();
-      try {
-        const resp = await adminClient.getSettings({});
-        if (isMounted) setSettings(resp.settings ?? null);
-      } catch (err) {
-        console.error("Failed to fetch settings:", err);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    }
-    fetchSettings();
-    return () => {
-      isMounted = false;
-    };
-  }, [isAdmin]);
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!settings) return;
-    setSaving(true);
-    try {
-      await adminClient.updateSettings({ settings });
-      console.log("Settings saved successfully");
-    } catch (err) {
-      console.error("Failed to save settings:", err);
-    } finally {
-      setSaving(false);
-    }
-  };
 
   if (authLoading || !isAdmin) return null;
 
@@ -77,7 +45,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1">
           <h1 className="text-4xl font-black tracking-tighter uppercase bg-linear-to-br from-white to-white/40 bg-clip-text text-transparent">

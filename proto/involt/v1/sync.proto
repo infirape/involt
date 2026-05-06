@@ -42,6 +42,7 @@ message PullMetadataResponse {
   AppConfig config = 5;
   Settings settings = 6;
   Period current_period = 7;
+  repeated Operator operators = 8;
 }
 
 message UploadPhotoRequest {

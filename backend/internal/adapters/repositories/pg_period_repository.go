@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"github.com/infira/involt/backend/internal/domain"
 	"github.com/jmoiron/sqlx"
@@ -19,7 +18,7 @@ func NewPostgresPeriodRepository(db *sqlx.DB) *PostgresPeriodRepository {
 
 func (r *PostgresPeriodRepository) GetByID(ctx context.Context, id string) (*domain.Period, error) {
 	var period domain.Period
-	query := "SELECT id, start_date, end_date, status, created_at, updated_at FROM periods WHERE id = $1"
+	query := "SELECT id, start_date, end_date, status, is_billing_period, created_at, updated_at FROM periods WHERE id = $1"
 	err := r.db.GetContext(ctx, &period, query, id)
 	if err != nil {
 		return nil, err
@@ -29,7 +28,7 @@ func (r *PostgresPeriodRepository) GetByID(ctx context.Context, id string) (*dom
 
 func (r *PostgresPeriodRepository) GetCurrent(ctx context.Context) (*domain.Period, error) {
 	var period domain.Period
-	query := "SELECT id, start_date, end_date, status, created_at, updated_at FROM periods WHERE status = 'OPEN' ORDER BY start_date DESC LIMIT 1"
+	query := "SELECT id, start_date, end_date, status, is_billing_period, created_at, updated_at FROM periods WHERE status = 'OPEN' ORDER BY start_date DESC LIMIT 1"
 	err := r.db.GetContext(ctx, &period, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -42,7 +41,7 @@ func (r *PostgresPeriodRepository) GetCurrent(ctx context.Context) (*domain.Peri
 
 func (r *PostgresPeriodRepository) List(ctx context.Context) ([]domain.Period, error) {
 	var periods []domain.Period
-	query := "SELECT id, start_date, end_date, status, created_at, updated_at FROM periods ORDER BY start_date DESC"
+	query := "SELECT id, start_date, end_date, status, is_billing_period, created_at, updated_at FROM periods ORDER BY start_date DESC"
 	err := r.db.SelectContext(ctx, &periods, query)
 	if err != nil {
 		return nil, err
@@ -51,12 +50,13 @@ func (r *PostgresPeriodRepository) List(ctx context.Context) ([]domain.Period, e
 }
 
 func (r *PostgresPeriodRepository) Save(ctx context.Context, p *domain.Period) error {
-	query := `INSERT INTO periods (id, start_date, end_date, status, updated_at)
-			  VALUES (:id, :start_date, :end_date, :status, NOW())
+	query := `INSERT INTO periods (id, start_date, end_date, status, is_billing_period, updated_at)
+			  VALUES (:id, :start_date, :end_date, :status, :is_billing_period, NOW())
 			  ON CONFLICT (id) DO UPDATE SET
 			  start_date = EXCLUDED.start_date,
 			  end_date = EXCLUDED.end_date,
 			  status = EXCLUDED.status,
+			  is_billing_period = EXCLUDED.is_billing_period,
 			  updated_at = NOW()`
 	_, err := r.db.NamedExecContext(ctx, query, p)
 	return err
@@ -71,14 +71,9 @@ func (r *PostgresPeriodRepository) GetStats(ctx context.Context, periodID string
 		return nil, err
 	}
 
-	// 2. Readings Captured for this period
-	// We need to parse periodID (YYYY-MM) to get dates
-	t, _ := time.Parse("2006-01", periodID)
-	start := t.Format("2006-01-02")
-	end := t.AddDate(0, 1, -1).Format("2006-01-02")
-
+	// 2. Readings Captured for this period (use period column, not period_start/end)
 	err = r.db.GetContext(ctx, &stats.ReadingsCaptured, 
-		"SELECT COUNT(*) FROM readings WHERE period_start = $1 AND period_end = $2", start, end)
+		"SELECT COUNT(DISTINCT customer_id) FROM readings WHERE period = $1", periodID)
 	if err != nil {
 		return nil, err
 	}
@@ -98,12 +93,12 @@ func (r *PostgresPeriodRepository) GetStats(ctx context.Context, periodID string
 		FROM customers c
 		JOIN sectors s ON c.sector_id = s.id
 		WHERE c.id NOT IN (
-			SELECT customer_id FROM readings WHERE period_start = $1 AND period_end = $2
+			SELECT customer_id FROM readings WHERE period = $1
 		)
 		ORDER BY s.name ASC, c.name ASC
 		LIMIT 100`
 	
-	rows, err := r.db.QueryContext(ctx, query, start, end)
+	rows, err := r.db.QueryContext(ctx, query, periodID)
 	if err != nil {
 		return nil, err
 	}

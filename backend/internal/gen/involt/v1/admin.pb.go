@@ -522,13 +522,14 @@ func (x *GetSectorsResponse) GetSectors() []*Sector {
 }
 
 type GetCustomersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SectorId      string                 `protobuf:"bytes,1,opt,name=sector_id,json=sectorId,proto3" json:"sector_id,omitempty"`
-	SearchQuery   string                 `protobuf:"bytes,2,opt,name=search_query,json=searchQuery,proto3" json:"search_query,omitempty"`
-	PageNumber    int32                  `protobuf:"varint,3,opt,name=page_number,json=pageNumber,proto3" json:"page_number,omitempty"`
-	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	SectorId        string                 `protobuf:"bytes,1,opt,name=sector_id,json=sectorId,proto3" json:"sector_id,omitempty"`
+	SearchQuery     string                 `protobuf:"bytes,2,opt,name=search_query,json=searchQuery,proto3" json:"search_query,omitempty"`
+	PageNumber      int32                  `protobuf:"varint,3,opt,name=page_number,json=pageNumber,proto3" json:"page_number,omitempty"`
+	PageSize        int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	ExcludePeriodId string                 `protobuf:"bytes,5,opt,name=exclude_period_id,json=excludePeriodId,proto3" json:"exclude_period_id,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *GetCustomersRequest) Reset() {
@@ -587,6 +588,13 @@ func (x *GetCustomersRequest) GetPageSize() int32 {
 		return x.PageSize
 	}
 	return 0
+}
+
+func (x *GetCustomersRequest) GetExcludePeriodId() string {
+	if x != nil {
+		return x.ExcludePeriodId
+	}
+	return ""
 }
 
 type GetCustomersResponse struct {
@@ -1822,13 +1830,14 @@ const file_involt_v1_admin_proto_rawDesc = "" +
 	"\x04user\x18\x01 \x01(\v2\x0f.involt.v1.UserR\x04user\"\x13\n" +
 	"\x11GetSectorsRequest\"A\n" +
 	"\x12GetSectorsResponse\x12+\n" +
-	"\asectors\x18\x01 \x03(\v2\x11.involt.v1.SectorR\asectors\"\x93\x01\n" +
+	"\asectors\x18\x01 \x03(\v2\x11.involt.v1.SectorR\asectors\"\xbf\x01\n" +
 	"\x13GetCustomersRequest\x12\x1b\n" +
 	"\tsector_id\x18\x01 \x01(\tR\bsectorId\x12!\n" +
 	"\fsearch_query\x18\x02 \x01(\tR\vsearchQuery\x12\x1f\n" +
 	"\vpage_number\x18\x03 \x01(\x05R\n" +
 	"pageNumber\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"j\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12*\n" +
+	"\x11exclude_period_id\x18\x05 \x01(\tR\x0fexcludePeriodId\"j\n" +
 	"\x14GetCustomersResponse\x121\n" +
 	"\tcustomers\x18\x01 \x03(\v2\x13.involt.v1.CustomerR\tcustomers\x12\x1f\n" +
 	"\vtotal_count\x18\x02 \x01(\x05R\n" +

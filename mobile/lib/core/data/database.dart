@@ -33,7 +33,6 @@ class Customers extends Table {
   TextColumn get meterNumber => text()();
   RealColumn get latitude => real().withDefault(const Constant(0.0))();
   RealColumn get longitude => real().withDefault(const Constant(0.0))();
-  RealColumn get lastReadingValue => real().withDefault(const Constant(0.0))();
   RealColumn get initialReading => real().withDefault(const Constant(0.0))();
   @override
   Set<Column> get primaryKey => {id};
@@ -72,13 +71,22 @@ class Settings extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [Communities, Sectors, Customers, Readings, Settings])
+class Operators extends Table {
+  TextColumn get id => text()();
+  TextColumn get email => text()();
+  TextColumn get passwordHash => text()();
+  TextColumn get role => text()();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DriftDatabase(tables: [Communities, Sectors, Customers, Readings, Settings, Operators])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
   AppDatabase.withExecutor(QueryExecutor e) : super(e);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -92,7 +100,7 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(customers, customers.longitude);
       }
       if (from < 3) {
-        await m.addColumn(customers, customers.lastReadingValue);
+        // last_reading_value now calculated dynamically from readings table
       }
       if (from < 4) {
         await m.createTable(settings);
@@ -106,6 +114,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 7) {
         await m.addColumn(customers, customers.initialReading);
+      }
+      if (from < 8) {
+        await m.createTable(operators);
       }
     },
     beforeOpen: (details) async {

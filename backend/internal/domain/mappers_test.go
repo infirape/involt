@@ -42,6 +42,34 @@ func TestMapProtoToReading(t *testing.T) {
 	}
 }
 
+func TestMapProtoToReadingDerivesPeriodFromPeriodStart(t *testing.T) {
+	proto := &involtv1.Reading{
+		Id:          "hist-CUST-ACH001",
+		Timestamp:   "2026-05-05T21:12:12Z",
+		PeriodStart: "2026-04-01T00:00:00Z",
+	}
+
+	domain := MapProtoToReading(proto)
+
+	if domain.Period != "2026-04" {
+		t.Errorf("expected Period 2026-04, got %s", domain.Period)
+	}
+}
+
+func TestMapReadingToProtoDerivesPeriodFromPeriodStart(t *testing.T) {
+	reading := &Reading{
+		ID:          "hist-CUST-ACH001",
+		Timestamp:   time.Date(2026, 5, 5, 21, 12, 12, 0, time.UTC),
+		PeriodStart: time.Date(2026, 4, 1, 0, 0, 0, 0, time.UTC),
+	}
+
+	proto := MapReadingToProto(reading)
+
+	if proto.Period != "2026-04" {
+		t.Errorf("expected Period 2026-04, got %s", proto.Period)
+	}
+}
+
 func TestMapProtoToCustomer(t *testing.T) {
 	proto := &involtv1.Customer{
 		Id:             "cust-123",

@@ -61,7 +61,7 @@ func main() {
 		jwtSecret = "super-secret-key-change-me-in-prod"
 	}
 
-	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, periodRepo, pdfGen)
+	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, periodRepo, adminRepo, pdfGen)
 	settingsHandler := handlers.NewSettingsHandler(settingsRepo)
 	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret)
 	adminHandler := admin.NewAdminHandler(adminRepo, settingsRepo, customerRepo, readingRepo, metaRepo, pdfGen, jwtSecret)
@@ -70,10 +70,14 @@ func main() {
 	mux := http.NewServeMux()
 
 	// ConnectRPC endpoints
-	path, handler := involtv1connect.NewSyncServiceHandler(syncHandler)
+	authInterceptor := auth.NewAuthInterceptor(auth.NewJWTService(jwtSecret))
+
+	path, handler := involtv1connect.NewSyncServiceHandler(
+		syncHandler,
+		connect.WithInterceptors(authInterceptor),
+	)
 	mux.Handle(path, handler)
 
-	authInterceptor := auth.NewAuthInterceptor(auth.NewJWTService(jwtSecret))
 	adminPath, adminHandlerRPC := involtv1connect.NewAdminServiceHandler(
 		adminSvcHandler,
 		connect.WithInterceptors(authInterceptor),

@@ -3,6 +3,8 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
 
 	"connectrpc.com/connect"
 	"github.com/infira/involt/backend/internal/adapters/auth"
@@ -12,7 +14,6 @@ import (
 	"github.com/infira/involt/backend/internal/ports"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 type AdminHandler struct {
@@ -226,7 +227,8 @@ func (h *AdminHandler) GetCustomers(
 		allowedSectors = []string{req.Msg.SectorId}
 	}
 
-	customers, total, err := h.customerRepo.List(ctx, allowedSectors, req.Msg.SearchQuery, int(pageSize), int(offset))
+	log.Printf("🔍 Admin: GetCustomers (Sector: %s, Search: %s, ExcludePeriod: %s)", req.Msg.SectorId, req.Msg.SearchQuery, req.Msg.ExcludePeriodId)
+	customers, total, err := h.customerRepo.List(ctx, allowedSectors, req.Msg.SearchQuery, int(pageSize), int(offset), req.Msg.ExcludePeriodId)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -483,7 +485,19 @@ func (h *AdminHandler) GetDashboardStats(
 
 	period := req.Msg.Period
 	if period == "" {
-		period = time.Now().Format("2006-01")
+		// Use OPEN period instead of current month
+		periods, _ := h.periodRepo.List(ctx)
+		for _, p := range periods {
+			if p.Status == domain.PeriodStatusOpen {
+				period = p.ID
+				break
+			}
+		}
+		// Fallback to current month if no open period
+		if period == "" {
+			period = time.Now().Format("2006-01")
+		}
+		fmt.Printf("📊 Dashboard using period: %s (open: %v, periods: %v)\n", period, periods, len(periods))
 	}
 
 	// Calculate previous period (YYYY-MM)

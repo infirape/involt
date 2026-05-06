@@ -51,15 +51,15 @@ type Customer struct {
 	CommunityName    string         `db:"community_name"`
 	SectorID         string         `db:"sector_id"`
 	SectorName       string         `db:"sector_name"`
-	Address          string         `db:"address"`
-	ConnectionType   ConnectionType `db:"connection_type"`
-	Tariff           float64        `db:"tariff"`
-	MeterNumber      string         `db:"meter_number"`
-	Latitude         float64        `db:"latitude"`
-	Longitude        float64        `db:"longitude"`
-	LastReadingValue float64        `db:"last_reading_value"`
-	InitialReading   float64        `db:"initial_reading"`
-	ContractStart    time.Time      `db:"contract_start"`
+	Address         string         `db:"address"`
+	ConnectionType  ConnectionType `db:"connection_type"`
+	Tariff         float64        `db:"tariff"`
+	MeterNumber    string         `db:"meter_number"`
+	Latitude      float64        `db:"latitude"`
+	Longitude     float64        `db:"longitude"`
+	InitialReading float64      `db:"initial_reading"`
+	LastReadingValue float64     `db:"last_reading_value"`
+	ContractStart  time.Time    `db:"contract_start"`
 }
 
 // Reading represents a captured meter value.
@@ -75,6 +75,7 @@ type Reading struct {
 	Longitude        float64   `db:"longitude"`
 
 	// Period for the reading
+	Period      string    `db:"period"`
 	PeriodStart time.Time `db:"period_start"`
 	PeriodEnd   time.Time `db:"period_end"`
 

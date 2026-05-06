@@ -1,5 +1,7 @@
 import '../../data/services/sync_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/app_state_provider.dart';
 import '../../data/database.dart';
 import '../theme/app_colors.dart';
 import '../widgets/glass_card.dart';
@@ -26,6 +28,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final db = widget.db;
     final syncService = widget.syncService;
     
+    final appState = Provider.of<AppStateProvider>(context);
+    
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -38,7 +42,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // ... (User Avatar & Name section remains same)
             Center(
               child: Column(
                 children: [
@@ -55,9 +58,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  const Text('Henry Bravo', 
-                    style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                  Text('henry.bravo@infira.pe', 
+                  Text(appState.userName.isNotEmpty ? appState.userName : 'Usuario', 
+                    style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+                  Text(appState.userEmail.isNotEmpty ? appState.userEmail : 'sin email', 
                     style: TextStyle(color: AppColors.textMuted, fontSize: 14)),
                   const SizedBox(height: 5),
                   Container(
@@ -67,8 +70,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: AppColors.volt.withOpacity(0.3)),
                     ),
-                    child: const Text('OPERADOR SENIOR', 
-                      style: TextStyle(color: AppColors.volt, fontSize: 10, fontWeight: FontWeight.bold)),
+                    child: Text(appState.userRoleLabel, 
+                      style: const TextStyle(color: AppColors.volt, fontSize: 10, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
@@ -394,7 +397,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR')),
           TextButton(
-            onPressed: () => Navigator.pop(context), 
+            onPressed: () async {
+              Navigator.pop(context); // Close dialog
+              final appState = context.read<AppStateProvider>();
+              await appState.logout();
+            }, 
             child: const Text('SALIR', style: TextStyle(color: AppColors.volt))
           ),
         ],

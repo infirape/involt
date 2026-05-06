@@ -12,15 +12,14 @@ import 'package:involt/core/presentation/providers/app_state_provider.dart';
 import 'package:involt/core/data/services/sync_service.dart';
 import 'package:involt/core/config/app_config.dart';
 import 'package:involt/core/presentation/screens/splash_screen.dart';
+import 'package:involt/core/presentation/screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final db = AppDatabase();
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AppStateProvider(db)),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => AppStateProvider(db))],
       child: MyApp(db: db),
     ),
   );
@@ -63,35 +62,46 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   Widget build(BuildContext context) {
     // Watch the global state
     final appState = context.watch<AppStateProvider>();
-    
+
     if (appState.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    if (!appState.isAuthenticated) {
+      return const LoginScreen();
+    }
+
     final screens = [
-      SectorsListScreen(db: widget.db),
+      SectorsListScreen(
+        db: widget.db,
+        onOpenSync: () {
+          setState(() {
+            _currentIndex = 2;
+            _pendingSectorId = null;
+          });
+        },
+      ),
       SearchScreen(
-        db: widget.db, 
+        db: widget.db,
         initialSectorId: _pendingSectorId,
         onSectorHandled: () => _pendingSectorId = null,
       ),
       SyncScreen(db: widget.db),
       ProfileScreen(
         db: widget.db,
-        syncService: SyncService(db: widget.db, baseUrl: AppConfig.baseUrl),
+        syncService: SyncService(
+          db: widget.db,
+          baseUrl: AppConfig.baseUrl,
+          authToken: appState.authToken,
+        ),
       ),
     ];
 
     return Scaffold(
       extendBody: true,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppColors.mainGradient,
-        ),
-        child: IndexedStack(
-          index: _currentIndex,
-          children: screens,
-        ),
+        decoration: const BoxDecoration(gradient: AppColors.mainGradient),
+        child: IndexedStack(index: _currentIndex, children: screens),
       ),
       bottomNavigationBar: CurvedNavigationBar(
         currentIndex: _currentIndex,

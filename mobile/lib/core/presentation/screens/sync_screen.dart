@@ -26,8 +26,13 @@ class _SyncScreenState extends State<SyncScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Sincronización', 
-          style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Sincronización',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -50,19 +55,19 @@ class _SyncScreenState extends State<SyncScreen> {
                       children: [
                         Expanded(
                           child: _buildStatusCard(
-                            'Pendientes', 
-                            unsynced.toString(), 
-                            AppColors.volt, 
-                            Icons.cloud_upload_outlined
+                            'Pendientes',
+                            unsynced.toString(),
+                            AppColors.volt,
+                            Icons.cloud_upload_outlined,
                           ),
                         ),
                         const SizedBox(width: 15),
                         Expanded(
                           child: _buildStatusCard(
-                            'Sincronizados', 
-                            synced.toString(), 
-                            AppColors.cyan, 
-                            Icons.cloud_done_outlined
+                            'Sincronizados',
+                            synced.toString(),
+                            AppColors.cyan,
+                            Icons.cloud_done_outlined,
                           ),
                         ),
                       ],
@@ -80,22 +85,43 @@ class _SyncScreenState extends State<SyncScreen> {
                                 child: SizedBox(
                                   height: 50,
                                   child: ElevatedButton.icon(
-                                    onPressed: (unsynced > 0 && !_isProcessing) ? () => _handleSync(context) : null,
-                                    icon: Icon(_isProcessing ? Icons.hourglass_empty : Icons.cloud_upload_outlined),
-                                    label: Text(_isProcessing ? 'PROCESANDO...' : 'SUBIR MEDIDAS', 
-                                      style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+                                    onPressed: (unsynced > 0 && !_isProcessing)
+                                        ? () => _handleSync(context)
+                                        : null,
+                                    icon: Icon(
+                                      _isProcessing
+                                          ? Icons.hourglass_empty
+                                          : Icons.cloud_upload_outlined,
+                                    ),
+                                    label: Text(
+                                      _isProcessing
+                                          ? 'PROCESANDO...'
+                                          : 'SUBIR MEDIDAS',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1.1,
+                                      ),
+                                    ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.volt,
                                       foregroundColor: Colors.black,
                                       disabledBackgroundColor: Colors.white10,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.info_outline, color: Colors.white54),
-                                onPressed: () => _showInfo(context, 'Envía todas las lecturas guardadas localmente al servidor central de Infira.'),
+                                icon: const Icon(
+                                  Icons.info_outline,
+                                  color: Colors.white54,
+                                ),
+                                onPressed: () => _showInfo(
+                                  context,
+                                  'Envía todas las lecturas guardadas localmente al servidor central de Infira.',
+                                ),
                               ),
                             ],
                           ),
@@ -106,21 +132,48 @@ class _SyncScreenState extends State<SyncScreen> {
                                 child: SizedBox(
                                   height: 50,
                                   child: OutlinedButton.icon(
-                                    onPressed: _isProcessing ? null : () => _handleUpdateCatalogs(context),
-                                    icon: Icon(_isProcessing ? Icons.hourglass_empty : Icons.cloud_download_outlined),
-                                    label: Text(_isProcessing ? 'PROCESANDO...' : 'ACTUALIZAR DATOS', 
-                                      style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+                                    onPressed: _isProcessing
+                                        ? null
+                                        : () => _handleUpdateCatalogs(context),
+                                    icon: Icon(
+                                      _isProcessing
+                                          ? Icons.hourglass_empty
+                                          : Icons.cloud_download_outlined,
+                                    ),
+                                    label: Text(
+                                      _isProcessing
+                                          ? 'PROCESANDO...'
+                                          : 'ACTUALIZAR DATOS',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1.1,
+                                      ),
+                                    ),
                                     style: OutlinedButton.styleFrom(
-                                      foregroundColor: _isProcessing ? Colors.grey : AppColors.cyan,
-                                      side: BorderSide(color: _isProcessing ? Colors.grey : AppColors.cyan),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                      foregroundColor: _isProcessing
+                                          ? Colors.grey
+                                          : AppColors.cyan,
+                                      side: BorderSide(
+                                        color: _isProcessing
+                                            ? Colors.grey
+                                            : AppColors.cyan,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.info_outline, color: Colors.white54),
-                                onPressed: () => _showInfo(context, 'Descarga la lista actualizada de clientes, sectores y zonas desde el servidor.'),
+                                icon: const Icon(
+                                  Icons.info_outline,
+                                  color: Colors.white54,
+                                ),
+                                onPressed: () => _showInfo(
+                                  context,
+                                  'Descarga la lista actualizada de clientes, sectores y zonas desde el servidor.',
+                                ),
                               ),
                             ],
                           ),
@@ -131,22 +184,40 @@ class _SyncScreenState extends State<SyncScreen> {
                 );
               },
             ),
-            
+
             const SizedBox(height: 30),
-            const Text('Actividad Reciente', 
-              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              'Actividad Reciente',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 15),
-            
+
             // Recent Activity List
             Expanded(
               child: StreamBuilder<List<drift.TypedResult>>(
-                stream: (db.select(db.readings).join([
-                  drift.innerJoin(db.customers, db.customers.id.equalsExp(db.readings.customerId))
-                ])..orderBy([drift.OrderingTerm.desc(db.readings.timestamp)])).watch(),
+                stream:
+                    (db.select(db.readings).join([
+                          drift.innerJoin(
+                            db.customers,
+                            db.customers.id.equalsExp(db.readings.customerId),
+                          ),
+                        ])..orderBy([
+                          drift.OrderingTerm.desc(db.readings.timestamp),
+                        ]))
+                        .watch(),
                 builder: (context, snapshot) {
                   final rows = snapshot.data ?? [];
                   if (rows.isEmpty) {
-                    return Center(child: Text('Sin lecturas registradas', style: TextStyle(color: AppColors.textMuted)));
+                    return Center(
+                      child: Text(
+                        'Sin lecturas registradas',
+                        style: TextStyle(color: AppColors.textMuted),
+                      ),
+                    );
                   }
                   return ListView.builder(
                     itemCount: rows.length,
@@ -158,18 +229,25 @@ class _SyncScreenState extends State<SyncScreen> {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: GlassCard(
-                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 12,
+                          ),
                           child: Row(
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: reading.isSynced ? AppColors.cyan.withOpacity(0.1) : AppColors.volt.withOpacity(0.1),
+                                  color: reading.isSynced
+                                      ? AppColors.cyan.withOpacity(0.1)
+                                      : AppColors.volt.withOpacity(0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
                                   reading.isSynced ? Icons.check : Icons.sync,
-                                  color: reading.isSynced ? AppColors.cyan : AppColors.volt,
+                                  color: reading.isSynced
+                                      ? AppColors.cyan
+                                      : AppColors.volt,
                                   size: 16,
                                 ),
                               ),
@@ -178,15 +256,30 @@ class _SyncScreenState extends State<SyncScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(customer.name, 
-                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                    Text('Lectura: ${reading.currentValue} kWh', 
-                                      style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                                    Text(
+                                      customer.name,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Lectura: ${reading.currentValue} kWh',
+                                      style: TextStyle(
+                                        color: AppColors.textMuted,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
-                              Text('${reading.timestamp.hour}:${reading.timestamp.minute.toString().padLeft(2, '0')}', 
-                                style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                              Text(
+                                '${reading.timestamp.hour}:${reading.timestamp.minute.toString().padLeft(2, '0')}',
+                                style: TextStyle(
+                                  color: AppColors.textMuted,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -219,31 +312,71 @@ class _SyncScreenState extends State<SyncScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('ENTENDIDO', style: TextStyle(color: AppColors.volt, fontWeight: FontWeight.bold)),
+            child: const Text(
+              'ENTENDIDO',
+              style: TextStyle(
+                color: AppColors.volt,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatusCard(String label, String value, Color color, IconData icon) {
+  Widget _buildStatusCard(
+    String label,
+    String value,
+    Color color,
+    IconData icon,
+  ) {
     return GlassCard(
       padding: const EdgeInsets.all(15),
       child: Column(
         children: [
           Icon(icon, color: color, size: 24),
           const SizedBox(height: 10),
-          Text(value, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-          Text(label, style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+          ),
         ],
       ),
     );
   }
 
+  Future<SyncService> _syncServiceForCurrentSession(
+    BuildContext context,
+  ) async {
+    final appState = context.read<AppStateProvider>();
+    if (appState.authToken.isEmpty) {
+      await appState.loadPeriod();
+    }
+
+    if (!context.mounted) {
+      throw StateError('La pantalla ya no está activa');
+    }
+
+    final refreshedState = context.read<AppStateProvider>();
+    if (refreshedState.authToken.isEmpty) {
+      throw StateError('No hay una sesión activa. Inicia sesión nuevamente.');
+    }
+
+    return SyncService(db: widget.db, authToken: refreshedState.authToken);
+  }
+
   Future<void> _handleUpdateCatalogs(BuildContext context) async {
-    final syncService = SyncService(db: widget.db);
     setState(() => _isProcessing = true);
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Actualizando clientes y sectores...'),
@@ -253,8 +386,9 @@ class _SyncScreenState extends State<SyncScreen> {
     );
 
     try {
+      final syncService = await _syncServiceForCurrentSession(context);
       await syncService.pullMetadata();
-      
+
       if (context.mounted) {
         await context.read<AppStateProvider>().loadPeriod();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -281,21 +415,24 @@ class _SyncScreenState extends State<SyncScreen> {
   }
 
   Future<void> _handleSync(BuildContext context) async {
-    final syncService = SyncService(db: widget.db);
     setState(() => _isProcessing = true);
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Sincronizando con el servidor de Infira...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        content: Text(
+          'Sincronizando con el servidor de Infira...',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: AppColors.volt,
         duration: Duration(seconds: 2),
       ),
     );
 
     try {
+      final syncService = await _syncServiceForCurrentSession(context);
       // 1. Push captured readings
       await syncService.pushReadings();
-      
+
       // 2. Pull latest metadata (master data)
       await syncService.pullMetadata();
 
@@ -335,7 +472,7 @@ class NetworkStatusCard extends StatefulWidget {
 class _NetworkStatusCardState extends State<NetworkStatusCard> {
   final Connectivity _connectivity = Connectivity();
   final NetworkInfo _networkInfo = NetworkInfo();
-  
+
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   String? _wifiName;
 
@@ -405,23 +542,32 @@ class _NetworkStatusCardState extends State<NetworkStatusCard> {
     return GlassCard(
       child: Column(
         children: [
-          const Text('Estado de la conexión', 
-            style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text(
+            'Estado de la conexión',
+            style: TextStyle(color: Colors.white70, fontSize: 14),
+          ),
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(statusIcon, color: statusColor, size: 16),
               const SizedBox(width: 8),
-              Text(statusText, 
-                style: TextStyle(color: statusColor, fontWeight: FontWeight.bold)),
+              Text(
+                statusText,
+                style: TextStyle(
+                  color: statusColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
           if (isOffline) ...[
             const SizedBox(height: 8),
-            const Text('Se requiere conexión para sincronizar', 
-              style: TextStyle(color: Colors.white38, fontSize: 11)),
-          ]
+            const Text(
+              'Se requiere conexión para sincronizar',
+              style: TextStyle(color: Colors.white38, fontSize: 11),
+            ),
+          ],
         ],
       ),
     );

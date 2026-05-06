@@ -13,9 +13,10 @@ type Period struct {
 	ID        string       `db:"id"` // YYYY-MM
 	StartDate time.Time    `db:"start_date"`
 	EndDate   time.Time    `db:"end_date"`
-	Status    PeriodStatus `db:"status"`
-	CreatedAt time.Time    `db:"created_at"`
-	UpdatedAt time.Time    `db:"updated_at"`
+	Status          PeriodStatus `db:"status"`
+	IsBillingPeriod bool         `db:"is_billing_period"`
+	CreatedAt       time.Time    `db:"created_at"`
+	UpdatedAt       time.Time    `db:"updated_at"`
 }
 
 type PeriodStats struct {

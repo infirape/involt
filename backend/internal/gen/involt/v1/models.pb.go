@@ -247,10 +247,10 @@ type Customer struct {
 	MeterNumber      string                 `protobuf:"bytes,8,opt,name=meter_number,json=meterNumber,proto3" json:"meter_number,omitempty"`
 	Latitude         float64                `protobuf:"fixed64,9,opt,name=latitude,proto3" json:"latitude,omitempty"`
 	Longitude        float64                `protobuf:"fixed64,10,opt,name=longitude,proto3" json:"longitude,omitempty"`
-	LastReadingValue float64                `protobuf:"fixed64,11,opt,name=last_reading_value,json=lastReadingValue,proto3" json:"last_reading_value,omitempty"`
-	InitialReading   float64                `protobuf:"fixed64,12,opt,name=initial_reading,json=initialReading,proto3" json:"initial_reading,omitempty"`
-	Address          string                 `protobuf:"bytes,13,opt,name=address,proto3" json:"address,omitempty"`
-	ContractStart    string                 `protobuf:"bytes,14,opt,name=contract_start,json=contractStart,proto3" json:"contract_start,omitempty"` // ISO 8601 string
+	InitialReading   float64                `protobuf:"fixed64,11,opt,name=initial_reading,json=initialReading,proto3" json:"initial_reading,omitempty"`
+	Address          string                 `protobuf:"bytes,12,opt,name=address,proto3" json:"address,omitempty"`
+	ContractStart    string                 `protobuf:"bytes,13,opt,name=contract_start,json=contractStart,proto3" json:"contract_start,omitempty"`
+	LastReadingValue float64                `protobuf:"fixed64,14,opt,name=last_reading_value,json=lastReadingValue,proto3" json:"last_reading_value,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -355,13 +355,6 @@ func (x *Customer) GetLongitude() float64 {
 	return 0
 }
 
-func (x *Customer) GetLastReadingValue() float64 {
-	if x != nil {
-		return x.LastReadingValue
-	}
-	return 0
-}
-
 func (x *Customer) GetInitialReading() float64 {
 	if x != nil {
 		return x.InitialReading
@@ -381,6 +374,13 @@ func (x *Customer) GetContractStart() string {
 		return x.ContractStart
 	}
 	return ""
+}
+
+func (x *Customer) GetLastReadingValue() float64 {
+	if x != nil {
+		return x.LastReadingValue
+	}
+	return 0
 }
 
 // Reading represents a captured meter value at a point in time.
@@ -411,6 +411,7 @@ type Reading struct {
 	PreviousBalance  float64 `protobuf:"fixed64,20,opt,name=previous_balance,json=previousBalance,proto3" json:"previous_balance,omitempty"`
 	OverdueTotal     float64 `protobuf:"fixed64,21,opt,name=overdue_total,json=overdueTotal,proto3" json:"overdue_total,omitempty"`
 	ExpirationDate   string  `protobuf:"bytes,22,opt,name=expiration_date,json=expirationDate,proto3" json:"expiration_date,omitempty"`
+	Period           string  `protobuf:"bytes,23,opt,name=period,proto3" json:"period,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -595,6 +596,13 @@ func (x *Reading) GetOverdueTotal() float64 {
 func (x *Reading) GetExpirationDate() string {
 	if x != nil {
 		return x.ExpirationDate
+	}
+	return ""
+}
+
+func (x *Reading) GetPeriod() string {
+	if x != nil {
+		return x.Period
 	}
 	return ""
 }
@@ -785,13 +793,14 @@ func (x *Settings) GetIgv() bool {
 }
 
 type Period struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"` // YYYY-MM
-	StartDate     string                 `protobuf:"bytes,2,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
-	EndDate       string                 `protobuf:"bytes,3,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
-	Status        PeriodStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=involt.v1.PeriodStatus" json:"status,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"` // YYYY-MM
+	StartDate       string                 `protobuf:"bytes,2,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
+	EndDate         string                 `protobuf:"bytes,3,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
+	Status          PeriodStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=involt.v1.PeriodStatus" json:"status,omitempty"`
+	IsBillingPeriod bool                   `protobuf:"varint,5,opt,name=is_billing_period,json=isBillingPeriod,proto3" json:"is_billing_period,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *Period) Reset() {
@@ -852,6 +861,83 @@ func (x *Period) GetStatus() PeriodStatus {
 	return PeriodStatus_PERIOD_STATUS_UNSPECIFIED
 }
 
+func (x *Period) GetIsBillingPeriod() bool {
+	if x != nil {
+		return x.IsBillingPeriod
+	}
+	return false
+}
+
+// Operator represents a field user that can log into the mobile app.
+// The password_hash is synced so login can work offline.
+type Operator struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	PasswordHash  string                 `protobuf:"bytes,3,opt,name=password_hash,json=passwordHash,proto3" json:"password_hash,omitempty"`
+	Role          string                 `protobuf:"bytes,4,opt,name=role,proto3" json:"role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Operator) Reset() {
+	*x = Operator{}
+	mi := &file_involt_v1_models_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Operator) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Operator) ProtoMessage() {}
+
+func (x *Operator) ProtoReflect() protoreflect.Message {
+	mi := &file_involt_v1_models_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Operator.ProtoReflect.Descriptor instead.
+func (*Operator) Descriptor() ([]byte, []int) {
+	return file_involt_v1_models_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *Operator) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Operator) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *Operator) GetPasswordHash() string {
+	if x != nil {
+		return x.PasswordHash
+	}
+	return ""
+}
+
+func (x *Operator) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
 var File_involt_v1_models_proto protoreflect.FileDescriptor
 
 const file_involt_v1_models_proto_rawDesc = "" +
@@ -875,11 +961,11 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\fmeter_number\x18\b \x01(\tR\vmeterNumber\x12\x1a\n" +
 	"\blatitude\x18\t \x01(\x01R\blatitude\x12\x1c\n" +
 	"\tlongitude\x18\n" +
-	" \x01(\x01R\tlongitude\x12,\n" +
-	"\x12last_reading_value\x18\v \x01(\x01R\x10lastReadingValue\x12'\n" +
-	"\x0finitial_reading\x18\f \x01(\x01R\x0einitialReading\x12\x18\n" +
-	"\aaddress\x18\r \x01(\tR\aaddress\x12%\n" +
-	"\x0econtract_start\x18\x0e \x01(\tR\rcontractStart\"\xfa\x05\n" +
+	" \x01(\x01R\tlongitude\x12'\n" +
+	"\x0finitial_reading\x18\v \x01(\x01R\x0einitialReading\x12\x18\n" +
+	"\aaddress\x18\f \x01(\tR\aaddress\x12%\n" +
+	"\x0econtract_start\x18\r \x01(\tR\rcontractStart\x12,\n" +
+	"\x12last_reading_value\x18\x0e \x01(\x01R\x10lastReadingValue\"\x92\x06\n" +
 	"\aReading\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcustomer_id\x18\x02 \x01(\tR\n" +
@@ -909,7 +995,8 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\x10round_difference\x18\x13 \x01(\x01R\x0froundDifference\x12)\n" +
 	"\x10previous_balance\x18\x14 \x01(\x01R\x0fpreviousBalance\x12#\n" +
 	"\roverdue_total\x18\x15 \x01(\x01R\foverdueTotal\x12'\n" +
-	"\x0fexpiration_date\x18\x16 \x01(\tR\x0eexpirationDate\"[\n" +
+	"\x0fexpiration_date\x18\x16 \x01(\tR\x0eexpirationDate\x12\x16\n" +
+	"\x06period\x18\x17 \x01(\tR\x06period\"[\n" +
 	"\tAppConfig\x12(\n" +
 	"\x10map_url_template\x18\x01 \x01(\tR\x0emapUrlTemplate\x12$\n" +
 	"\x0emap_user_agent\x18\x02 \x01(\tR\fmapUserAgent\"\xeb\x02\n" +
@@ -928,13 +1015,19 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\talumbrado\x18\n" +
 	" \x01(\x01R\talumbrado\x12$\n" +
 	"\rmantenimiento\x18\v \x01(\x01R\rmantenimiento\x12\x10\n" +
-	"\x03igv\x18\f \x01(\bR\x03igv\"\x83\x01\n" +
+	"\x03igv\x18\f \x01(\bR\x03igv\"\xaf\x01\n" +
 	"\x06Period\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
 	"start_date\x18\x02 \x01(\tR\tstartDate\x12\x19\n" +
 	"\bend_date\x18\x03 \x01(\tR\aendDate\x12/\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x17.involt.v1.PeriodStatusR\x06status*p\n" +
+	"\x06status\x18\x04 \x01(\x0e2\x17.involt.v1.PeriodStatusR\x06status\x12*\n" +
+	"\x11is_billing_period\x18\x05 \x01(\bR\x0fisBillingPeriod\"i\n" +
+	"\bOperator\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12#\n" +
+	"\rpassword_hash\x18\x03 \x01(\tR\fpasswordHash\x12\x12\n" +
+	"\x04role\x18\x04 \x01(\tR\x04role*p\n" +
 	"\x0eConnectionType\x12\x1f\n" +
 	"\x1bCONNECTION_TYPE_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aCONNECTION_TYPE_MONOFASICA\x10\x01\x12\x1d\n" +
@@ -957,7 +1050,7 @@ func file_involt_v1_models_proto_rawDescGZIP() []byte {
 }
 
 var file_involt_v1_models_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_involt_v1_models_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_involt_v1_models_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_involt_v1_models_proto_goTypes = []any{
 	(ConnectionType)(0), // 0: involt.v1.ConnectionType
 	(PeriodStatus)(0),   // 1: involt.v1.PeriodStatus
@@ -968,6 +1061,7 @@ var file_involt_v1_models_proto_goTypes = []any{
 	(*AppConfig)(nil),   // 6: involt.v1.AppConfig
 	(*Settings)(nil),    // 7: involt.v1.Settings
 	(*Period)(nil),      // 8: involt.v1.Period
+	(*Operator)(nil),    // 9: involt.v1.Operator
 }
 var file_involt_v1_models_proto_depIdxs = []int32{
 	0, // 0: involt.v1.Customer.connection_type:type_name -> involt.v1.ConnectionType
@@ -990,7 +1084,7 @@ func file_involt_v1_models_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_involt_v1_models_proto_rawDesc), len(file_involt_v1_models_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

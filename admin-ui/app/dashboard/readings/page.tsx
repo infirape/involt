@@ -7,49 +7,32 @@ import {
   ChevronRight,
   Activity,
   Zap,
-  DollarSign,
-  CheckCircle2,
   Search,
   Filter,
   Download,
-  X,
-  FileText,
 } from "lucide-react";
-import { useEffect, useState, useCallback, useMemo } from "react";
-import type { Reading, Sector } from "@/app/gen/involt/v1/models_pb";
-import { PeriodStatus } from "@/app/gen/involt/v1/models_pb";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { adminClient } from "@/lib/rpc";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { useRouter } from "next/navigation";
 import { ExportModal } from "@/components/dashboard/readings/ExportModal";
+import { getAdminToken, API_BASE_URL, downloadFile } from "@/lib/utils";
 import { ReadingsStats } from "@/components/dashboard/readings/ReadingsStats";
+import { useReadings } from "./hooks/useReadings";
+import { useRouter } from "next/navigation";
 
 export default function ReadingsPage() {
+  const router = useRouter();
   const { isReader } = useAuth();
-  const [data, setData] = useState<{
-    readings: Reading[];
-    totalCount: number;
-    loading: boolean;
-    stats: {
-      totalRevenue: number;
-      totalConsumptionKwh: number;
-      syncPercentage: number;
-    };
-    sectors: Sector[];
-    periods: string[];
-  }>({
-    readings: [],
-    totalCount: 0,
-    loading: true,
-    stats: {
-      totalRevenue: 0,
-      totalConsumptionKwh: 0,
-      syncPercentage: 0,
-    },
-    sectors: [],
-    periods: [],
-  });
+  const {
+    data,
+    filters,
+    setFilters,
+    pagination,
+    setPagination,
+    isBilling,
+    colSpan,
+    totalPages,
+  } = useReadings();
 
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [exportFilters, setExportFilters] = useState({
@@ -57,114 +40,14 @@ export default function ReadingsPage() {
     sectorId: "",
   });
 
-  const [pagination, setPagination] = useState({
-    pageNumber: 1,
-    pageSize: 15,
-  });
-
-  const currentMonth = new Date().toISOString().slice(0, 7);
-
-  const [filters, setFilters] = useState({
-    customerId: "",
-    sectorId: "",
-    period: currentMonth,
-  });
-
-  const fetchReadings = useCallback(async () => {
-    try {
-      setData((prev) => ({ ...prev, loading: true }));
-      const [readingsResp, statsResp] = await Promise.all([
-        adminClient.getReadings({
-          customerId: filters.customerId,
-          sectorId: filters.sectorId,
-          period: filters.period,
-          pageNumber: pagination.pageNumber,
-          pageSize: pagination.pageSize,
-        }),
-        adminClient.getDashboardStats({
-          period: filters.period,
-        }),
-      ]);
-
-      const totalReadings = statsResp.totalReadingsPeriod;
-      const pendingReadings = statsResp.pendingReadingsPeriod;
-      const syncPercentage =
-        totalReadings + pendingReadings > 0
-          ? (totalReadings / (totalReadings + pendingReadings)) * 100
-          : 0;
-
-      setData((prev) => ({
-        ...prev,
-        readings: readingsResp.readings,
-        totalCount: readingsResp.totalCount,
-        loading: false,
-        stats: {
-          totalRevenue: statsResp.totalRevenue,
-          totalConsumptionKwh: statsResp.totalConsumptionKwh,
-          syncPercentage: syncPercentage,
-        },
-      }));
-    } catch (err) {
-      console.error("Failed to fetch readings:", err);
-      setData((prev) => ({ ...prev, loading: false }));
+  useEffect(() => {
+    if (filters.period && !exportFilters.period) {
+      // Defer to next tick to avoid cascading render warning
+      Promise.resolve().then(() => {
+        setExportFilters((prev) => ({ ...prev, period: filters.period }));
+      });
     }
-  }, [filters, pagination]);
-
-  useEffect(() => {
-    const initPage = async () => {
-      try {
-        const [sectorsResp, periodsResp] = await Promise.all([
-          adminClient.getSectors({}),
-          adminClient.listPeriods({}),
-        ]);
-
-        const dbPeriods = periodsResp.periods.map((p) => p.id);
-        const currentOpen = periodsResp.periods.find(
-          (p) => p.status === PeriodStatus.OPEN,
-        );
-
-        setData((prev) => ({
-          ...prev,
-          sectors: sectorsResp.sectors,
-          periods: dbPeriods,
-        }));
-
-        if (currentOpen) {
-          setFilters((prev) => ({ ...prev, period: currentOpen.id }));
-          setExportFilters((prev) => ({ ...prev, period: currentOpen.id }));
-        } else if (dbPeriods.length > 0) {
-          setFilters((prev) => ({ ...prev, period: dbPeriods[0] }));
-          setExportFilters((prev) => ({ ...prev, period: dbPeriods[0] }));
-        }
-      } catch (err) {
-        console.error("Failed to init readings page:", err);
-      }
-    };
-
-    initPage();
-  }, []); // Only once on mount
-
-  useEffect(() => {
-    let isMounted = true;
-
-    // Defer the execution to avoid synchronous setState during effect execution
-    const load = async () => {
-      await Promise.resolve();
-      if (isMounted) {
-        await fetchReadings();
-      }
-    };
-
-    load();
-    return () => {
-      isMounted = false;
-    };
-  }, [fetchReadings]);
-
-  const totalPages = useMemo(
-    () => Math.ceil(data.totalCount / pagination.pageSize),
-    [data.totalCount, pagination.pageSize],
-  );
+  }, [filters.period, exportFilters.period]);
 
   return (
     <div className="p-8 space-y-6 animate-in fade-in duration-1000">
@@ -185,13 +68,22 @@ export default function ReadingsPage() {
         </div>
         <div className="flex gap-3">
           {!isReader && (
-            <button
-              onClick={() => setIsExportModalOpen(true)}
-              className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-black hover:bg-primary/90 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
-            >
-              <Download className="w-4 h-4" />
-              Descargar Recibos
-            </button>
+            <>
+              <button
+                onClick={() => router.push("/dashboard/readings/bulk")}
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest"
+              >
+                <Zap className="w-4 h-4 text-primary" />
+                Carga Masiva
+              </button>
+              <button
+                onClick={() => setIsExportModalOpen(true)}
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-black hover:bg-primary/90 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+              >
+                <Download className="w-4 h-4" />
+                Descargar Recibos
+              </button>
+            </>
           )}
           <div className="relative group">
             <select
@@ -203,8 +95,12 @@ export default function ReadingsPage() {
               }}
             >
               {data.periods.map((p) => (
-                <option key={p} value={p} className="bg-zinc-900 text-white">
-                  {p}
+                <option
+                  key={p.id}
+                  value={p.id}
+                  className="bg-zinc-900 text-white"
+                >
+                  {p.id}
                 </option>
               ))}
             </select>
@@ -263,8 +159,12 @@ export default function ReadingsPage() {
             }}
           >
             {data.periods.map((p) => (
-              <option key={p} value={p} className="bg-zinc-900 text-white">
-                {p}
+              <option
+                key={p.id}
+                value={p.id}
+                className="bg-zinc-900 text-white"
+              >
+                {p.id}
               </option>
             ))}
           </select>
@@ -295,26 +195,30 @@ export default function ReadingsPage() {
                 <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
                   Consumo
                 </th>
-                <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Monto
-                </th>
-                <th className="px-8 py-3 text-right text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Recibo
-                </th>
+                {isBilling && (
+                  <>
+                    <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                      Monto
+                    </th>
+                    <th className="px-8 py-3 text-right text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                      Recibo
+                    </th>
+                  </>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {data.loading ? (
                 [1, 2, 3, 4, 5, 6].map((i) => (
                   <tr key={i} className="animate-pulse">
-                    <td colSpan={6} className="px-8 py-4">
+                    <td colSpan={colSpan} className="px-8 py-4">
                       <div className="h-5 bg-white/5 rounded-xl w-full" />
                     </td>
                   </tr>
                 ))
               ) : data.readings.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-8 py-12 text-center">
+                  <td colSpan={colSpan} className="px-8 py-12 text-center">
                     <div className="flex flex-col items-center gap-4 opacity-20">
                       <Activity className="w-12 h-12" />
                       <p className="text-[10px] font-black uppercase tracking-[0.3em]">
@@ -356,43 +260,41 @@ export default function ReadingsPage() {
                     <td className="px-8 py-3">
                       <div className="flex items-baseline gap-1.5">
                         <span className="text-sm font-black font-mono text-primary tracking-tighter">
-                          {reading.consumption.toLocaleString()}
+                          {!isBilling
+                            ? "-"
+                            : reading.consumption.toLocaleString()}
                         </span>
                         <span className="text-[9px] font-bold text-muted-foreground/30 uppercase">
                           kWh
                         </span>
                       </div>
                     </td>
-                    <td className="px-8 py-3">
-                      <span className="text-[11px] font-black text-white">
-                        S/{" "}
-                        {reading.totalToPay.toLocaleString(undefined, {
-                          minimumFractionDigits: 2,
-                        })}
-                      </span>
-                    </td>
-                    <td className="px-8 py-3 text-right">
-                      <button
-                        onClick={() => {
-                          const baseUrl =
-                            process.env.NEXT_PUBLIC_API_URL ||
-                            "http://localhost:8080";
-                          const cookieRow = document.cookie
-                            .split("; ")
-                            .find((row) => row.startsWith("admin_token="));
-                          const token = cookieRow
-                            ? cookieRow.substring("admin_token=".length)
-                            : "";
-                          window.open(
-                            `${baseUrl}/admin/readings/pdf/${reading.id}?token=${encodeURIComponent(token)}`,
-                            "_blank",
-                          );
-                        }}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 border border-white/5 hover:bg-primary hover:text-black hover:border-primary transition-all group/btn"
-                      >
-                        <Receipt className="w-3.5 h-3.5" />
-                      </button>
-                    </td>
+                    {isBilling && (
+                      <>
+                        <td className="px-8 py-3">
+                          <span className="text-[11px] font-black text-white">
+                            S/{" "}
+                            {reading.totalToPay.toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                            })}
+                          </span>
+                        </td>
+                        <td className="px-8 py-3 text-right">
+                          <button
+                            onClick={() => {
+                              const token = getAdminToken();
+                              window.open(
+                                `${API_BASE_URL}/admin/readings/pdf/${reading.id}?token=${encodeURIComponent(token || "")}`,
+                                "_blank",
+                              );
+                            }}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 border border-white/5 hover:bg-primary hover:text-black hover:border-primary transition-all group/btn"
+                          >
+                            <Receipt className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </>
+                    )}
                   </tr>
                 ))
               )}
@@ -472,44 +374,15 @@ export default function ReadingsPage() {
         filters={exportFilters}
         onFilterChange={setExportFilters}
         onExport={async () => {
-          const baseUrl =
-            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-          const cookieRow = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("admin_token="));
-          const token = cookieRow
-            ? cookieRow.substring("admin_token=".length)
-            : "";
-
-          const url = `${baseUrl}/admin/readings/bulk-pdf?period=${exportFilters.period}&sectorId=${exportFilters.sectorId}&token=${encodeURIComponent(token)}`;
+          const token = getAdminToken();
+          const url = `${API_BASE_URL}/admin/readings/bulk-pdf?period=${exportFilters.period}&sectorId=${exportFilters.sectorId}&token=${encodeURIComponent(token || "")}`;
 
           try {
-            // Background fetch to avoid opening new windows
-            const response = await fetch(url);
-            if (!response.ok) throw new Error("Export failed");
-
-            const blob = await response.blob();
-            const contentDisposition = response.headers.get(
-              "Content-Disposition",
-            );
-            let fileName = `recibos_${exportFilters.period}.pdf`;
-            if (contentDisposition) {
-              const match = contentDisposition.match(/filename=(.+)/);
-              if (match && match[1]) fileName = match[1];
-            }
-
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = downloadUrl;
-            link.setAttribute("download", fileName);
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            window.URL.revokeObjectURL(downloadUrl);
+            await downloadFile(url, `recibos_${exportFilters.period}.pdf`);
             setIsExportModalOpen(false);
           } catch (err) {
             console.error("Export error:", err);
-            alert("Error al generar el ZIP. Por favor re-ingresa al sistema.");
+            alert("Error al generar el PDF. Por favor re-ingresa al sistema.");
           }
         }}
       />

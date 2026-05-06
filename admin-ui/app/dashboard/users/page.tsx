@@ -1,34 +1,32 @@
 "use client";
 
 import { MoreVertical, Plus, Search, Shield, User, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { type User as AdminUser, UserRole } from "@/app/gen/involt/v1/admin_pb";
-import type { Sector } from "@/app/gen/involt/v1/models_pb";
+import { useEffect } from "react";
+import { UserRole } from "@/app/gen/involt/v1/admin_pb";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { adminClient } from "@/lib/rpc";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { useUsers } from "./hooks/useUsers";
 
 export default function UsersPage() {
   const { isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [data, setData] = useState<{
-    users: AdminUser[];
-    sectors: Sector[];
-    loading: boolean;
-  }>({
-    users: [],
-    sectors: [],
-    loading: true,
-  });
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<Partial<AdminUser> | null>(
-    null,
-  );
-  const [saving, setSaving] = useState(false);
+  const {
+    data,
+    isModalOpen,
+    setIsModalOpen,
+    editingUser,
+    setEditingUser,
+    saving,
+    password,
+    setPassword,
+    handleOpenModal,
+    handleSave,
+    toggleSector,
+  } = useUsers();
 
   useEffect(() => {
     if (!authLoading && !isAdmin) {
@@ -36,77 +34,10 @@ export default function UsersPage() {
     }
   }, [authLoading, isAdmin, router]);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const [usersResp, sectorsResp] = await Promise.all([
-        adminClient.getUsers({}),
-        adminClient.getSectors({}),
-      ]);
-      setData({
-        users: usersResp.users,
-        sectors: sectorsResp.sectors,
-        loading: false,
-      });
-    } catch (err) {
-      console.error("Failed to fetch data:", err);
-      setData((prev) => ({ ...prev, loading: false }));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isAdmin) {
-      fetchData();
-    }
-  }, [isAdmin, fetchData]);
-
-  const [password, setPassword] = useState("");
-
-  const handleOpenModal = (user: Partial<AdminUser> | null = null) => {
-    setEditingUser(
-      user || {
-        id: crypto.randomUUID(),
-        email: "",
-        role: UserRole.READER,
-        assignedSectorIds: [],
-      },
-    );
-    setPassword("");
-    setIsModalOpen(true);
-  };
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingUser) return;
-    setSaving(true);
-    try {
-      await adminClient.upsertUser({
-        user: editingUser as AdminUser,
-        password: password,
-      });
-      await fetchData();
-      setIsModalOpen(false);
-    } catch (err) {
-      console.error("Failed to save user:", err);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const toggleSector = (sectorId: string) => {
-    setEditingUser((prev) => {
-      if (!prev) return null;
-      const sectors = prev.assignedSectorIds || [];
-      const newSectors = sectors.includes(sectorId)
-        ? sectors.filter((id) => id !== sectorId)
-        : [...sectors, sectorId];
-      return { ...prev, assignedSectorIds: newSectors };
-    });
-  };
-
   if (authLoading || !isAdmin) return null;
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1">
           <h1 className="text-4xl font-black tracking-tighter uppercase bg-linear-to-br from-white to-white/40 bg-clip-text text-transparent">

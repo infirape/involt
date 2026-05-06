@@ -1,8 +1,6 @@
 "use client";
 
-import { Calendar, ChevronRight, Lock, Unlock, Users, AlertCircle, CheckCircle2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { adminClient } from "@/lib/rpc";
+import { Calendar, ChevronRight, Lock, Unlock, AlertCircle } from "lucide-react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,73 +11,27 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { GetPeriodStatsResponse } from "@/app/gen/involt/v1/admin_pb";
 import { PeriodStatus } from "@/app/gen/involt/v1/models_pb";
-import type { Period } from "@/app/gen/involt/v1/models_pb";
+import { usePeriods } from "./hooks/usePeriods";
 
 export default function PeriodsPage() {
   const { isAdmin, loading: authLoading } = useAuth();
-  const [periods, setPeriods] = useState<Period[]>([]);
-  const [stats, setStats] = useState<GetPeriodStatsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [closing, setClosing] = useState(false);
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const resp = await adminClient.listPeriods({});
-      setPeriods(resp.periods);
-      
-      const current = resp.periods.find(p => p.status === PeriodStatus.OPEN);
-      if (current) {
-        const statsResp = await adminClient.getPeriodStats({ periodId: current.id });
-        setStats(statsResp);
-      } else {
-        setStats(null);
-      }
-    } catch (err) {
-      console.error("Failed to fetch periods:", err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (isAdmin) fetchData();
-  }, [isAdmin]);
-
-  const handleClosePeriod = async (periodId: string) => {
-    if (!confirm("¿Estás seguro de cerrar este periodo? Se aperturará el siguiente automáticamente.")) return;
-    setClosing(true);
-    try {
-      await adminClient.closePeriod({ id: periodId, openNext: true });
-      await fetchData();
-    } catch (err) {
-      console.error("Failed to close period:", err);
-    } finally {
-      setClosing(false);
-    }
-  };
-
-  const handleOpenManual = async () => {
-    const periodId = prompt("Ingrese el periodo (YYYY-MM):", new Date().toISOString().slice(0, 7));
-    if (!periodId) return;
-    
-    // Simple dates for manual open
-    const start = `${periodId}-01`;
-    const end = new Date(new Date(start).getFullYear(), new Date(start).getMonth() + 1, 0).toISOString().slice(0, 10);
-    
-    try {
-      await adminClient.openPeriod({ id: periodId, startDate: start, endDate: end });
-      await fetchData();
-    } catch (err) {
-      console.error("Failed to open period:", err);
-    }
-  };
+  const {
+    loading,
+    closing,
+    data,
+    handleClosePeriod,
+    handleOpenManual,
+  } = usePeriods();
 
   if (authLoading || !isAdmin) return null;
 
-  const currentPeriod = periods.find(p => p.status === PeriodStatus.OPEN);
+  const { periods, currentPeriod, stats } = data;
+
+  const handleManualPrompt = () => {
+    const periodId = prompt("Ingrese el periodo (YYYY-MM):", new Date().toISOString().slice(0, 7));
+    if (periodId) handleOpenManual(periodId);
+  };
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-700">
@@ -93,8 +45,8 @@ export default function PeriodsPage() {
           </p>
         </div>
         <Button 
-          onClick={handleOpenManual}
-          disabled={!!currentPeriod}
+          onClick={handleManualPrompt}
+          disabled={!!currentPeriod || loading}
           variant="outline" 
           className="border-white/10 hover:bg-white/5 rounded-xl font-bold uppercase tracking-widest text-xs disabled:opacity-30"
         >
@@ -126,7 +78,12 @@ export default function PeriodsPage() {
           </CardHeader>
           
           <CardContent className="space-y-8">
-            {currentPeriod ? (
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-20 animate-pulse">
+                <Calendar className="w-12 h-12 text-primary/20 mb-4" />
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-20">Cargando Periodo...</p>
+              </div>
+            ) : currentPeriod ? (
               <>
                 <div className="grid grid-cols-3 gap-6">
                   <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-1">
@@ -146,7 +103,9 @@ export default function PeriodsPage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">Clientes sin medida</h3>
-                    <Badge variant="outline" className="text-[10px] opacity-60">{stats?.missingCustomers.length} mostrados</Badge>
+                    <Badge variant="outline" className="text-[10px] opacity-60">
+                      {stats?.missingCustomers?.length || 0} mostrados
+                    </Badge>
                   </div>
                   
                   <div className="rounded-2xl border border-white/5 overflow-hidden max-h-[300px] overflow-y-auto scrollbar-thin">
@@ -160,7 +119,7 @@ export default function PeriodsPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/5">
-                        {stats?.missingCustomers.map((c) => (
+                        {stats?.missingCustomers?.map((c) => (
                           <tr key={c.id} className="hover:bg-white/5 transition-colors">
                             <td className="px-4 py-3 font-mono text-primary/80">{c.code}</td>
                             <td className="px-4 py-3 font-bold">{c.name}</td>
@@ -200,7 +159,7 @@ export default function PeriodsPage() {
                   <p className="font-bold text-muted-foreground">No hay periodos abiertos</p>
                   <p className="text-xs text-muted-foreground/60">Aperturá uno manualmente o esperá al próximo mes.</p>
                 </div>
-                <Button onClick={handleOpenManual} className="bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold uppercase tracking-widest text-xs px-6">
+                <Button onClick={handleManualPrompt} className="bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold uppercase tracking-widest text-xs px-6">
                   Aperturar Ahora
                 </Button>
               </div>
@@ -224,7 +183,7 @@ export default function PeriodsPage() {
                     </div>
                     <div>
                       <p className="font-bold text-sm">{p.id}</p>
-                      <p className="text-[10px] text-muted-foreground opacity-60 uppercase">Cerrado el {new Date().toLocaleDateString()}</p>
+                      <p className="text-[10px] text-muted-foreground opacity-60 uppercase">Cerrado</p>
                     </div>
                   </div>
                   <ChevronRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary transition-colors" />

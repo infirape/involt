@@ -28,27 +28,34 @@ func (r *PostgresReadingRepository) Save(ctx context.Context, reading *domain.Re
 				photo_url, timestamp, latitude, longitude, period_start, period_end,
 				cargo_fijo, alumbrado_publico, mantenimiento, adjustment, subtotal, 
 				saldo_redondeo, round_difference, total_to_pay, previous_balance, 
-				overdue_total, expiration_date
+				overdue_total, expiration_date, period
 			  ) 
 	          VALUES (
 				:id, :customer_id, :previous_value, :current_value, :consumption, 
 				:photo_url, :timestamp, :latitude, :longitude, :period_start, :period_end,
 				:cargo_fijo, :alumbrado_publico, :mantenimiento, :adjustment, :subtotal, 
 				:saldo_redondeo, :round_difference, :total_to_pay, :previous_balance, 
-				:overdue_total, :expiration_date
+				:overdue_total, :expiration_date, :period
 			  ) 
-	          ON CONFLICT (id) DO UPDATE SET 
+		ON CONFLICT (id) DO UPDATE SET 
+				previous_value = EXCLUDED.previous_value,
 				current_value = EXCLUDED.current_value,
 				consumption = EXCLUDED.consumption,
-				total_to_pay = EXCLUDED.total_to_pay`
+				total_to_pay = EXCLUDED.total_to_pay,
+				timestamp = EXCLUDED.timestamp,
+				period_start = EXCLUDED.period_start,
+				period_end = EXCLUDED.period_end,
+				cargo_fijo = EXCLUDED.cargo_fijo,
+				alumbrado_publico = EXCLUDED.alumbrado_publico,
+				mantenimiento = EXCLUDED.mantenimiento,
+				adjustment = EXCLUDED.adjustment,
+				subtotal = EXCLUDED.subtotal,
+				saldo_redondeo = EXCLUDED.saldo_redondeo,
+				round_difference = EXCLUDED.round_difference,
+				expiration_date = EXCLUDED.expiration_date,
+				period = EXCLUDED.period`
 
 	_, err = tx.NamedExecContext(ctx, query, reading)
-	if err != nil {
-		return err
-	}
-
-	// Update customer's last reading value
-	_, err = tx.ExecContext(ctx, "UPDATE customers SET last_reading_value = $1 WHERE id = $2", reading.CurrentValue, reading.CustomerID)
 	if err != nil {
 		return err
 	}
@@ -70,6 +77,16 @@ func (r *PostgresReadingRepository) GetLatestByCustomer(ctx context.Context, cus
 	var reading domain.Reading
 	query := `SELECT * FROM readings WHERE customer_id = $1 ORDER BY timestamp DESC LIMIT 1`
 	err := r.db.GetContext(ctx, &reading, query, customerID)
+	if err != nil {
+		return nil, fmt.Errorf("error getting latest reading: %w", err)
+	}
+	return &reading, nil
+}
+
+func (r *PostgresReadingRepository) GetLatestByCustomerExcludingID(ctx context.Context, customerID, excludeID string) (*domain.Reading, error) {
+	var reading domain.Reading
+	query := `SELECT * FROM readings WHERE customer_id = $1 AND id != $2 ORDER BY timestamp DESC LIMIT 1`
+	err := r.db.GetContext(ctx, &reading, query, customerID, excludeID)
 	if err != nil {
 		return nil, fmt.Errorf("error getting latest reading: %w", err)
 	}
@@ -101,7 +118,7 @@ func (r *PostgresReadingRepository) ListBySectorAndPeriod(ctx context.Context, s
 
 func (r *PostgresReadingRepository) CountByPeriod(ctx context.Context, period string) (int, error) {
 	var count int
-	query := `SELECT COUNT(DISTINCT customer_id) FROM readings WHERE to_char(timestamp, 'YYYY-MM') = $1`
+	query := `SELECT COUNT(DISTINCT customer_id) FROM readings WHERE period = $1`
 	err := r.db.GetContext(ctx, &count, query, period)
 	return count, err
 }
@@ -112,7 +129,7 @@ func (r *PostgresReadingRepository) CountPendingByPeriod(ctx context.Context, pe
 	          WHERE NOT EXISTS (
 	              SELECT 1 FROM readings r 
 	              WHERE r.customer_id = c.id 
-	              AND to_char(r.timestamp, 'YYYY-MM') = $1
+	              AND r.period = $1
 	          )`
 	err := r.db.GetContext(ctx, &count, query, period)
 	return count, err
@@ -120,7 +137,7 @@ func (r *PostgresReadingRepository) CountPendingByPeriod(ctx context.Context, pe
 
 func (r *PostgresReadingRepository) ListPeriods(ctx context.Context) ([]string, error) {
 	var periods []string
-	query := `SELECT DISTINCT to_char(timestamp, 'YYYY-MM') as period 
+	query := `SELECT DISTINCT period 
 	          FROM readings 
 	          ORDER BY period DESC`
 	err := r.db.SelectContext(ctx, &periods, query)
@@ -133,8 +150,9 @@ func (r *PostgresReadingRepository) CountBySectorAndPeriod(ctx context.Context, 
 	var count int
 	query := `SELECT COUNT(DISTINCT r.customer_id) FROM readings r
 	          JOIN customers c ON r.customer_id = c.id
-	          WHERE c.sector_id = $1 AND to_char(r.timestamp, 'YYYY-MM') = $2`
+	          WHERE c.sector_id = $1 AND r.period = $2`
 	err := r.db.GetContext(ctx, &count, query, sectorID, period)
+	fmt.Printf("📊 CountBySectorAndPeriod: sector=%s, period=%s, count=%d, err=%v\n", sectorID, period, count, err)
 	return count, err
 }
 
@@ -142,7 +160,7 @@ func (r *PostgresReadingRepository) SumConsumptionBySectorAndPeriod(ctx context.
 	var sum float64
 	query := `SELECT COALESCE(SUM(r.consumption), 0) FROM readings r
 	          JOIN customers c ON r.customer_id = c.id
-	          WHERE c.sector_id = $1 AND to_char(r.timestamp, 'YYYY-MM') = $2`
+	          WHERE c.sector_id = $1 AND r.period = $2`
 	err := r.db.GetContext(ctx, &sum, query, sectorID, period)
 	return sum, err
 }
@@ -151,21 +169,21 @@ func (r *PostgresReadingRepository) SumRevenueBySectorAndPeriod(ctx context.Cont
 	var sum float64
 	query := `SELECT COALESCE(SUM(r.total_to_pay), 0) FROM readings r
 	          JOIN customers c ON r.customer_id = c.id
-	          WHERE c.sector_id = $1 AND to_char(r.timestamp, 'YYYY-MM') = $2`
+	          WHERE c.sector_id = $1 AND r.period = $2`
 	err := r.db.GetContext(ctx, &sum, query, sectorID, period)
 	return sum, err
 }
 
 func (r *PostgresReadingRepository) SumRevenueByPeriod(ctx context.Context, period string) (float64, error) {
 	var sum float64
-	query := `SELECT COALESCE(SUM(total_to_pay), 0) FROM readings WHERE to_char(timestamp, 'YYYY-MM') = $1`
+	query := `SELECT COALESCE(SUM(total_to_pay), 0) FROM readings WHERE period = $1`
 	err := r.db.GetContext(ctx, &sum, query, period)
 	return sum, err
 }
 
 func (r *PostgresReadingRepository) SumConsumptionByPeriod(ctx context.Context, period string) (float64, error) {
 	var sum float64
-	query := `SELECT COALESCE(SUM(consumption), 0) FROM readings WHERE to_char(timestamp, 'YYYY-MM') = $1`
+	query := `SELECT COALESCE(SUM(consumption), 0) FROM readings WHERE period = $1`
 	err := r.db.GetContext(ctx, &sum, query, period)
 	return sum, err
 }
@@ -190,7 +208,7 @@ func (r *PostgresReadingRepository) List(ctx context.Context, customerID, sector
 	}
 
 	if period != "" {
-		where += fmt.Sprintf(" AND to_char(r.timestamp, 'YYYY-MM') = $%d", argIdx)
+		where += fmt.Sprintf(" AND r.period = $%d", argIdx)
 		args = append(args, period)
 		argIdx++
 	}

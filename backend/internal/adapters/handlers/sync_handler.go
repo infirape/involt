@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
+	"github.com/infira/involt/backend/internal/adapters/auth"
 	"github.com/infira/involt/backend/internal/domain"
 	involtv1 "github.com/infira/involt/backend/internal/gen/involt/v1"
 	"github.com/infira/involt/backend/internal/gen/involt/v1/involtv1connect"
@@ -19,6 +20,7 @@ type SyncHandler struct {
 	customerRepo ports.CustomerRepository
 	readingRepo  ports.ReadingRepository
 	periodRepo   ports.PeriodRepository
+	adminRepo    ports.AdminRepository
 	pdfGen       ports.ReceiptGenerator
 }
 
@@ -27,6 +29,7 @@ func NewSyncHandler(
 	customerRepo ports.CustomerRepository,
 	readingRepo ports.ReadingRepository,
 	periodRepo ports.PeriodRepository,
+	adminRepo ports.AdminRepository,
 	pdfGen ports.ReceiptGenerator,
 ) *SyncHandler {
 	return &SyncHandler{
@@ -34,6 +37,7 @@ func NewSyncHandler(
 		customerRepo: customerRepo,
 		readingRepo:  readingRepo,
 		periodRepo:   periodRepo,
+		adminRepo:    adminRepo,
 		pdfGen:       pdfGen,
 	}
 }
@@ -42,19 +46,51 @@ func (h *SyncHandler) PullMetadata(
 	ctx context.Context,
 	req *connect.Request[involtv1.PullMetadataRequest],
 ) (*connect.Response[involtv1.PullMetadataResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	isAdmin := ok && userCtx.Role == string(domain.RoleAdmin)
+
 	communities, err := h.metaRepo.ListCommunities(ctx)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to list communities: %w", err))
 	}
 
-	sectors, err := h.metaRepo.ListSectors(ctx)
+	allSectors, err := h.metaRepo.ListSectors(ctx)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to list sectors: %w", err))
 	}
 
-	customers, err := h.customerRepo.ListAll(ctx)
+	allCustomers, err := h.customerRepo.ListAll(ctx)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to list customers: %w", err))
+	}
+
+	// Filter based on role
+	var sectors []domain.Sector
+	var customers []domain.Customer
+	allowedSectorIDs := make(map[string]bool)
+
+	if isAdmin {
+		sectors = allSectors
+		customers = allCustomers
+	} else {
+		// Reader: Filter by assigned sectors
+		assignedMap := make(map[string]bool)
+		for _, id := range userCtx.AssignedSectorIDs {
+			assignedMap[id] = true
+		}
+
+		for _, s := range allSectors {
+			if assignedMap[s.ID] {
+				sectors = append(sectors, s)
+				allowedSectorIDs[s.ID] = true
+			}
+		}
+
+		for _, c := range allCustomers {
+			if allowedSectorIDs[c.SectorID] {
+				customers = append(customers, c)
+			}
+		}
 	}
 
 	config, err := h.metaRepo.GetAppConfig(ctx)
@@ -70,7 +106,7 @@ func (h *SyncHandler) PullMetadata(
 	}
 
 	resp := &involtv1.PullMetadataResponse{
-		Communities: make([]*involtv1.Community, len(communities)),
+		Communities: make([]*involtv1.Community, 0),
 		Sectors:     make([]*involtv1.Sector, len(sectors)),
 		Customers:   make([]*involtv1.Customer, len(customers)),
 		Config: &involtv1.AppConfig{
@@ -93,8 +129,15 @@ func (h *SyncHandler) PullMetadata(
 		},
 	}
 
-	for i, c := range communities {
-		resp.Communities[i] = &involtv1.Community{Id: c.ID, Name: c.Name}
+	// Filter communities to only those that have at least one allowed sector
+	allowedCommunityIDs := make(map[string]bool)
+	for _, s := range sectors {
+		allowedCommunityIDs[s.CommunityID] = true
+	}
+	for _, c := range communities {
+		if allowedCommunityIDs[c.ID] {
+			resp.Communities = append(resp.Communities, &involtv1.Community{Id: c.ID, Name: c.Name})
+		}
 	}
 
 	for i, s := range sectors {
@@ -105,20 +148,39 @@ func (h *SyncHandler) PullMetadata(
 		resp.Customers[i] = domain.MapCustomerToProto(&c)
 	}
 
-	// Fetch and map readings
-	readings, err := h.readingRepo.ListAll(ctx)
+	// Fetch and map readings (Filter by allowed customers if reader)
+	allReadings, err := h.readingRepo.ListAll(ctx)
 	if err != nil {
 		log.Printf("⚠️ Error getting readings for sync: %v", err)
 	} else {
-		resp.Readings = make([]*involtv1.Reading, len(readings))
-		for i, r := range readings {
-			resp.Readings[i] = domain.MapReadingToProto(&r)
+		allowedCustomerIDs := make(map[string]bool)
+		for _, c := range customers {
+			allowedCustomerIDs[c.ID] = true
 		}
+
+		filteredReadings := make([]*involtv1.Reading, 0)
+		for _, r := range allReadings {
+			if allowedCustomerIDs[r.CustomerID] {
+				filteredReadings = append(filteredReadings, domain.MapReadingToProto(&r))
+			}
+		}
+		resp.Readings = filteredReadings
 	}
 
 	// Fetch current open period
 	if openPeriod, err := h.periodRepo.GetCurrent(ctx); err == nil && openPeriod != nil {
 		resp.CurrentPeriod = domain.MapPeriodToProto(openPeriod)
+	}
+
+	// Fetch operators for offline login
+	users, err := h.adminRepo.ListUsers(ctx)
+	if err != nil {
+		log.Printf("⚠️ Error getting users for sync: %v", err)
+	} else {
+		resp.Operators = make([]*involtv1.Operator, len(users))
+		for i, u := range users {
+			resp.Operators[i] = domain.MapUserToOperatorProto(&u)
+		}
 	}
 
 	return connect.NewResponse(resp), nil
@@ -134,12 +196,32 @@ func (h *SyncHandler) PushReadings(
 		settings = &domain.Settings{}
 	}
 
+	log.Printf("📥 Sync: Received PushReadings request with %d readings", len(req.Msg.Readings))
 	for _, r := range req.Msg.Readings {
 		reading := domain.MapProtoToReading(r)
 		
-		// Recalculate components to ensure server-side truth
-		prevVal := reading.PreviousValue
-		consumption := reading.CurrentValue - prevVal
+		// 1. Get true previous value from server DB to ensure consistency
+		// We look for the latest reading that is NOT this one.
+		prevReading, err := h.readingRepo.GetLatestByCustomerExcludingID(ctx, r.CustomerId, r.Id)
+		actualPrevValue := r.PreviousValue // fallback to what App sent
+		
+		if err == nil && prevReading != nil {
+			actualPrevValue = prevReading.CurrentValue
+		} else if actualPrevValue <= 0 {
+			// If App sent <= 0, then we try customer initial reading as last resort
+			if cust, err := h.customerRepo.GetByID(ctx, r.CustomerId); err == nil && cust != nil {
+				if cust.InitialReading > 0 {
+					actualPrevValue = cust.InitialReading
+				}
+			}
+		}
+
+		log.Printf("   -> Processing %s for %s (Curr: %.2f, AppPrev: %.2f, DBPrev: %.2f)", 
+			r.Id, r.CustomerId, r.CurrentValue, r.PreviousValue, actualPrevValue)
+		
+		// Recalculate components based on SERVER truth
+		reading.PreviousValue = actualPrevValue
+		consumption := reading.CurrentValue - actualPrevValue
 		if consumption < 0 {
 			consumption = 0
 		}
@@ -148,11 +230,24 @@ func (h *SyncHandler) PushReadings(
 		subtotal := consumptionCharge + settings.CargoFijo + settings.Alumbrado + settings.Mantenimiento
 		total := subtotal + reading.SaldoRedondeo
 
+		// Check if period is billing
+		if period, err := h.periodRepo.GetByID(ctx, reading.Period); err == nil && period != nil {
+			if !period.IsBillingPeriod {
+				log.Printf("   -> Non-billing period %s, setting totals to 0", reading.Period)
+				subtotal = 0
+				total = 0
+				reading.CargoFijo = 0
+				reading.AlumbradoPublico = 0
+				reading.Mantenimiento = 0
+			} else {
+				reading.CargoFijo = settings.CargoFijo
+				reading.AlumbradoPublico = settings.Alumbrado
+				reading.Mantenimiento = settings.Mantenimiento
+			}
+		}
+
 		// Update with server calculations
 		reading.Consumption = consumption
-		reading.CargoFijo = settings.CargoFijo
-		reading.AlumbradoPublico = settings.Alumbrado
-		reading.Mantenimiento = settings.Mantenimiento
 		reading.Subtotal = subtotal
 		reading.TotalToPay = total
 

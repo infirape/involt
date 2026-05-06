@@ -14,11 +14,7 @@ class ReadingScreen extends StatefulWidget {
   final Customer customer;
   final AppDatabase db;
 
-  const ReadingScreen({
-    super.key,
-    required this.customer,
-    required this.db,
-  });
+  const ReadingScreen({super.key, required this.customer, required this.db});
 
   @override
   State<ReadingScreen> createState() => _ReadingScreenState();
@@ -27,7 +23,7 @@ class ReadingScreen extends StatefulWidget {
 class _ReadingScreenState extends State<ReadingScreen> {
   final TextEditingController _kwhController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
-  
+
   File? _image;
   Position? _currentPosition;
   bool _isSaving = false;
@@ -41,26 +37,61 @@ class _ReadingScreenState extends State<ReadingScreen> {
   }
 
   Future<void> _loadInitialData() async {
-    // Use lastReadingValue if available, otherwise fallback to initialReading
-    if (widget.customer.lastReadingValue > 0) {
-      _previousValue = widget.customer.lastReadingValue;
+    final selectedPeriod = context.read<AppStateProvider>().selectedPeriod;
+    final repo = DriftReadingRepository(widget.db);
+    
+    // 1. Get all readings for this customer
+    final allReadings = await repo.getReadingsForCustomer(widget.customer.id);
+    
+    // 2. Check if we are EDITING an existing reading for this period
+    Reading? existingReading;
+    try {
+      existingReading = allReadings.firstWhere((r) => r.period == selectedPeriod);
+    } catch (_) {}
+
+    if (existingReading != null) {
+      // If editing, the previous value is already stored in the reading
+      // unless it's zero and we have a better one in history
+      _previousValue = existingReading.previousValue;
+      
+      // Safety check: if stored previous is same as current, it's a corrupted record
+      if (_previousValue == existingReading.currentValue) {
+        final lastBefore = allReadings
+            .where((r) => r.period.compareTo(selectedPeriod) < 0)
+            .toList();
+        if (lastBefore.isNotEmpty) {
+          lastBefore.sort((a, b) => b.period.compareTo(a.period));
+          _previousValue = lastBefore.first.currentValue;
+        } else {
+          _previousValue = widget.customer.initialReading;
+        }
+      }
     } else {
-      _previousValue = widget.customer.initialReading;
+      // 3. If NEW reading, look for the latest from PREVIOUS periods
+      final previousReadings = allReadings
+          .where((r) => r.period.compareTo(selectedPeriod) < 0)
+          .toList();
+      
+      if (previousReadings.isNotEmpty) {
+        previousReadings.sort((a, b) => b.period.compareTo(a.period));
+        _previousValue = previousReadings.first.currentValue;
+      } else {
+        // Fallback to initial reading (last_reading_value now calculated from readings table)
+        _previousValue = widget.customer.initialReading;
+      }
     }
     
     _determinePosition();
-    
-    // Proactive duplicate check
-    final selectedPeriod = context.read<AppStateProvider>().selectedPeriod;
-    final repo = DriftReadingRepository(widget.db);
+
+    // Proactive duplicate checK
     final readings = await repo.getReadingsForCustomer(widget.customer.id);
-    
+
     try {
       final existingReading = readings.firstWhere(
         (r) => r.period == selectedPeriod,
         orElse: () => throw Exception('Not found'),
       );
-      
+
       if (mounted) {
         setState(() {
           _isAlreadyRegistered = true;
@@ -97,7 +128,10 @@ class _ReadingScreenState extends State<ReadingScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('ENTENDIDO', style: TextStyle(color: AppColors.cyan)),
+              child: const Text(
+                'ENTENDIDO',
+                style: TextStyle(color: AppColors.cyan),
+              ),
             ),
           ],
         ),
@@ -116,16 +150,22 @@ class _ReadingScreenState extends State<ReadingScreen> {
 
   Future<void> _takePhoto() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.camera, imageQuality: 70);
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 70,
+    );
     if (pickedFile != null) setState(() => _image = File(pickedFile.path));
   }
 
   double get _currentValue => double.tryParse(_kwhController.text) ?? 0;
-  double get _consumption => _currentValue > _previousValue ? _currentValue - _previousValue : 0;
+  double get _consumption =>
+      _currentValue > _previousValue ? _currentValue - _previousValue : 0;
 
   Future<void> _saveReading() async {
     if (_kwhController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ingrese la lectura')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Ingrese la lectura')));
       return;
     }
 
@@ -144,11 +184,26 @@ class _ReadingScreenState extends State<ReadingScreen> {
         context: context,
         builder: (context) => AlertDialog(
           backgroundColor: AppColors.onyx,
-          title: const Text('Sobrescribir Registro', style: TextStyle(color: Colors.white)),
-          content: const Text('Ya existe una lectura para este período. ¿Desea actualizarla?', style: TextStyle(color: Colors.white70)),
+          title: const Text(
+            'Sobrescribir Registro',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: const Text(
+            'Ya existe una lectura para este período. ¿Desea actualizarla?',
+            style: TextStyle(color: Colors.white70),
+          ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('CANCELAR')),
-            TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('ACTUALIZAR', style: TextStyle(color: AppColors.volt))),
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('CANCELAR'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text(
+                'ACTUALIZAR',
+                style: TextStyle(color: AppColors.volt),
+              ),
+            ),
           ],
         ),
       );
@@ -182,7 +237,9 @@ class _ReadingScreenState extends State<ReadingScreen> {
       await repo.saveReading(reading);
       if (mounted) Navigator.pop(context);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -193,7 +250,10 @@ class _ReadingScreenState extends State<ReadingScreen> {
     return Scaffold(
       backgroundColor: AppColors.onyx,
       appBar: AppBar(
-        title: Text(widget.customer.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        title: Text(
+          widget.customer.name,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -208,16 +268,24 @@ class _ReadingScreenState extends State<ReadingScreen> {
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.warning_amber_rounded, color: Colors.amber, size: 16),
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.amber,
+                    size: 16,
+                  ),
                   SizedBox(width: 8),
                   Text(
                     'ATENCIÓN: YA EXISTE UN REGISTRO PARA ESTE PERÍODO',
-                    style: TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.amber,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
             ),
-            
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -248,7 +316,11 @@ class _ReadingScreenState extends State<ReadingScreen> {
         const SizedBox(width: 6),
         Text(
           'LECTURA ANTERIOR: ${_previousValue.toStringAsFixed(1)} kWh',
-          style: const TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white38,
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );
@@ -260,7 +332,12 @@ class _ReadingScreenState extends State<ReadingScreen> {
       child: Center(
         child: Text(
           _kwhController.text.isEmpty ? '0.0' : _kwhController.text,
-          style: const TextStyle(color: AppColors.cyan, fontSize: 54, fontWeight: FontWeight.bold, letterSpacing: 4),
+          style: const TextStyle(
+            color: AppColors.cyan,
+            fontSize: 54,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 4,
+          ),
         ),
       ),
     );
@@ -275,7 +352,11 @@ class _ReadingScreenState extends State<ReadingScreen> {
       ),
       child: Text(
         'CONSUMO: ${_consumption.toStringAsFixed(1)} kWh',
-        style: const TextStyle(color: AppColors.cyan, fontSize: 13, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          color: AppColors.cyan,
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -321,13 +402,20 @@ class _ReadingScreenState extends State<ReadingScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.volt,
                     foregroundColor: Colors.black, // High contrast text
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: _isSaving
                       ? const CircularProgressIndicator(color: Colors.black)
                       : Text(
-                          _isAlreadyRegistered ? 'ACTUALIZAR LECTURA' : 'GUARDAR LECTURA', 
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          _isAlreadyRegistered
+                              ? 'ACTUALIZAR LECTURA'
+                              : 'GUARDAR LECTURA',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                 ),
               ),
@@ -348,7 +436,9 @@ class _ReadingScreenState extends State<ReadingScreen> {
           color: Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.white.withOpacity(0.1)),
-          image: _image != null ? DecorationImage(image: FileImage(_image!), fit: BoxFit.cover) : null,
+          image: _image != null
+              ? DecorationImage(image: FileImage(_image!), fit: BoxFit.cover)
+              : null,
         ),
         child: _image == null
             ? const Row(
@@ -356,7 +446,14 @@ class _ReadingScreenState extends State<ReadingScreen> {
                 children: [
                   Icon(Icons.camera_alt, color: AppColors.volt, size: 20),
                   SizedBox(width: 10),
-                  Text('AÑADIR FOTO (OPCIONAL)', style: TextStyle(color: AppColors.volt, fontSize: 12, fontWeight: FontWeight.bold)),
+                  Text(
+                    'AÑADIR FOTO (OPCIONAL)',
+                    style: TextStyle(
+                      color: AppColors.volt,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               )
             : null,

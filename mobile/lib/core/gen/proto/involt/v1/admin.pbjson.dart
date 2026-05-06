@@ -162,6 +162,7 @@ const GetCustomersRequest$json = {
     {'1': 'search_query', '3': 2, '4': 1, '5': 9, '10': 'searchQuery'},
     {'1': 'page_number', '3': 3, '4': 1, '5': 5, '10': 'pageNumber'},
     {'1': 'page_size', '3': 4, '4': 1, '5': 5, '10': 'pageSize'},
+    {'1': 'exclude_period_id', '3': 5, '4': 1, '5': 9, '10': 'excludePeriodId'},
   ],
 };
 
@@ -169,7 +170,8 @@ const GetCustomersRequest$json = {
 final $typed_data.Uint8List getCustomersRequestDescriptor = $convert.base64Decode(
     'ChNHZXRDdXN0b21lcnNSZXF1ZXN0EhsKCXNlY3Rvcl9pZBgBIAEoCVIIc2VjdG9ySWQSIQoMc2'
     'VhcmNoX3F1ZXJ5GAIgASgJUgtzZWFyY2hRdWVyeRIfCgtwYWdlX251bWJlchgDIAEoBVIKcGFn'
-    'ZU51bWJlchIbCglwYWdlX3NpemUYBCABKAVSCHBhZ2VTaXpl');
+    'ZU51bWJlchIbCglwYWdlX3NpemUYBCABKAVSCHBhZ2VTaXplEioKEWV4Y2x1ZGVfcGVyaW9kX2'
+    'lkGAUgASgJUg9leGNsdWRlUGVyaW9kSWQ=');
 
 @$core.Deprecated('Use getCustomersResponseDescriptor instead')
 const GetCustomersResponse$json = {

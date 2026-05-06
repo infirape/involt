@@ -12,6 +12,7 @@ type ReadingRepository interface {
 	GetByID(ctx context.Context, id string) (*domain.Reading, error)
 	ListByCustomer(ctx context.Context, customerID string) ([]domain.Reading, error)
 	GetLatestByCustomer(ctx context.Context, customerID string) (*domain.Reading, error)
+	GetLatestByCustomerExcludingID(ctx context.Context, customerID, excludeID string) (*domain.Reading, error)
 	ListBySectorAndPeriod(ctx context.Context, sectorID string, start, end string) ([]domain.Reading, error)
 	CountByPeriod(ctx context.Context, period string) (int, error)
 	CountPendingByPeriod(ctx context.Context, period string) (int, error)
@@ -29,7 +30,7 @@ type ReadingRepository interface {
 type CustomerRepository interface {
 	GetByID(ctx context.Context, id string) (*domain.Customer, error)
 	GetByCode(ctx context.Context, code string) (*domain.Customer, error)
-	List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int) ([]domain.Customer, int, error)
+	List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int, excludePeriodID string) ([]domain.Customer, int, error)
 	ListAll(ctx context.Context) ([]domain.Customer, error)
 	SaveBatch(ctx context.Context, customers []domain.Customer) error
 	Save(ctx context.Context, customer *domain.Customer) error
