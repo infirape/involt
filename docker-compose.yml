@@ -18,6 +18,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - involt-net
 
   backend:
     build:
@@ -32,6 +34,26 @@ services:
       DATABASE_URL: postgres://involt_user:involt_password@db:5432/involt_db?sslmode=disable
     ports:
       - "8080:8080"
+    networks:
+      - involt-net
+
+  admin:
+    build:
+      context: .
+      dockerfile: admin-ui/Dockerfile
+    container_name: involt_admin
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL: http://localhost:8080
+    networks:
+      - involt-net
 
 volumes:
   postgres_data:
+
+networks:
+  involt-net:
+    driver: bridge
