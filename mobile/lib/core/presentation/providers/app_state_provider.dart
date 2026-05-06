@@ -95,8 +95,12 @@ class AppStateProvider extends ChangeNotifier {
       return await _performLoginRpc(email, password);
     } catch (e) {
       print('❌ Login Online failed: $e. Attempting offline fallback...');
-      // 2. Fallback to offline login if online fails (e.g. timeout or no network)
-      return await _performOfflineLogin(email, password);
+      final offlineSuccess = await _performOfflineLogin(email, password);
+      if (!offlineSuccess) {
+        // Rethrow the original error if offline login also fails
+        rethrow;
+      }
+      return true;
     }
   }
 
@@ -158,8 +162,8 @@ class AppStateProvider extends ChangeNotifier {
       }
       return false;
     } catch (e) {
-      print('❌ Login RPC Error: $e');
-      rethrow;
+      debugPrint('❌ Login RPC error: $e');
+      throw Exception('No se pudo conectar con el servidor. Verifica tu internet o la URL de la API.');
     }
   }
 
