@@ -6,7 +6,9 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN go mod tidy && CGO_ENABLED=0 GOOS=linux go build -o /out/involt-server ./cmd/server
+RUN go mod tidy && \
+    CGO_ENABLED=0 GOOS=linux go build -o /out/involt-server ./cmd/server && \
+    CGO_ENABLED=0 GOOS=linux go build -o /out/involt-seed ./cmd/seed_production
 
 FROM alpine:3.20
 
@@ -15,7 +17,9 @@ WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app
 
 COPY --from=builder /out/involt-server /app/involt-server
+COPY --from=builder /out/involt-seed /app/involt-seed
 COPY cmd/admin/templates /app/cmd/admin/templates
+COPY docs/cleaned_customers.csv /app/cleaned_customers.csv
 
 ENV PORT=8080
 EXPOSE 8080
