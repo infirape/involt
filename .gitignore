@@ -16,3 +16,6 @@ backend/server
 
 # Temp
 jira_*.json
+
+# Docs (binaries/downloads)
+docs/
