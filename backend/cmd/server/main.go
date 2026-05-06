@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"log"
 	"net/http"
 	"os"
@@ -45,6 +46,13 @@ func main() {
 	}
 	defer db.Close()
 	log.Println("🐘 Connected to PostgreSQL")
+
+	// Initialize database schema
+	if err := initSchema(db); err != nil {
+		log.Printf("⚠️  Schema init warning: %v", err)
+	} else {
+		log.Println("✅ Database schema initialized")
+	}
 
 	// 2. Initialize Repositories
 	metaRepo := repositories.NewPostgresMetadataRepository(db)
@@ -151,4 +159,12 @@ func resolveAssetsDir() string {
 	}
 
 	return "../assets"
+}
+
+//go:embed schema.sql
+var schemaSQL string
+
+func initSchema(db *sqlx.DB) error {
+	_, err := db.Exec(schemaSQL)
+	return err
 }
