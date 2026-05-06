@@ -23,8 +23,8 @@ services:
 
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: involt_backend
     restart: always
     depends_on:
@@ -39,8 +39,8 @@ services:
 
   admin:
     build:
-      context: .
-      dockerfile: admin-ui/Dockerfile
+      context: ./admin-ui
+      dockerfile: Dockerfile
     container_name: involt_admin
     restart: always
     ports:
