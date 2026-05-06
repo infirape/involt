@@ -45,7 +45,7 @@ services:
       NODE_ENV: production
       NEXT_PUBLIC_API_URL: http://localhost:8081
     ports:
-      - "3001:3000"
+      - "3034:3000"
     networks:
       - involt-net
 
