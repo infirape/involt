@@ -33,7 +33,7 @@ services:
     networks:
       - involt-net
 
-admin:
+  admin:
     build:
       context: ./admin-ui
       dockerfile: Dockerfile
