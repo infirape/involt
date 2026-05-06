@@ -1,0 +1,9 @@
+.git
+.github
+docs
+mobile
+admin-ui
+proto
+*.md
+.env
+.dockerignore
