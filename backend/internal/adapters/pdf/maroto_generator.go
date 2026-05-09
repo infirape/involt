@@ -94,13 +94,13 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 
 	// ===== LOGO SECTION =====
 	m.AddRows(
-		row.New(20).Add(
+		row.New(25).Add(
 			col.New(12).Add(
 				image.NewFromFile("assets/logo_chetilla.png", props.Rect{
 					Center:  true,
-					Percent: 40,
+					Percent: 60,
 				}),
-			),
+			).WithStyle(&props.Cell{BorderType: border.Left | border.Right | border.Top, BorderThickness: borderThick}),
 		),
 	)
 
@@ -112,12 +112,12 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 				text.New(fmt.Sprintf("Para consulta su código es: %s", customer.Code), props.Text{Left: 1, Top: 4.5, Size: fontSmall, Style: fontstyle.Bold}),
 				text.New(customer.Name, props.Text{Left: 1, Top: 8, Size: fontNormal, Style: fontstyle.Bold}),
 				text.New(customer.Address, props.Text{Left: 1, Top: 11.5, Size: fontSmall}),
-			).WithStyle(&props.Cell{BorderType: border.Left | border.Top, BorderThickness: borderThick}),
+			).WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick}),
 			col.New(5).Add(
 				text.New(sector, props.Text{Right: 1, Top: 1, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
 				text.New(settings.Municipalidad, props.Text{Right: 1, Top: 4.5, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
 				text.New(settings.Empresa, props.Text{Right: 1, Top: 8, Size: fontSmall, Align: align.Right}),
-			).WithStyle(&props.Cell{BorderType: border.Right | border.Top, BorderThickness: borderThick}),
+			).WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick}),
 		),
 	)
 
