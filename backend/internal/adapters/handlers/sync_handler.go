@@ -205,10 +205,31 @@ func (h *SyncHandler) PushReadings(
 		prevReading, err := h.readingRepo.GetLatestByCustomerExcludingID(ctx, r.CustomerId, r.Id)
 		actualPrevValue := r.PreviousValue // fallback to what App sent
 		
-		if err == nil && prevReading != nil {
+		if err == nil && prevReading != nil && prevReading.CurrentValue > 0 {
+			// Database has a non-zero history, keep it for consistency
 			actualPrevValue = prevReading.CurrentValue
+		} else if r.PreviousValue > 0 {
+			// Prioritize user-provided previous value if DB is 0 or missing
+			actualPrevValue = r.PreviousValue
+
+			// Backfill previous period reading if it doesn't exist
+			// This ensures that GetCustomers for the current period will find this history
+			prevPeriod := getPreviousPeriodID(r.Period)
+			if prevPeriod != "" {
+				prevID := fmt.Sprintf("read-%s-%s", r.CustomerId, prevPeriod)
+				if _, err := h.readingRepo.GetByID(ctx, prevID); err != nil {
+					// Create a base reading for the previous period so it exists in the history
+					h.readingRepo.Save(ctx, &domain.Reading{
+						ID:           prevID,
+						CustomerID:   r.CustomerId,
+						CurrentValue: r.PreviousValue,
+						Period:       prevPeriod,
+						Timestamp:    time.Now(),
+					})
+				}
+			}
 		} else if actualPrevValue <= 0 {
-			// If App sent <= 0, then we try customer initial reading as last resort
+			// Fallback to customer initial reading if everything else is 0
 			if cust, err := h.customerRepo.GetByID(ctx, r.CustomerId); err == nil && cust != nil {
 				if cust.InitialReading > 0 {
 					actualPrevValue = cust.InitialReading
@@ -331,3 +352,11 @@ func (h *SyncHandler) DownloadReceipt(
 
 // Ensure SyncHandler implements the generated interface
 var _ involtv1connect.SyncServiceHandler = (*SyncHandler)(nil)
+
+func getPreviousPeriodID(periodID string) string {
+	t, err := time.Parse("2006-01", periodID)
+	if err != nil {
+		return ""
+	}
+	return t.AddDate(0, -1, 0).Format("2006-01")
+}

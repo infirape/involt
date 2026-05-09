@@ -82,7 +82,14 @@ func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs 
 	selectQuery, selectArgs, err := sqlx.Named(fmt.Sprintf(`
 		SELECT id, code, name, community_id, sector_id, address, 
 		       connection_type, tariff, meter_number,
-		       latitude, longitude, initial_reading
+		       latitude, longitude, initial_reading,
+		       COALESCE((
+		           SELECT r.current_value 
+		           FROM readings r 
+		           WHERE r.customer_id = customers.id 
+		           AND (:exclude_period_id = '' OR r.period < :exclude_period_id)
+		           ORDER BY r.period DESC LIMIT 1
+		       ), initial_reading) as last_reading_value
 		FROM customers WHERE %s 
 		ORDER BY code ASC LIMIT :limit OFFSET :offset`, where), args)
 	if err != nil {

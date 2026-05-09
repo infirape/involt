@@ -4,6 +4,7 @@ import {
   useEffect,
   useMemo,
   useTransition,
+  useRef,
 } from "react";
 import { adminClient, syncClient } from "@/lib/rpc";
 import {
@@ -44,8 +45,10 @@ export function useBulkReadings() {
 
   // Track initialization status (separate from data loading)
   const [initialized, setInitialized] = useState(false);
+  const lastPeriodRef = useRef<string>("");
 
   const [bulkReadings, setBulkReadings] = useState<Record<string, string>>({});
+  const [bulkPreviousReadings, setBulkPreviousReadings] = useState<Record<string, string>>({});
   const [syncedReadings, setSyncedReadings] = useState<Set<string>>(new Set());
 
   const fetchReadingsAndCustomers = useCallback(
@@ -73,9 +76,10 @@ export function useBulkReadings() {
           }),
           adminClient.getCustomers({
             pageSize: customerPageSize,
-            pageNumber: 1, // Always page 1 if fetching all
+            pageNumber: page, // Use the correct page number
             searchQuery: showMissingAll ? "" : searchQuery, // No search when fetching all
             sectorId: sectorId,
+            excludePeriodId: periodId,
           }),
         ]);
 
@@ -86,14 +90,32 @@ export function useBulkReadings() {
         );
 
         startTransition(() => {
+          const isNewPeriod = lastPeriodRef.current !== periodId;
+          lastPeriodRef.current = periodId;
+
+          if (isNewPeriod) {
+            setBulkPreviousReadings({});
+          }
+
           setBulkReadings((prev) => {
-            const newMap = { ...prev };
+            const newMap = isNewPeriod ? {} : { ...prev };
+            const newPrevMap = isNewPeriod ? {} : { ...bulkPreviousReadings };
+
             readingsResp.readings.forEach((r) => {
+              // Populate current values
               if (!newMap[r.customerId]) {
                 newMap[r.customerId] = r.currentValue.toString();
               }
+              // Populate previous values if they were manually corrected or differ from customer base
+              if (!newPrevMap[r.customerId]) {
+                newPrevMap[r.customerId] = r.previousValue.toString();
+              }
               syncedSet.add(r.customerId);
             });
+
+            // We need to update bulkPreviousReadings too
+            setBulkPreviousReadings(newPrevMap);
+            
             return newMap;
           });
 
@@ -230,12 +252,24 @@ const filteredCustomers = useMemo(() => {
     }
   };
 
+  const handlePreviousInputChange = (customerId: string, value: string) => {
+    const normalizedValue = value.replace(",", ".");
+    if (normalizedValue === "" || /^\d*\.?\d*$/.test(normalizedValue)) {
+      setBulkPreviousReadings((prev) => ({
+        ...prev,
+        [customerId]: normalizedValue,
+      }));
+    }
+  };
+
   const saveSingleReading = async (customerId: string, value: string) => {
     if (!value || !filters.periodId || syncedReadings.has(customerId)) return;
 
     const customer = data.customers.find((c) => c.id === customerId);
     const currentValue = parseFloat(value);
-    const previousValue = customer?.lastReadingValue || 0;
+    const previousValue = bulkPreviousReadings[customerId] !== undefined && bulkPreviousReadings[customerId] !== "" 
+      ? parseFloat(bulkPreviousReadings[customerId]) 
+      : (customer?.lastReadingValue || 0);
 
     if (currentValue < previousValue) return;
 
@@ -272,12 +306,29 @@ const filteredCustomers = useMemo(() => {
 
     setSaving(true);
     try {
+      // Validate that no reading is less than the previous one
+      const hasInvalid = entries.some(([customerId, value]) => {
+        const customer = data.customers.find((c) => c.id === customerId);
+        const prevVal = bulkPreviousReadings[customerId] !== undefined && bulkPreviousReadings[customerId] !== "" 
+          ? parseFloat(bulkPreviousReadings[customerId]) 
+          : (customer?.lastReadingValue || 0);
+        return parseFloat(value) < prevVal;
+      });
+
+      if (hasInvalid) {
+        toast.error("Hay suministros con lectura actual menor a la anterior. Corrígelos antes de guardar.");
+        setSaving(false);
+        return;
+      }
+
       const readingsToPush = entries.map(([customerId, value]) => {
         const customer = data.customers.find((c) => c.id === customerId);
         return create(ReadingSchema, {
           id: `read-${customerId}-${filters.periodId}`,
           customerId,
-          previousValue: customer?.lastReadingValue || 0,
+          previousValue: bulkPreviousReadings[customerId] !== undefined && bulkPreviousReadings[customerId] !== "" 
+            ? parseFloat(bulkPreviousReadings[customerId]) 
+            : (customer?.lastReadingValue || 0),
           currentValue: parseFloat(value),
           period: filters.periodId,
           timestamp: new Date().toISOString(),
@@ -330,6 +381,8 @@ const filteredCustomers = useMemo(() => {
     syncedReadings,
     filteredCustomers,
     handleInputChange,
+    handlePreviousInputChange,
+    bulkPreviousReadings,
     handleSave,
     saveSingleReading,
     focusNextRow,

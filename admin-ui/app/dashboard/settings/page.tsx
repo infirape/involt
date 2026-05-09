@@ -256,6 +256,7 @@ export default function SettingsPage() {
 
         <div className="flex justify-end">
           <Button
+            type="submit"
             disabled={saving}
             className="h-12 px-8 font-black uppercase tracking-tighter rounded-xl bg-primary text-primary-foreground hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20"
           >

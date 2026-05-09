@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import {
   Search,
   Save,
@@ -25,9 +26,21 @@ export default function BulkReadingsPage() {
     syncedReadings,
     filteredCustomers,
     handleInputChange,
+    handlePreviousInputChange,
+    bulkPreviousReadings,
     handleSave,
+    saveSingleReading,
     getPreviousPeriod,
   } = useBulkReadings();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [filters.page]);
+
+  const isOldestPeriod =
+    data.periods.length > 0 &&
+    [...data.periods].sort((a, b) => a.id.localeCompare(b.id))[0].id ===
+      filters.periodId;
 
   return (
     <div className="p-4 space-y-3 animate-in fade-in duration-1000">
@@ -148,20 +161,25 @@ export default function BulkReadingsPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-white/5 bg-white/2">
-                <th className="px-4 py-2 text-left text-[9px] font-black uppercase tracking-[0.1em] text-muted-foreground/40 w-24">
-                  Código
+                <th className="px-4 py-2 text-left text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                  #
                 </th>
-                <th className="px-4 py-2 text-left text-[9px] font-black uppercase tracking-[0.1em] text-muted-foreground/40">
-                  Cliente
+                <th className="px-4 py-2 text-left text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                  Cód
                 </th>
-                <th className="px-4 py-2 text-center text-[9px] font-black uppercase tracking-[0.1em] text-muted-foreground/40 w-32">
-                  ANT {getPreviousPeriod(filters.periodId)}
+                <th className="px-4 py-2 text-left text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                  Suministro
                 </th>
-                <th className="px-4 py-2 text-center text-[9px] font-black uppercase tracking-[0.1em] text-primary w-32">
-                  ACT {filters.periodId}
+                {!isOldestPeriod && (
+                  <th className="px-4 py-2 text-center text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                    ANT
+                  </th>
+                )}
+                <th className="px-4 py-2 text-center text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                  ACT
                 </th>
-                <th className="px-4 py-2 text-center text-[9px] font-black uppercase tracking-[0.1em] text-cyan-400 w-24">
-                  Consumo (kWh)
+                <th className="px-4 py-2 text-center text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                  Consumo
                 </th>
               </tr>
             </thead>
@@ -169,14 +187,14 @@ export default function BulkReadingsPage() {
               {loading ? (
                 [1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                   <tr key={i} className="animate-pulse">
-                    <td colSpan={5} className="px-8 py-6">
+                    <td colSpan={6} className="px-8 py-6">
                       <div className="h-8 bg-white/5 rounded-2xl w-full" />
                     </td>
                   </tr>
                 ))
               ) : filteredCustomers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-8 py-20 text-center">
+                  <td colSpan={6} className="px-8 py-20 text-center">
                     <div className="flex flex-col items-center gap-4 opacity-20">
                       <Database className="w-16 h-16" />
                       <p className="text-[10px] font-black uppercase tracking-[0.4em]">
@@ -186,90 +204,113 @@ export default function BulkReadingsPage() {
                   </td>
                 </tr>
               ) : (
-                filteredCustomers.map((customer) => (
-                  <tr
-                    key={customer.id}
-                    className="hover:bg-white/3 transition-all duration-300 group"
-                  >
-                    <td className="px-4 py-1.5">
-                      <div className="text-[10px] font-black font-mono text-primary">
-                        {customer.code}
-                      </div>
-                    </td>
-                    <td className="px-4 py-1.5">
-                      <div className="flex flex-col">
-                        <span className="text-[11px] font-black text-white group-hover:text-primary transition-colors tracking-tight">
-                          {customer.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-1.5 text-center">
-                      <span className="text-xs font-black font-mono text-muted-foreground/30 tracking-tighter">
-                        {customer.lastReadingValue.toLocaleString()}
-                      </span>
-                    </td>
-                    <td className="px-4 py-1.5 flex justify-center">
-                      <div className="relative w-32 group/input">
-                        <input
-                          id={`input-${customer.id}`}
-                          type="text"
-                          value={bulkReadings[customer.id] || ""}
-                          onChange={(e) =>
-                            handleInputChange(customer.id, e.target.value)
-                          }
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              const nextInput = document.getElementById(
-                                `input-${filteredCustomers[filteredCustomers.indexOf(customer) + 1]?.id}`,
-                              ) as HTMLInputElement;
-                              if (nextInput) nextInput.focus();
-                            }
-                          }}
-                          className={`
-                            w-full bg-black/40 border-2 rounded-xl px-3 py-1.5 text-xs font-black font-mono transition-all outline-none text-center
-                            ${
-                              syncedReadings.has(customer.id)
-                                ? "border-green-500/50 text-green-400"
-                                : "border-white/10 text-white focus:border-primary focus:bg-black/60 shadow-lg shadow-primary/5"
-                            }
-                          `}
-                        />
-                        {syncedReadings.has(customer.id) && (
-                          <div className="absolute -right-6 top-1/2 -translate-y-1/2 animate-in zoom-in duration-300">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
-                          </div>
-                        )}
-                        {!syncedReadings.has(customer.id) &&
-                          bulkReadings[customer.id] && (
-                            <div className="absolute -right-6 top-1/2 -translate-y-1/2 animate-pulse">
-                              <div className="w-2 h-2 rounded-full bg-primary" />
+                filteredCustomers.map((customer, index) => {
+                  const isSynced = syncedReadings.has(customer.id);
+                  const prevVal = (customer.lastReadingValue === 0 || isSynced) && 
+                                   bulkPreviousReadings[customer.id] !== undefined && 
+                                   bulkPreviousReadings[customer.id] !== "" 
+                                   ? parseFloat(bulkPreviousReadings[customer.id]) 
+                                   : customer.lastReadingValue;
+
+                  return (
+                    <tr
+                      key={customer.id}
+                      className="hover:bg-white/3 transition-all duration-300 group"
+                    >
+                      <td className="px-4 py-1.5">
+                        <div className="text-[10px] font-black font-mono text-muted-foreground/40">
+                          {(filters.page - 1) * 500 + index + 1}
+                        </div>
+                      </td>
+                      <td className="px-4 py-1.5">
+                        <div className="text-[10px] font-black font-mono text-primary">
+                          {customer.code}
+                        </div>
+                      </td>
+                      <td className="px-4 py-1.5">
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-black text-white group-hover:text-primary transition-colors tracking-tight">
+                            {customer.name}
+                          </span>
+                        </div>
+                      </td>
+                      {!isOldestPeriod && (
+                        <td className="px-4 py-1.5 text-center">
+                          {customer.lastReadingValue === 0 ? (
+                            <div className="relative w-20 mx-auto">
+                              <input
+                                type="text"
+                                value={bulkPreviousReadings[customer.id] !== undefined ? bulkPreviousReadings[customer.id] : ""}
+                                onChange={(e) => handlePreviousInputChange(customer.id, e.target.value)}
+                                disabled={isSynced}
+                                placeholder="0"
+                                className={`w-full bg-black/40 border-2 rounded-xl px-2 py-1.5 text-xs font-black font-mono transition-all outline-none text-center 
+                                  ${isSynced 
+                                    ? "border-green-500/20 text-green-400/50 cursor-not-allowed" 
+                                    : "border-white/10 text-muted-foreground focus:border-primary focus:bg-black/60"}`}
+                              />
                             </div>
+                          ) : (
+                            <span className="text-xs font-black font-mono text-muted-foreground/30 tracking-tighter">
+                              {prevVal.toLocaleString()}
+                            </span>
                           )}
-                      </div>
-                    </td>
-                    <td className="px-4 py-1.5 text-center">
-                      {bulkReadings[customer.id] && (
-                        <span
-                          className={`text-xs font-black font-mono tracking-tighter ${
-                            parseFloat(bulkReadings[customer.id]) -
-                              customer.lastReadingValue <
-                            0
-                              ? "text-red-500"
-                              : "text-cyan-400 font-bold"
-                          }`}
-                        >
-                          {data.periods.find((p) => p.id === filters.periodId)
-                            ?.isBillingPeriod === false
-                            ? "-"
-                            : (
-                                parseFloat(bulkReadings[customer.id]) -
-                                customer.lastReadingValue
-                              ).toFixed(2)}
-                        </span>
+                        </td>
                       )}
-                    </td>
-                  </tr>
-                ))
+                      <td className="px-4 py-1.5 flex justify-center">
+                        <div className="relative w-32 group/input">
+                          <input
+                            id={`input-${customer.id}`}
+                            type="text"
+                            value={bulkReadings[customer.id] || ""}
+                            onChange={(e) => handleInputChange(customer.id, e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                // Save immediately on Enter
+                                saveSingleReading(customer.id, bulkReadings[customer.id]);
+                                
+                                const nextInput = document.getElementById(
+                                  `input-${filteredCustomers[filteredCustomers.indexOf(customer) + 1]?.id}`,
+                                ) as HTMLInputElement;
+                                if (nextInput) nextInput.focus();
+                              }
+                            }}
+                            disabled={isSynced}
+                            placeholder="0.00"
+                            className={`w-full bg-black/40 border-2 rounded-2xl px-4 py-2 text-sm font-black font-mono transition-all outline-none text-center
+                              ${isSynced 
+                                ? "border-green-500/50 text-green-400 cursor-not-allowed" 
+                                : "border-white/10 text-white focus:border-primary focus:bg-black/60 shadow-2xl focus:shadow-primary/20"}`}
+                          />
+                        </div>
+                        <div className="ml-2 flex items-center">
+                          {isSynced ? (
+                            <CheckCircle2 className="w-4 h-4 text-green-500 animate-in zoom-in duration-300" />
+                          ) : bulkReadings[customer.id] ? (
+                            <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+                          ) : null}
+                        </div>
+                      </td>
+                      <td className="px-4 py-1.5 text-center">
+                        {bulkReadings[customer.id] && (
+                          <span
+                            className={`text-xs font-black font-mono tracking-tighter ${
+                              parseFloat(bulkReadings[customer.id]) - prevVal < 0 
+                                ? "text-red-500" 
+                                : "text-cyan-400 font-bold"
+                            }`}
+                          >
+                            {(() => {
+                              const isBilling = data.periods.find((p) => p.id === filters.periodId)?.isBillingPeriod !== false;
+                              if (!isBilling && prevVal === 0) return "-";
+                              return (parseFloat(bulkReadings[customer.id]) - prevVal).toFixed(2);
+                            })()}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

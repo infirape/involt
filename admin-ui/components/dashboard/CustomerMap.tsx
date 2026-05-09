@@ -2,7 +2,7 @@
 
 import L from "leaflet";
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { Customer } from "@/app/gen/involt/v1/models_pb";
 import { adminClient } from "@/lib/rpc";
@@ -77,13 +77,14 @@ export default function CustomerMap() {
         center={center}
         zoom={15}
         maxZoom={22}
-        scrollWheelZoom={false}
-        dragging={false}
+        scrollWheelZoom={true}
+        dragging={true}
         zoomControl={false}
-        doubleClickZoom={false}
-        touchZoom={false}
+        doubleClickZoom={true}
+        touchZoom={true}
         className="h-full w-full brightness-[0.8] contrast-[1.1]"
       >
+        <ZoomControl position="bottomright" />
         <TileLayer
           attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
           url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
