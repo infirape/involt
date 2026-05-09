@@ -9,6 +9,7 @@ import (
 	"github.com/infira/involt/backend/internal/domain"
 	"github.com/johnfercher/maroto/v2"
 	"github.com/johnfercher/maroto/v2/pkg/components/col"
+	"github.com/johnfercher/maroto/v2/pkg/components/image"
 	"github.com/johnfercher/maroto/v2/pkg/components/row"
 	"github.com/johnfercher/maroto/v2/pkg/components/text"
 	"github.com/johnfercher/maroto/v2/pkg/config"
@@ -90,6 +91,18 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 	fontNormal := 9.0
 	fontLarge := 12.0
 	borderThick := 0.6 
+
+	// ===== LOGO SECTION =====
+	m.AddRows(
+		row.New(20).Add(
+			col.New(12).Add(
+				image.NewFromFile("assets/logo_chetilla.png", props.Rect{
+					Center:  true,
+					Percent: 40,
+				}),
+			),
+		),
+	)
 
 	// ===== HEADER SECTION =====
 	m.AddRows(
