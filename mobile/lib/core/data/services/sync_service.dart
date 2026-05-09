@@ -217,22 +217,26 @@ class SyncService {
         // 4. Config
         if (response.message.hasConfig()) {
           final config = response.message.config;
-          batch.insert(
-            db.settings,
-            SettingsCompanion.insert(
-              key: 'map_url_template',
-              value: config.mapUrlTemplate,
-            ),
-            mode: InsertMode.insertOrReplace,
-          );
-          batch.insert(
-            db.settings,
-            SettingsCompanion.insert(
-              key: 'map_user_agent',
-              value: config.mapUserAgent,
-            ),
-            mode: InsertMode.insertOrReplace,
-          );
+          if (config.mapUrlTemplate.isNotEmpty) {
+            batch.insert(
+              db.settings,
+              SettingsCompanion.insert(
+                key: 'map_url_template',
+                value: config.mapUrlTemplate,
+              ),
+              mode: InsertMode.insertOrReplace,
+            );
+          }
+          if (config.mapUserAgent.isNotEmpty) {
+            batch.insert(
+              db.settings,
+              SettingsCompanion.insert(
+                key: 'map_user_agent',
+                value: config.mapUserAgent,
+              ),
+              mode: InsertMode.insertOrReplace,
+            );
+          }
         }
 
         // Current Period

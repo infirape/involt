@@ -105,13 +105,22 @@ func (h *SyncHandler) PullMetadata(
 		settings = &domain.Settings{}
 	}
 
+	mapUrl := config.MapURLTemplate
+	if mapUrl == "" {
+		mapUrl = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+	}
+	mapUserAgent := config.MapUserAgent
+	if mapUserAgent == "" {
+		mapUserAgent = "InVoltApp/1.0 (com.infira.involt; android)"
+	}
+
 	resp := &involtv1.PullMetadataResponse{
 		Communities: make([]*involtv1.Community, 0),
 		Sectors:     make([]*involtv1.Sector, len(sectors)),
 		Customers:   make([]*involtv1.Customer, len(customers)),
 		Config: &involtv1.AppConfig{
-			MapUrlTemplate: config.MapURLTemplate,
-			MapUserAgent:   config.MapUserAgent,
+			MapUrlTemplate: mapUrl,
+			MapUserAgent:   mapUserAgent,
 		},
 		Settings: &involtv1.Settings{
 			Municipalidad:   settings.Municipalidad,
