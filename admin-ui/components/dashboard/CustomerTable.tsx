@@ -11,7 +11,7 @@ import {
   X,
   Plus,
 } from "lucide-react";
-import { ConnectionType, type Customer, Sector } from "@/app/gen/involt/v1/models_pb";
+import { ConnectionType, type Customer } from "@/app/gen/involt/v1/models_pb";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
