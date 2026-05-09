@@ -18,6 +18,7 @@ import { ExportModal } from "@/components/dashboard/readings/ExportModal";
 import { getAdminToken, API_BASE_URL, downloadFile } from "@/lib/utils";
 import { useReadings } from "./hooks/useReadings";
 import { useRouter } from "next/navigation";
+import { useConfigStore } from "@/lib/store/useConfigStore";
 
 export default function ReadingsPage() {
   const router = useRouter();
@@ -28,7 +29,6 @@ export default function ReadingsPage() {
     setFilters,
     pagination,
     setPagination,
-    isBilling,
     colSpan,
     totalPages,
   } = useReadings();
@@ -39,14 +39,15 @@ export default function ReadingsPage() {
     sectorId: "",
   });
 
+  const { selectedPeriod } = useConfigStore();
+
   useEffect(() => {
-    if (filters.period && !exportFilters.period) {
-      // Defer to next tick to avoid cascading render warning
+    if (selectedPeriod && !exportFilters.period) {
       Promise.resolve().then(() => {
-        setExportFilters((prev) => ({ ...prev, period: filters.period }));
+        setExportFilters((prev) => ({ ...prev, period: selectedPeriod }));
       });
     }
-  }, [filters.period, exportFilters.period]);
+  }, [selectedPeriod, exportFilters.period]);
 
   return (
     <div className="p-8 space-y-6 animate-in fade-in duration-1000">
@@ -69,26 +70,38 @@ export default function ReadingsPage() {
           {/* Minimalist Stats Overlay */}
           <div className="hidden lg:flex items-center gap-8 px-8 border-x border-white/5 h-12">
             <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Consumo Total</span>
+              <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                Consumo Total
+              </span>
               <span className="text-[13px] font-black text-primary italic">
-                {data.stats.totalConsumptionKwh.toLocaleString()} <span className="text-[9px] not-italic opacity-40 ml-0.5">kWh</span>
+                {data.stats.totalConsumptionKwh.toLocaleString()}{" "}
+                <span className="text-[9px] not-italic opacity-40 ml-0.5">
+                  kWh
+                </span>
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Recaudación</span>
+              <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                Recaudación
+              </span>
               <span className="text-[13px] font-black text-white">
-                S/ {data.stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                S/{" "}
+                {data.stats.totalRevenue.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                })}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Progreso</span>
+              <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                Progreso
+              </span>
               <div className="flex items-center gap-2">
                 <span className="text-[13px] font-black text-cyan-500">
                   {data.stats.syncPercentage.toFixed(1)}%
                 </span>
                 <div className="w-12 h-1 bg-white/5 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-cyan-500 transition-all duration-1000" 
+                  <div
+                    className="h-full bg-cyan-500 transition-all duration-1000"
                     style={{ width: `${data.stats.syncPercentage}%` }}
                   />
                 </div>
@@ -115,27 +128,6 @@ export default function ReadingsPage() {
                 </button>
               </>
             )}
-            <div className="relative group">
-              <select
-                className="flex items-center gap-2 px-10 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer outline-none focus:ring-2 focus:ring-primary/20 appearance-none bg-zinc-900 min-w-[160px]"
-                value={filters.period}
-                onChange={(e) => {
-                  setFilters((prev) => ({ ...prev, period: e.target.value }));
-                  setPagination((prev) => ({ ...prev, pageNumber: 1 }));
-                }}
-              >
-                {data.periods.map((p) => (
-                  <option
-                    key={p.id}
-                    value={p.id}
-                    className="bg-zinc-900 text-white"
-                  >
-                    {p.id}
-                  </option>
-                ))}
-              </select>
-              <Calendar className="w-4 h-4 text-primary absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
           </div>
         </div>
       </div>
@@ -376,7 +368,6 @@ export default function ReadingsPage() {
       <ExportModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
-        periods={data.periods}
         sectors={data.sectors}
         filters={exportFilters}
         onFilterChange={setExportFilters}

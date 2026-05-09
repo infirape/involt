@@ -39,9 +39,6 @@ export default function DashboardPage() {
   const router = useRouter();
   const {
     data,
-    periods,
-    selectedPeriod,
-    setSelectedPeriod,
     consumptionDelta,
   } = useDashboard();
 
@@ -132,33 +129,9 @@ export default function DashboardPage() {
         <div className="flex items-center gap-4">
           <div className="text-right hidden md:block mr-4">
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
-              Cierre de Periodo
+              Última Sincronización
             </p>
-            <p className="text-sm font-black text-white">28 de Mayo, 2026</p>
-          </div>
-          <div className="h-12 w-px bg-white/5 mx-2 hidden md:block" />
-          <div className="relative group">
-            <select
-              value={selectedPeriod || ""}
-              onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="appearance-none flex items-center gap-3 px-10 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/30 transition-all text-xs font-black uppercase tracking-widest cursor-pointer outline-none focus:ring-2 focus:ring-primary/20"
-            >
-              {periods.map((p) => (
-                <option
-                  key={p.id}
-                  value={p.id}
-                  className="bg-[#050505] text-white"
-                >
-                  {p.id} {p.status === PeriodStatus.OPEN ? "• ABIERTO" : ""}
-                </option>
-              ))}
-              {periods.length === 0 && (
-                <option value={new Date().toISOString().slice(0, 7)}>
-                  {new Date().toISOString().slice(0, 7)}
-                </option>
-              )}
-            </select>
-            <Clock className="w-4 h-4 text-primary absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <p className="text-sm font-black text-white">{new Date().toLocaleDateString()}</p>
           </div>
         </div>
       </div>

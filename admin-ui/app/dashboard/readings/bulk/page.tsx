@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useBulkReadings } from "../hooks/useBulkReadings";
-import { type Customer, type Period } from "@/app/gen/involt/v1/models_pb";
+import { type Customer } from "@/app/gen/involt/v1/models_pb";
+import { useConfigStore } from "@/lib/store/useConfigStore";
 
 export default function BulkReadingsPage() {
   const router = useRouter();
@@ -33,17 +34,18 @@ export default function BulkReadingsPage() {
     bulkObservations,
     handleSave,
     saveSingleReading,
-    getPreviousPeriod,
   } = useBulkReadings();
+
+  const { selectedPeriod, periods: globalPeriods } = useConfigStore();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [filters.page]);
 
   const isOldestPeriod =
-    data.periods.length > 0 &&
-    [...data.periods].sort((a, b) => a.id.localeCompare(b.id))[0].id ===
-      filters.periodId;
+    globalPeriods.length > 0 &&
+    [...globalPeriods].sort((a, b) => a.id.localeCompare(b.id))[0].id ===
+      selectedPeriod;
 
   return (
     <div className="p-4 space-y-3 animate-in fade-in duration-1000">
@@ -61,7 +63,7 @@ export default function BulkReadingsPage() {
               Carga Masiva <span className="text-primary italic">Lecturas</span>
             </h1>
             <p className="text-muted-foreground/40 font-bold uppercase text-[8px] tracking-[0.2em]">
-              {filters.periodId} • {filteredCustomers.length} Suministros
+              {selectedPeriod} • {filteredCustomers.length} Suministros
             </p>
           </div>
         </div>
@@ -113,23 +115,12 @@ export default function BulkReadingsPage() {
 
         <div className="col-span-3">
           <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 block ml-1">
-            Periodo
+            Periodo Activo
           </Label>
-          <select
-            value={filters.periodId}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, periodId: e.target.value, page: 1 }))
-            }
-            className="w-full bg-black/40 border-2 border-white/5 rounded-2xl px-4 py-2 text-xs font-bold text-white outline-none focus:border-primary/40 transition-all appearance-none"
-          >
-            {[...data.periods]
-              .sort((a, b) => b.id.localeCompare(a.id))
-              .map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.id} {p.status === 2 ? "(CERRADO)" : ""}
-                </option>
-              ))}
-          </select>
+          <div className="w-full bg-primary/10 border-2 border-primary/20 rounded-2xl px-4 py-2 text-xs font-black text-primary flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            {selectedPeriod}
+          </div>
         </div>
 
         <div className="col-span-6 relative flex flex-col justify-end">
@@ -216,7 +207,6 @@ export default function BulkReadingsPage() {
                     handleObservationChange={handleObservationChange}
                     saveSingleReading={saveSingleReading}
                     filteredCustomers={filteredCustomers}
-                    data={data}
                   />
                 ))
               )}
@@ -270,7 +260,6 @@ interface ReadingRowProps {
   customer: Customer;
   filters: {
     sectorId: string;
-    periodId: string;
     searchQuery: string;
     page: number;
     showMissing: boolean;
@@ -285,9 +274,6 @@ interface ReadingRowProps {
   handleObservationChange: (customerId: string, value: string) => void;
   saveSingleReading: (customerId: string, value: string) => Promise<void>;
   filteredCustomers: Customer[];
-  data: {
-    periods: Period[];
-  };
 }
 
 // Sub-component for individual rows to handle local UI state (like 'Other' toggle)
@@ -305,8 +291,8 @@ function ReadingRow({
   handleObservationChange,
   saveSingleReading,
   filteredCustomers,
-  data
 }: ReadingRowProps) {
+  const { selectedPeriod, periods: globalPeriods } = useConfigStore();
   const PRESETS = ["NO SE PUDO ACCEDER", "MEDIDOR MALOGRADO", "VIVIENDA DESHABITADA", "PERRO AGRESIVO"];
   
   const currentObs = bulkObservations[customer.id] || "";
@@ -324,8 +310,8 @@ function ReadingRow({
   const consumption = currentVal !== null ? currentVal - prevVal : 0;
   const isNegative = currentVal !== null && consumption < 0;
 
-  const currentPeriod = data.periods.find((p: Period) => p.id === filters.periodId);
-  const isPeriodOpen = currentPeriod?.status === 1; // 1 = OPEN
+  const currentPeriod = globalPeriods.find((p) => p.id === selectedPeriod);
+  const isPeriodOpen = currentPeriod?.status === "OPEN";
   const canEdit = isPeriodOpen;
 
   return (
@@ -420,8 +406,6 @@ function ReadingRow({
             <span>
               {(() => {
                 if (currentVal === null || consumption === 0) return "-";
-                const isBilling = data.periods.find((p: Period) => p.id === filters.periodId)?.isBillingPeriod !== false;
-                if (!isBilling && prevVal === 0) return "-";
                 return consumption > 0 ? `+${consumption.toFixed(2)}` : consumption.toFixed(2);
               })()}
             </span>

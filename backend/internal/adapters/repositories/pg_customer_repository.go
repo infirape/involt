@@ -21,7 +21,7 @@ var customer domain.Customer
 	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
 	          latitude, longitude, initial_reading
-	          FROM customers WHERE code = $1`
+	          FROM customers WHERE code = $1 AND deleted_at IS NULL`
 	err := r.db.GetContext(ctx, &customer, query, code)
 	if err != nil {
 		return nil, fmt.Errorf("error getting customer by code: %w", err)
@@ -34,7 +34,7 @@ func (r *PostgresCustomerRepository) GetByID(ctx context.Context, id string) (*d
 	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
 	          latitude, longitude, initial_reading
-	          FROM customers WHERE id = $1`
+	          FROM customers WHERE id = $1 AND deleted_at IS NULL`
 	err := r.db.GetContext(ctx, &customer, query, id)
 	if err != nil {
 		return nil, fmt.Errorf("error getting customer by id: %w", err)
@@ -46,7 +46,7 @@ func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs 
 	var customers []domain.Customer
 	var total int
 
-	where := "1=1"
+	where := "deleted_at IS NULL"
 	args := map[string]interface{}{
 		"limit":             limit,
 		"offset":            offset,
@@ -113,7 +113,7 @@ func (r *PostgresCustomerRepository) ListAll(ctx context.Context) ([]domain.Cust
 	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
 	          latitude, longitude, initial_reading
-	          FROM customers ORDER BY code ASC`
+	          FROM customers WHERE deleted_at IS NULL ORDER BY code ASC`
 	err := r.db.SelectContext(ctx, &customers, query)
 	if err != nil {
 		return nil, fmt.Errorf("error listing customers: %w", err)
@@ -135,7 +135,8 @@ func (r *PostgresCustomerRepository) SaveBatch(ctx context.Context, customers []
 	          sector_id = EXCLUDED.sector_id, address = EXCLUDED.address, connection_type = EXCLUDED.connection_type, 
 	          tariff = EXCLUDED.tariff, meter_number = EXCLUDED.meter_number,
 	          latitude = EXCLUDED.latitude, longitude = EXCLUDED.longitude, 
-	          initial_reading = EXCLUDED.initial_reading`
+	          initial_reading = EXCLUDED.initial_reading,
+	          deleted_at = NULL`
 	_, err := r.db.NamedExecContext(ctx, query, customers)
 	return err
 }
@@ -153,7 +154,8 @@ func (r *PostgresCustomerRepository) Save(ctx context.Context, c *domain.Custome
 	          sector_id = EXCLUDED.sector_id, address = EXCLUDED.address, connection_type = EXCLUDED.connection_type, 
 	          tariff = EXCLUDED.tariff, meter_number = EXCLUDED.meter_number,
 	          latitude = EXCLUDED.latitude, longitude = EXCLUDED.longitude, 
-	          initial_reading = EXCLUDED.initial_reading`
+	          initial_reading = EXCLUDED.initial_reading,
+	          deleted_at = NULL`
 	_, err := r.db.ExecContext(ctx, query,
 		c.ID, c.Code, c.Name, c.CommunityID, c.SectorID, c.Address, c.ConnectionType,
 		c.Tariff, c.MeterNumber, c.Latitude, c.Longitude, c.InitialReading)
@@ -161,14 +163,14 @@ func (r *PostgresCustomerRepository) Save(ctx context.Context, c *domain.Custome
 }
 
 func (r *PostgresCustomerRepository) Delete(ctx context.Context, id string) error {
-	query := `DELETE FROM customers WHERE id = $1`
+	query := `UPDATE customers SET deleted_at = NOW() WHERE id = $1`
 	_, err := r.db.ExecContext(ctx, query, id)
 	return err
 }
 
 func (r *PostgresCustomerRepository) CountBySector(ctx context.Context, sectorID string) (int, error) {
 	var count int
-	query := `SELECT COUNT(*) FROM customers WHERE sector_id = $1`
+	query := `SELECT COUNT(*) FROM customers WHERE sector_id = $1 AND deleted_at IS NULL`
 	err := r.db.GetContext(ctx, &count, query, sectorID)
 	fmt.Printf("📊 CountBySector: sector=%s, count=%d, err=%v\n", sectorID, count, err)
 	return count, err

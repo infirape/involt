@@ -10,40 +10,37 @@ import { adminClient, syncClient } from "@/lib/rpc";
 import {
   type Customer,
   type Sector,
-  type Period,
   PeriodStatus,
   ReadingSchema,
 } from "@/app/gen/involt/v1/models_pb";
 import { create } from "@bufbuild/protobuf";
 import { toast } from "sonner";
+import { useConfigStore } from "@/lib/store/useConfigStore";
 
 export function useBulkReadings() {
   const [isPending, startTransition] = useTransition();
   const [saving, setSaving] = useState(false);
+  const { selectedPeriod, periods: globalPeriods } = useConfigStore();
 
   const [data, setData] = useState<{
     customers: Customer[];
     sectors: Sector[];
-    periods: Period[];
     totalCount: number;
     totalReadings: number;
   }>({
     customers: [],
     sectors: [],
-    periods: [],
     totalCount: 0,
     totalReadings: 0,
   });
 
   const [filters, setFilters] = useState({
     sectorId: "",
-    periodId: "",
     searchQuery: "",
     page: 1,
-    showMissing: false, // Filter: show only customers without reading
+    showMissing: false,
   });
 
-  // Track initialization status (separate from data loading)
   const [initialized, setInitialized] = useState(false);
   const lastPeriodRef = useRef<string>("");
 
@@ -61,12 +58,8 @@ export function useBulkReadings() {
       showMissingAll: boolean = false,
     ) => {
       if (!periodId) return;
-      console.log(
-        `🔍 Fetching Page ${page} (Size: 500, Search: "${searchQuery}", Sector: "${sectorId}", AllCustomers: ${showMissingAll})`,
-      );
-
+      
       try {
-        // When filtering "missing", fetch ALL customers at once (no pagination)
         const customerPageSize = showMissingAll ? 5000 : 500;
         
         const [readingsResp, customersResp] = await Promise.all([
@@ -77,8 +70,8 @@ export function useBulkReadings() {
           }),
           adminClient.getCustomers({
             pageSize: customerPageSize,
-            pageNumber: page, // Use the correct page number
-            searchQuery: showMissingAll ? "" : searchQuery, // No search when fetching all
+            pageNumber: page,
+            searchQuery: showMissingAll ? "" : searchQuery,
             sectorId: sectorId,
             excludePeriodId: periodId,
           }),
@@ -86,16 +79,14 @@ export function useBulkReadings() {
 
         const syncedSet = new Set<string>();
 
-        console.log(
-          `✅ Received ${customersResp.customers.length} customers, ${readingsResp.readings.length} readings synced. Total customers: ${customersResp.totalCount}`,
-        );
-
         startTransition(() => {
           const isNewPeriod = lastPeriodRef.current !== periodId;
           lastPeriodRef.current = periodId;
 
           if (isNewPeriod) {
             setBulkPreviousReadings({});
+            setBulkReadings({});
+            setBulkObservations({});
           }
 
           setBulkReadings((prev) => {
@@ -104,22 +95,18 @@ export function useBulkReadings() {
             const newObsMap = isNewPeriod ? {} : { ...bulkObservations };
 
             readingsResp.readings.forEach((r) => {
-              // Populate current values
               if (!newMap[r.customerId]) {
                 newMap[r.customerId] = r.currentValue.toString();
               }
-              // Populate previous values if they were manually corrected or differ from customer base
               if (!newPrevMap[r.customerId]) {
                 newPrevMap[r.customerId] = r.previousValue.toString();
               }
-              // Populate observations
               if (!newObsMap[r.customerId]) {
                 newObsMap[r.customerId] = r.observation;
               }
               syncedSet.add(r.customerId);
             });
 
-            // We need to update state
             setBulkPreviousReadings(newPrevMap);
             setBulkObservations(newObsMap);
             
@@ -127,7 +114,6 @@ export function useBulkReadings() {
           });
 
           setSyncedReadings(syncedSet);
-          console.log(`📊 Synced customer IDs: ${[...syncedSet].slice(0, 5).join(", ")}...`);
           setData((prev) => ({
             ...prev,
             customers: customersResp.customers,
@@ -136,65 +122,42 @@ export function useBulkReadings() {
           }));
         });
       } catch (error) {
-        console.error("❌ Error fetching readings and customers:", error);
+        console.error("Error fetching readings and customers:", error);
         toast.error("Error al cargar datos del periodo");
       }
     },
-    [],
+    [bulkPreviousReadings, bulkObservations],
   );
 
+  // Initial fetch of sectors
   useEffect(() => {
-    let isMounted = true;
-
     const init = async () => {
       try {
-        const [sectorsResp, periodsResp] = await Promise.all([
-          adminClient.getSectors({}),
-          adminClient.listPeriods({}),
-        ]);
-
-        if (!isMounted) return;
-
-        const periods = periodsResp.periods;
-        const openPeriod = periods.find((p) => p.status === PeriodStatus.OPEN);
-        const initialPeriodId =
-          openPeriod?.id || (periods.length > 0 ? periods[0].id : "");
-
+        const resp = await adminClient.getSectors({});
         startTransition(() => {
-          setData((prev) => ({
-            ...prev,
-            sectors: sectorsResp.sectors,
-            periods: periods,
-          }));
-
-          if (initialPeriodId) {
-            setFilters((prev) => ({ ...prev, periodId: initialPeriodId }));
-          }
+          setData((prev) => ({ ...prev, sectors: resp.sectors }));
         });
       } catch (err) {
-        console.error("Failed to init bulk readings:", err);
-        toast.error("Error al inicializar la página");
+        console.error("Failed to init sectors:", err);
       } finally {
-        if (isMounted) setInitialized(true);
+        setInitialized(true);
       }
     };
-
     init();
-    return () => {
-      isMounted = false;
-    };
-  }, []); // Only on mount
+  }, []);
 
   useEffect(() => {
-    fetchReadingsAndCustomers(
-      filters.periodId,
-      filters.page,
-      filters.searchQuery,
-      filters.sectorId,
-      filters.showMissing,
-    );
+    if (selectedPeriod) {
+      fetchReadingsAndCustomers(
+        selectedPeriod,
+        filters.page,
+        filters.searchQuery,
+        filters.sectorId,
+        filters.showMissing,
+      );
+    }
   }, [
-    filters.periodId,
+    selectedPeriod,
     filters.page,
     filters.searchQuery,
     filters.sectorId,
@@ -202,47 +165,22 @@ export function useBulkReadings() {
     fetchReadingsAndCustomers,
   ]);
 
-const filteredCustomers = useMemo(() => {
-    const result = data.customers
+  const filteredCustomers = useMemo(() => {
+    return data.customers
       .filter((c) => {
-        const matchesSector =
-          !filters.sectorId || c.sectorId === filters.sectorId;
+        const matchesSector = !filters.sectorId || c.sectorId === filters.sectorId;
         const matchesSearch =
           !filters.searchQuery ||
           c.name.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
           c.code.toLowerCase().includes(filters.searchQuery.toLowerCase());
         
-        // Debug: log para audit
-        if (filters.showMissing && c.code === 'ACH001') {
-          console.log(`🔍 ACH001: synced=${syncedReadings.has(c.id)}, bulk="${bulkReadings[c.id]}"`);
-        }
-        
-        // "Solo Faltan" = solo los que NO tienen lectura SYNCED en el servidor
-        // No importa si tienen draft en bulkReadings - esos también faltan guardar
         const hasSyncedReading = syncedReadings.has(c.id);
         const matchesMissing = !filters.showMissing || !hasSyncedReading;
         
         return matchesSector && matchesSearch && matchesMissing;
       })
       .sort((a, b) => a.code.localeCompare(b.code));
-    
-    console.log(`📋 Filtered: ${result.length} customers, showMissing=${filters.showMissing}`);
-    return result;
-  }, [data.customers, filters.sectorId, filters.searchQuery, filters.showMissing, syncedReadings, bulkReadings]);
-
-  const focusNextRow = useCallback(
-    (currentId: string) => {
-      const currentIndex = filteredCustomers.findIndex(
-        (c) => c.id === currentId,
-      );
-      if (currentIndex < filteredCustomers.length - 1) {
-        const nextCustomer = filteredCustomers[currentIndex + 1];
-        const nextInput = document.getElementById(`input-${nextCustomer.id}`);
-        nextInput?.focus();
-      }
-    },
-    [filteredCustomers],
-  );
+  }, [data.customers, filters.sectorId, filters.searchQuery, filters.showMissing, syncedReadings]);
 
   const handleInputChange = (customerId: string, value: string) => {
     const normalizedValue = value.replace(",", ".");
@@ -275,21 +213,19 @@ const filteredCustomers = useMemo(() => {
       [customerId]: value,
     }));
 
-    // If an observation is set, automatically set current reading to previous reading
     if (value !== "") {
       const prevVal = bulkPreviousReadings[customerId];
       const customer = data.customers.find((c) => c.id === customerId);
       const ant = prevVal !== undefined && prevVal !== "" ? prevVal : (customer?.lastReadingValue.toString() || "0");
-      
       handleInputChange(customerId, ant);
     }
   };
 
   const saveSingleReading = async (customerId: string, value: string) => {
-    const period = data.periods.find((p) => p.id === filters.periodId);
-    const isPeriodOpen = period?.status === 1;
+    const period = globalPeriods.find((p) => p.id === selectedPeriod);
+    const isPeriodOpen = period?.status === "OPEN";
 
-    if (!value || !filters.periodId || (syncedReadings.has(customerId) && !isPeriodOpen)) return;
+    if (!value || !selectedPeriod || (syncedReadings.has(customerId) && !isPeriodOpen)) return;
 
     const customer = data.customers.find((c) => c.id === customerId);
     const currentValue = parseFloat(value);
@@ -301,13 +237,13 @@ const filteredCustomers = useMemo(() => {
 
     try {
       const reading = create(ReadingSchema, {
-        id: `read-${customerId}-${filters.periodId}`,
+        id: `read-${customerId}-${selectedPeriod}`,
         customerId,
         previousValue,
         currentValue,
         consumption: currentValue - previousValue,
         observation: bulkObservations[customerId] || "",
-        period: filters.periodId,
+        period: selectedPeriod,
         timestamp: new Date().toISOString(),
       });
 
@@ -321,8 +257,8 @@ const filteredCustomers = useMemo(() => {
   };
 
   const handleSave = async () => {
-    const period = data.periods.find((p) => p.id === filters.periodId);
-    const isPeriodOpen = period?.status === 1;
+    const period = globalPeriods.find((p) => p.id === selectedPeriod);
+    const isPeriodOpen = period?.status === "OPEN";
 
     const entries = Object.entries(bulkReadings).filter(
       ([customerId, val]) => (val !== "" || bulkObservations[customerId]) && (!syncedReadings.has(customerId) || isPeriodOpen),
@@ -333,11 +269,10 @@ const filteredCustomers = useMemo(() => {
       return;
     }
 
-    if (!filters.periodId) return;
+    if (!selectedPeriod) return;
 
     setSaving(true);
     try {
-      // Validate that no reading is less than the previous one
       const hasInvalid = entries.some(([customerId, value]) => {
         const customer = data.customers.find((c) => c.id === customerId);
         const prevVal = bulkPreviousReadings[customerId] !== undefined && bulkPreviousReadings[customerId] !== "" 
@@ -361,13 +296,13 @@ const filteredCustomers = useMemo(() => {
         const currentVal = value !== "" ? parseFloat(value) : prevVal;
 
         return create(ReadingSchema, {
-          id: `read-${customerId}-${filters.periodId}`,
+          id: `read-${customerId}-${selectedPeriod}`,
           customerId,
           previousValue: prevVal,
           currentValue: currentVal,
           consumption: currentVal - prevVal,
           observation: bulkObservations[customerId] || "",
-          period: filters.periodId,
+          period: selectedPeriod,
           timestamp: new Date().toISOString(),
         });
       });
@@ -377,7 +312,7 @@ const filteredCustomers = useMemo(() => {
       if (resp.success) {
         toast.success(`${resp.syncedCount} lecturas guardadas correctamente`);
         await fetchReadingsAndCustomers(
-          filters.periodId,
+          selectedPeriod,
           filters.page,
           filters.searchQuery,
           filters.sectorId,
@@ -392,16 +327,7 @@ const filteredCustomers = useMemo(() => {
     }
   };
 
-  const getPreviousPeriod = (id: string) => {
-    if (!id) return "";
-    const [year, month] = id.split("-").map(Number);
-    const date = new Date(year, month - 2, 1);
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-  };
-
-  // Derived loading state - true while not initialized
   const loading = !initialized;
-
   const pendingCount = useMemo(() => {
     return Object.keys(bulkReadings).filter(
       (customerId) => bulkReadings[customerId] !== "" && !syncedReadings.has(customerId),
@@ -424,9 +350,6 @@ const filteredCustomers = useMemo(() => {
     bulkObservations,
     handleSave,
     saveSingleReading,
-    focusNextRow,
-    getPreviousPeriod,
-    filledCount: pendingCount,
     pendingCount,
     isPending,
   };

@@ -2,12 +2,12 @@
 
 import { X, Download, FileText } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import type { Sector, Period } from "@/app/gen/involt/v1/models_pb";
+import type { Sector } from "@/app/gen/involt/v1/models_pb";
+import { useConfigStore } from "@/lib/store/useConfigStore";
 
 interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
-  periods: Period[];
   sectors: Sector[];
   filters: {
     period: string;
@@ -20,12 +20,13 @@ interface ExportModalProps {
 export function ExportModal({
   isOpen,
   onClose,
-  periods,
   sectors,
   filters,
   onFilterChange,
   onExport,
 }: ExportModalProps) {
+  const { periods } = useConfigStore();
+  
   if (!isOpen) return null;
 
   return (
@@ -120,3 +121,4 @@ export function ExportModal({
     </div>
   );
 }
+

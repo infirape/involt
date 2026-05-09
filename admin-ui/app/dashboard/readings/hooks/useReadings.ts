@@ -1,10 +1,12 @@
 import { useState, useCallback, useEffect, useMemo, useTransition } from "react";
 import { adminClient } from "@/lib/rpc";
-import type { Reading, Sector, Period } from "@/app/gen/involt/v1/models_pb";
-import { PeriodStatus } from "@/app/gen/involt/v1/models_pb";
+import type { Reading, Sector } from "@/app/gen/involt/v1/models_pb";
+import { useConfigStore } from "@/lib/store/useConfigStore";
 
 export function useReadings() {
   const [isPending, startTransition] = useTransition();
+  const { selectedPeriod, periods: globalPeriods } = useConfigStore();
+
   const [data, setData] = useState<{
     readings: Reading[];
     totalCount: number;
@@ -15,7 +17,6 @@ export function useReadings() {
       syncPercentage: number;
     };
     sectors: Sector[];
-    periods: Period[];
   }>({
     readings: [],
     totalCount: 0,
@@ -26,13 +27,11 @@ export function useReadings() {
       syncPercentage: 0,
     },
     sectors: [],
-    periods: [],
   });
 
   const [filters, setFilters] = useState({
     customerId: "",
     sectorId: "",
-    period: "",
   });
 
   const [pagination, setPagination] = useState({
@@ -41,15 +40,15 @@ export function useReadings() {
   });
 
   const { isBilling, colSpan } = useMemo(() => {
-    const isB = data.periods.find(p => p.id === filters.period)?.isBillingPeriod !== false;
+    // We check the global periods list for billing status
+    const isB = globalPeriods.find(p => p.id === selectedPeriod)?.status === "OPEN"; // Assuming OPEN means active billing
     return { isBilling: isB, colSpan: 7 };
-  }, [data.periods, filters.period]);
+  }, [globalPeriods, selectedPeriod]);
 
   const fetchReadings = useCallback(async (periodId: string, page: number, size: number, customerId: string, sectorId: string) => {
     if (!periodId) return;
     
     try {
-      // Use a transition to avoid cascading render warnings
       startTransition(() => {
         setData((prev) => ({ ...prev, loading: true }));
       });
@@ -95,53 +94,30 @@ export function useReadings() {
     }
   }, []);
 
-  // Initialization
+  // Fetch sectors once
   useEffect(() => {
-    let isMounted = true;
-    const initPage = async () => {
+    const initSectors = async () => {
       try {
-        const [sectorsResp, periodsResp] = await Promise.all([
-          adminClient.getSectors({}),
-          adminClient.listPeriods({}),
-        ]);
-
-        if (!isMounted) return;
-
-        const dbPeriods = periodsResp.periods;
-        const currentOpen = dbPeriods.find((p) => p.status === PeriodStatus.OPEN);
-        const initialPeriod = currentOpen?.id || (dbPeriods.length > 0 ? dbPeriods[0].id : "");
-
+        const resp = await adminClient.getSectors({});
         startTransition(() => {
-          setData((prev) => ({
-            ...prev,
-            sectors: sectorsResp.sectors,
-            periods: dbPeriods,
-          }));
-
-          if (initialPeriod) {
-            setFilters((prev) => ({ ...prev, period: initialPeriod }));
-          }
+          setData(prev => ({ ...prev, sectors: resp.sectors }));
         });
-
-        // The fetch will be triggered by the second useEffect when filters.period changes
       } catch (err) {
-        console.error("Failed to init readings page:", err);
+        console.error("Failed to fetch sectors:", err);
       }
     };
+    initSectors();
+  }, []);
 
-    initPage();
-    return () => { isMounted = false; };
-  }, []); // Only once on mount
-
-  // Use primitive dependencies to avoid object-identity issues
-  const { customerId, sectorId, period } = filters;
+  const { customerId, sectorId } = filters;
   const { pageNumber, pageSize } = pagination;
 
+  // Re-fetch when global period or filters change
   useEffect(() => {
-    if (data.periods.length > 0 && period) {
-      fetchReadings(period, pageNumber, pageSize, customerId, sectorId);
+    if (selectedPeriod) {
+      fetchReadings(selectedPeriod, pageNumber, pageSize, customerId, sectorId);
     }
-  }, [period, pageNumber, pageSize, customerId, sectorId, data.periods.length, fetchReadings]);
+  }, [selectedPeriod, pageNumber, pageSize, customerId, sectorId, fetchReadings]);
 
   const totalPages = Math.ceil(data.totalCount / pageSize);
 
@@ -155,6 +131,7 @@ export function useReadings() {
     colSpan,
     totalPages,
     isPending,
-    refresh: () => fetchReadings(period, pageNumber, pageSize, customerId, sectorId),
+    refresh: () => fetchReadings(selectedPeriod, pageNumber, pageSize, customerId, sectorId),
   };
 }
+

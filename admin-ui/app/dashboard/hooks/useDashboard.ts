@@ -1,12 +1,13 @@
 import { useState, useCallback, useEffect, useTransition, useMemo } from "react";
 import { adminClient } from "@/lib/rpc";
 import type { GetDashboardStatsResponse } from "@/app/gen/involt/v1/admin_pb";
-import { PeriodStatus } from "@/app/gen/involt/v1/models_pb";
-import type { Period } from "@/app/gen/involt/v1/models_pb";
 import { toast } from "sonner";
+import { useConfigStore } from "@/lib/store/useConfigStore";
 
 export function useDashboard() {
   const [isPending, startTransition] = useTransition();
+  const { selectedPeriod } = useConfigStore();
+  
   const [data, setData] = useState<{
     stats: GetDashboardStatsResponse | null;
     loading: boolean;
@@ -14,9 +15,6 @@ export function useDashboard() {
     stats: null,
     loading: true,
   });
-
-  const [periods, setPeriods] = useState<Period[]>([]);
-  const [selectedPeriod, setSelectedPeriod] = useState<string | null>(null);
 
   const fetchStats = useCallback(async (periodId: string) => {
     if (!periodId) return;
@@ -45,30 +43,7 @@ export function useDashboard() {
     }
   }, []);
 
-  // Initialization: fetch periods
-  useEffect(() => {
-    let isMounted = true;
-    const init = async () => {
-      try {
-        const resp = await adminClient.listPeriods({});
-        if (!isMounted) return;
-
-        const dbPeriods = resp.periods;
-        setPeriods(dbPeriods);
-
-        const current = dbPeriods.find((p) => p.status === PeriodStatus.OPEN) || dbPeriods[0];
-        const initialPeriodId = current?.id || new Date().toISOString().slice(0, 7);
-        
-        setSelectedPeriod(initialPeriodId);
-      } catch (err) {
-        console.error("Failed to list periods:", err);
-      }
-    };
-    init();
-    return () => { isMounted = false; };
-  }, []);
-
-  // Sync stats with selected period
+  // Sync stats with global selected period
   useEffect(() => {
     if (selectedPeriod) {
       fetchStats(selectedPeriod);
@@ -86,11 +61,9 @@ export function useDashboard() {
 
   return {
     data,
-    periods,
-    selectedPeriod,
-    setSelectedPeriod,
     consumptionDelta,
     isPending,
     refresh: () => selectedPeriod && fetchStats(selectedPeriod),
   };
 }
+
