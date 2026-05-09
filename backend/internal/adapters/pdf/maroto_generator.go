@@ -92,32 +92,32 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 	fontLarge := 12.0
 	borderThick := 0.6 
 
-	// ===== LOGO SECTION =====
+	// ===== HEADER SECTION (3 COLUMNS: TEXT - LOGO - TEXT) =====
 	m.AddRows(
 		row.New(25).Add(
-			col.New(12).Add(
+			// Left Column: Customer Info
+			col.New(4).Add(
+				text.New(community, props.Text{Left: 1, Top: 2, Size: fontSmall}),
+				text.New(fmt.Sprintf("Cód: %s", customer.Code), props.Text{Left: 1, Top: 6, Size: fontSmall, Style: fontstyle.Bold}),
+				text.New(customer.Name, props.Text{Left: 1, Top: 10, Size: fontNormal, Style: fontstyle.Bold}),
+				text.New(customer.Address, props.Text{Left: 1, Top: 14, Size: fontSmall}),
+			).WithStyle(&props.Cell{BorderType: border.Left | border.Top, BorderThickness: borderThick}),
+
+			// Middle Column: Logo
+			col.New(4).Add(
 				image.NewFromFile("assets/logo_chetilla.png", props.Rect{
 					Center:  true,
-					Percent: 60,
+					Percent: 90,
+					Top:     2,
 				}),
-			).WithStyle(&props.Cell{BorderType: border.Left | border.Right | border.Top, BorderThickness: borderThick}),
-		),
-	)
+			).WithStyle(&props.Cell{BorderType: border.Top, BorderThickness: borderThick}),
 
-	// ===== HEADER SECTION =====
-	m.AddRows(
-		row.New(18).Add(
-			col.New(7).Add(
-				text.New(community, props.Text{Left: 1, Top: 1, Size: fontSmall}),
-				text.New(fmt.Sprintf("Para consulta su código es: %s", customer.Code), props.Text{Left: 1, Top: 4.5, Size: fontSmall, Style: fontstyle.Bold}),
-				text.New(customer.Name, props.Text{Left: 1, Top: 8, Size: fontNormal, Style: fontstyle.Bold}),
-				text.New(customer.Address, props.Text{Left: 1, Top: 11.5, Size: fontSmall}),
-			).WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick}),
-			col.New(5).Add(
-				text.New(sector, props.Text{Right: 1, Top: 1, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
-				text.New(settings.Municipalidad, props.Text{Right: 1, Top: 4.5, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
-				text.New(settings.Empresa, props.Text{Right: 1, Top: 8, Size: fontSmall, Align: align.Right}),
-			).WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick}),
+			// Right Column: Entity Info
+			col.New(4).Add(
+				text.New(sector, props.Text{Right: 1, Top: 2, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				text.New(settings.Municipalidad, props.Text{Right: 1, Top: 6, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
+				text.New(settings.Empresa, props.Text{Right: 1, Top: 10, Size: fontSmall, Align: align.Right}),
+			).WithStyle(&props.Cell{BorderType: border.Right | border.Top, BorderThickness: borderThick}),
 		),
 	)
 
