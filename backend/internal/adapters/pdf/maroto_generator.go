@@ -94,13 +94,14 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 
 	// ===== HEADER SECTION (3 COLUMNS: TEXT - LOGO - TEXT) =====
 	m.AddRows(
-		row.New(25).Add(
+		row.New(30).Add(
 			// Left Column: Customer Info
 			col.New(4).Add(
 				text.New(community, props.Text{Left: 1, Top: 2, Size: fontSmall}),
 				text.New(fmt.Sprintf("Cód: %s", customer.Code), props.Text{Left: 1, Top: 6, Size: fontSmall, Style: fontstyle.Bold}),
 				text.New(customer.Name, props.Text{Left: 1, Top: 10, Size: fontNormal, Style: fontstyle.Bold}),
-				text.New(customer.Address, props.Text{Left: 1, Top: 14, Size: fontSmall}),
+				text.New(fmt.Sprintf("Impreso: %s", time.Now().Format("02/01/2006")), props.Text{Left: 1, Top: 13.5, Size: 6, Style: fontstyle.Italic}),
+				text.New(customer.Address, props.Text{Left: 1, Top: 17, Size: fontSmall}),
 			).WithStyle(&props.Cell{BorderType: border.Left | border.Top, BorderThickness: borderThick}),
 
 			// Middle Column: Logo
@@ -108,7 +109,7 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 				image.NewFromFile("assets/logo_chetilla.png", props.Rect{
 					Center:  true,
 					Percent: 90,
-					Top:     2,
+					Top:     4,
 				}),
 			).WithStyle(&props.Cell{BorderType: border.Top, BorderThickness: borderThick}),
 
@@ -116,7 +117,7 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 			col.New(4).Add(
 				text.New(sector, props.Text{Right: 1, Top: 2, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
 				text.New(settings.Municipalidad, props.Text{Right: 1, Top: 6, Size: fontSmall, Align: align.Right, Style: fontstyle.Bold}),
-				text.New(settings.Empresa, props.Text{Right: 1, Top: 10, Size: fontSmall, Align: align.Right}),
+				text.New(settings.Empresa, props.Text{Right: 1, Top: 14, Size: fontSmall, Align: align.Right}),
 			).WithStyle(&props.Cell{BorderType: border.Right | border.Top, BorderThickness: borderThick}),
 		),
 	)
