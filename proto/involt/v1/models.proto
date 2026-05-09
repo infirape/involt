@@ -74,6 +74,7 @@ message Reading {
   string expiration_date = 22;
   string period = 23;
   string observation = 24;
+  string customer_name = 25;
 }
 // AppConfig contains remote configuration for the mobile application.
 message AppConfig {

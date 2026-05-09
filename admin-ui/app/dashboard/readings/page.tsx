@@ -184,19 +184,19 @@ export default function ReadingsPage() {
             <thead>
               <tr className="border-b border-white/5 bg-white/2">
                 <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Timestamp
+                  Fecha
                 </th>
                 <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
                   ID Cliente
+                </th>
+                <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                  Nombre
                 </th>
                 <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
                   Lectura (Ant / Act)
                 </th>
                 <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
                   Consumo
-                </th>
-                <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Observación
                 </th>
                 <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
                   Monto
@@ -244,7 +244,12 @@ export default function ReadingsPage() {
                     </td>
                     <td className="px-8 py-3">
                       <span className="text-[10px] font-black font-mono text-muted-foreground/60">
-                        {reading.customerId.slice(0, 8)}...
+                        {reading.customerId}
+                      </span>
+                    </td>
+                    <td className="px-8 py-3">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-white">
+                        {reading.customerName || "-"}
                       </span>
                     </td>
                     <td className="px-8 py-3">
@@ -257,26 +262,19 @@ export default function ReadingsPage() {
                       </div>
                     </td>
                     <td className="px-8 py-3">
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-sm font-black font-mono text-primary tracking-tighter">
-                          {reading.consumption.toLocaleString()}
-                        </span>
-                        <span className="text-[9px] font-bold text-muted-foreground/30 uppercase">
-                          kWh
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-8 py-3">
                       {reading.observation ? (
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[9px] font-black uppercase tracking-widest text-amber-500">
-                            {reading.observation}
+                        <span className="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[9px] font-black uppercase tracking-widest text-amber-500 italic">
+                          {reading.observation}
+                        </span>
+                      ) : (
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-sm font-black font-mono text-primary tracking-tighter">
+                            {reading.consumption.toLocaleString()}
+                          </span>
+                          <span className="text-[9px] font-bold text-muted-foreground/30 uppercase">
+                            kWh
                           </span>
                         </div>
-                      ) : (
-                        <span className="text-[10px] font-bold text-muted-foreground/20 italic">
-                          Sin obs.
-                        </span>
                       )}
                     </td>
                     <td className="px-8 py-3">

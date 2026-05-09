@@ -42,6 +42,7 @@ func MapProtoToReading(p *involtv1.Reading) *Reading {
 		ExpirationDate:   ed,
 		Period:           period,
 		Observation:      p.Observation,
+		CustomerName:     p.CustomerName,
 	}
 }
 
@@ -77,6 +78,7 @@ func MapReadingToProto(d *Reading) *involtv1.Reading {
 		ExpirationDate:   d.ExpirationDate.Format(time.RFC3339),
 		Period:           period,
 		Observation:      d.Observation,
+		CustomerName:     d.CustomerName,
 	}
 }
 

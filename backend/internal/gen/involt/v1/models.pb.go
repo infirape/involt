@@ -413,6 +413,7 @@ type Reading struct {
 	ExpirationDate   string  `protobuf:"bytes,22,opt,name=expiration_date,json=expirationDate,proto3" json:"expiration_date,omitempty"`
 	Period           string  `protobuf:"bytes,23,opt,name=period,proto3" json:"period,omitempty"`
 	Observation      string  `protobuf:"bytes,24,opt,name=observation,proto3" json:"observation,omitempty"`
+	CustomerName     string  `protobuf:"bytes,25,opt,name=customer_name,json=customerName,proto3" json:"customer_name,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -611,6 +612,13 @@ func (x *Reading) GetPeriod() string {
 func (x *Reading) GetObservation() string {
 	if x != nil {
 		return x.Observation
+	}
+	return ""
+}
+
+func (x *Reading) GetCustomerName() string {
+	if x != nil {
+		return x.CustomerName
 	}
 	return ""
 }
@@ -973,7 +981,7 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\x0finitial_reading\x18\v \x01(\x01R\x0einitialReading\x12\x18\n" +
 	"\aaddress\x18\f \x01(\tR\aaddress\x12%\n" +
 	"\x0econtract_start\x18\r \x01(\tR\rcontractStart\x12,\n" +
-	"\x12last_reading_value\x18\x0e \x01(\x01R\x10lastReadingValue\"\xb4\x06\n" +
+	"\x12last_reading_value\x18\x0e \x01(\x01R\x10lastReadingValue\"\xd9\x06\n" +
 	"\aReading\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcustomer_id\x18\x02 \x01(\tR\n" +
@@ -1005,7 +1013,8 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\roverdue_total\x18\x15 \x01(\x01R\foverdueTotal\x12'\n" +
 	"\x0fexpiration_date\x18\x16 \x01(\tR\x0eexpirationDate\x12\x16\n" +
 	"\x06period\x18\x17 \x01(\tR\x06period\x12 \n" +
-	"\vobservation\x18\x18 \x01(\tR\vobservation\"[\n" +
+	"\vobservation\x18\x18 \x01(\tR\vobservation\x12#\n" +
+	"\rcustomer_name\x18\x19 \x01(\tR\fcustomerName\"[\n" +
 	"\tAppConfig\x12(\n" +
 	"\x10map_url_template\x18\x01 \x01(\tR\x0emapUrlTemplate\x12$\n" +
 	"\x0emap_user_agent\x18\x02 \x01(\tR\fmapUserAgent\"\xeb\x02\n" +

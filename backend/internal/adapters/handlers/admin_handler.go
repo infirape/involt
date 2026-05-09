@@ -320,12 +320,19 @@ func (h *AdminHandler) GetReadings(
 		settings = &domain.Settings{}
 	}
 
+	customers, _ := h.customerRepo.ListAll(ctx)
+	custMap := make(map[string]string)
+	for _, c := range customers {
+		custMap[c.ID] = c.Name
+	}
+
 	resp := &involtv1.GetReadingsResponse{
 		Readings:   make([]*involtv1.Reading, len(readings)),
 		TotalCount: int32(total),
 	}
 
 	for i, r := range readings {
+		r.CustomerName = custMap[r.CustomerID]
 		// If total is 0 but there is consumption, try to recalculate for display
 		if r.TotalToPay == 0 && r.Consumption > 0 {
 			consumptionCharge := r.Consumption * settings.TarifaKWh
