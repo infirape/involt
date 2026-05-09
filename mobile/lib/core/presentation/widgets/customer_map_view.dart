@@ -50,7 +50,7 @@ class _CustomerMapViewState extends State<CustomerMapView> {
     final settings = await database.select(database.settings).get();
     final config = {
       'map_url_template': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      'map_user_agent': 'com.infira.involt',
+      'map_user_agent': 'InVoltApp/1.0 (com.infira.involt; android)',
     };
     
     for (final s in settings) {
@@ -80,9 +80,13 @@ class _CustomerMapViewState extends State<CustomerMapView> {
     return FutureBuilder<Map<String, String>>(
       future: _configFuture,
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          debugPrint("Error loading map config: ${snapshot.error}");
+        }
+
         final config = snapshot.data ?? {
           'map_url_template': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-          'map_user_agent': 'com.infira.involt',
+          'map_user_agent': 'InVoltApp/1.0 (com.infira.involt; android)',
         };
 
         return FlutterMap(
@@ -114,8 +118,9 @@ class _CustomerMapViewState extends State<CustomerMapView> {
             TileLayer(
               urlTemplate: config['map_url_template']!,
               userAgentPackageName: config['map_user_agent']!,
-              maxNativeZoom: 17,
+              maxNativeZoom: 18, // ArcGIS often supports up to 18
               maxZoom: 22,
+              tileProvider: NetworkTileProvider(), // Explicitly set provider
             ),
             // User Location Marker
             if (widget.userLocation != null)
