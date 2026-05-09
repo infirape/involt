@@ -90,24 +90,29 @@ export function useBulkReadings() {
 
           setBulkReadings((prev) => {
             const newMap = isNewPeriod ? {} : { ...prev };
-            const newPrevMap = isNewPeriod ? {} : { ...bulkPreviousReadings };
-            const newObsMap = isNewPeriod ? {} : { ...bulkObservations };
+            
+            setBulkPreviousReadings(prevPrev => {
+              const newPrevMap = isNewPeriod ? {} : { ...prevPrev };
+              setBulkObservations(prevObs => {
+                const newObsMap = isNewPeriod ? {} : { ...prevObs };
+                
+                readingsResp.readings.forEach((r) => {
+                  if (!newMap[r.customerId]) {
+                    newMap[r.customerId] = r.currentValue.toString();
+                  }
+                  if (!newPrevMap[r.customerId]) {
+                    newPrevMap[r.customerId] = r.previousValue.toString();
+                  }
+                  if (!newObsMap[r.customerId]) {
+                    newObsMap[r.customerId] = r.observation;
+                  }
+                  syncedSet.add(r.customerId);
+                });
 
-            readingsResp.readings.forEach((r) => {
-              if (!newMap[r.customerId]) {
-                newMap[r.customerId] = r.currentValue.toString();
-              }
-              if (!newPrevMap[r.customerId]) {
-                newPrevMap[r.customerId] = r.previousValue.toString();
-              }
-              if (!newObsMap[r.customerId]) {
-                newObsMap[r.customerId] = r.observation;
-              }
-              syncedSet.add(r.customerId);
+                return newObsMap;
+              });
+              return newPrevMap;
             });
-
-            setBulkPreviousReadings(newPrevMap);
-            setBulkObservations(newObsMap);
             
             return newMap;
           });
@@ -125,7 +130,7 @@ export function useBulkReadings() {
         toast.error("Error al cargar datos del periodo");
       }
     },
-    [bulkPreviousReadings, bulkObservations],
+    [],
   );
 
   // Initial fetch of sectors

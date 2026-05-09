@@ -4,7 +4,9 @@ import {
   type Customer,
   ConnectionType,
   type Sector,
+  CustomerSchema,
 } from "@/app/gen/involt/v1/models_pb";
+import { create } from "@bufbuild/protobuf";
 import { toast } from "sonner";
 
 export function useCustomers() {
@@ -95,7 +97,7 @@ export function useCustomers() {
     setEditingCustomer({
       ...defaultCustomer,
       ...customer
-    } as any);
+    } as Partial<Customer>);
     setIsModalOpen(true);
   }, [data.sectors]);
 
@@ -105,10 +107,23 @@ export function useCustomers() {
     setSaving(true);
     try {
       const selectedSector = data.sectors.find(s => s.id === editingCustomer.sectorId);
-      const customerToSave = {
-        ...editingCustomer,
-        communityId: selectedSector?.communityId || "COM-001"
-      } as Customer;
+      
+      const customerToSave = create(CustomerSchema, {
+        id: editingCustomer.id,
+        code: editingCustomer.code,
+        name: editingCustomer.name,
+        address: editingCustomer.address,
+        sectorId: editingCustomer.sectorId,
+        communityId: selectedSector?.communityId || "COM-001",
+        connectionType: editingCustomer.connectionType,
+        latitude: editingCustomer.latitude,
+        longitude: editingCustomer.longitude,
+        initialReading: editingCustomer.initialReading,
+        meterNumber: editingCustomer.meterNumber,
+        tariff: editingCustomer.tariff,
+        contractStart: editingCustomer.contractStart,
+        lastReadingValue: editingCustomer.lastReadingValue,
+      });
 
       await adminClient.upsertCustomer({
         customer: customerToSave,

@@ -73,13 +73,13 @@ export const CustomerTable = forwardRef<
       );
       handleOpenModal(defaultSector ? { sectorId: defaultSector.id } : null);
     },
-  }));
+  }), [data.sectors, communityId, handleOpenModal]);
 
   useEffect(() => {
-    if (communityId) {
+    if (communityId && filters.communityId !== communityId) {
       setFilters((prev) => ({ ...prev, communityId }));
     }
-  }, [communityId, setFilters]);
+  }, [communityId, filters.communityId, setFilters]);
 
   return (
     <div className="space-y-4">

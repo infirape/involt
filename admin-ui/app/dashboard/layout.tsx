@@ -31,7 +31,11 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { isAdmin } = useAuth();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const saved = localStorage.getItem("sidebar_collapsed");
+    return saved === "true";
+  });
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const { setSelectedPeriod, setPeriods } = useConfigStore();
@@ -60,15 +64,7 @@ export default function DashboardLayout({
     initConfig();
   }, [setPeriods, setSelectedPeriod]);
 
-  // Persistence for collapsed state
-  useEffect(() => {
-    const saved = localStorage.getItem("sidebar_collapsed");
-    if (saved !== null) {
-      Promise.resolve().then(() => {
-        setIsCollapsed(saved === "true");
-      });
-    }
-  }, []);
+  // Persistence for collapsed state is now handled during initialization
 
   const toggleCollapse = () => {
     const newState = !isCollapsed;
