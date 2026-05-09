@@ -31,8 +31,9 @@ type Settings struct {
 
 // Community represents a village or Caserio.
 type Community struct {
-	ID   string
-	Name string
+	ID            string `db:"id"`
+	Name          string `db:"name"`
+	CustomerCount int    `db:"customer_count"`
 }
 
 // Sector represents an area within a community.

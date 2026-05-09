@@ -31,6 +31,58 @@ final $typed_data.Uint8List userRoleDescriptor = $convert.base64Decode(
     'CghVc2VyUm9sZRIZChVVU0VSX1JPTEVfVU5TUEVDSUZJRUQQABITCg9VU0VSX1JPTEVfQURNSU'
     '4QARIYChRVU0VSX1JPTEVfU1VQRVJWSVNPUhACEhQKEFVTRVJfUk9MRV9SRUFERVIQAw==');
 
+@$core.Deprecated('Use upsertSectorRequestDescriptor instead')
+const UpsertSectorRequest$json = {
+  '1': 'UpsertSectorRequest',
+  '2': [
+    {'1': 'sector', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Sector', '10': 'sector'},
+  ],
+};
+
+/// Descriptor for `UpsertSectorRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List upsertSectorRequestDescriptor = $convert.base64Decode(
+    'ChNVcHNlcnRTZWN0b3JSZXF1ZXN0EikKBnNlY3RvchgBIAEoCzIRLmludm9sdC52MS5TZWN0b3'
+    'JSBnNlY3Rvcg==');
+
+@$core.Deprecated('Use upsertSectorResponseDescriptor instead')
+const UpsertSectorResponse$json = {
+  '1': 'UpsertSectorResponse',
+  '2': [
+    {'1': 'sector', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Sector', '10': 'sector'},
+  ],
+};
+
+/// Descriptor for `UpsertSectorResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List upsertSectorResponseDescriptor = $convert.base64Decode(
+    'ChRVcHNlcnRTZWN0b3JSZXNwb25zZRIpCgZzZWN0b3IYASABKAsyES5pbnZvbHQudjEuU2VjdG'
+    '9yUgZzZWN0b3I=');
+
+@$core.Deprecated('Use upsertCommunityRequestDescriptor instead')
+const UpsertCommunityRequest$json = {
+  '1': 'UpsertCommunityRequest',
+  '2': [
+    {'1': 'community', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Community', '10': 'community'},
+  ],
+};
+
+/// Descriptor for `UpsertCommunityRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List upsertCommunityRequestDescriptor = $convert.base64Decode(
+    'ChZVcHNlcnRDb21tdW5pdHlSZXF1ZXN0EjIKCWNvbW11bml0eRgBIAEoCzIULmludm9sdC52MS'
+    '5Db21tdW5pdHlSCWNvbW11bml0eQ==');
+
+@$core.Deprecated('Use upsertCommunityResponseDescriptor instead')
+const UpsertCommunityResponse$json = {
+  '1': 'UpsertCommunityResponse',
+  '2': [
+    {'1': 'community', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Community', '10': 'community'},
+  ],
+};
+
+/// Descriptor for `UpsertCommunityResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List upsertCommunityResponseDescriptor = $convert.base64Decode(
+    'ChdVcHNlcnRDb21tdW5pdHlSZXNwb25zZRIyCgljb21tdW5pdHkYASABKAsyFC5pbnZvbHQudj'
+    'EuQ29tbXVuaXR5Ugljb21tdW5pdHk=');
+
 @$core.Deprecated('Use deleteCustomerRequestDescriptor instead')
 const DeleteCustomerRequest$json = {
   '1': 'DeleteCustomerRequest',
@@ -154,6 +206,28 @@ final $typed_data.Uint8List getSectorsResponseDescriptor = $convert.base64Decode
     'ChJHZXRTZWN0b3JzUmVzcG9uc2USKwoHc2VjdG9ycxgBIAMoCzIRLmludm9sdC52MS5TZWN0b3'
     'JSB3NlY3RvcnM=');
 
+@$core.Deprecated('Use getCommunitiesRequestDescriptor instead')
+const GetCommunitiesRequest$json = {
+  '1': 'GetCommunitiesRequest',
+};
+
+/// Descriptor for `GetCommunitiesRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCommunitiesRequestDescriptor = $convert.base64Decode(
+    'ChVHZXRDb21tdW5pdGllc1JlcXVlc3Q=');
+
+@$core.Deprecated('Use getCommunitiesResponseDescriptor instead')
+const GetCommunitiesResponse$json = {
+  '1': 'GetCommunitiesResponse',
+  '2': [
+    {'1': 'communities', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.Community', '10': 'communities'},
+  ],
+};
+
+/// Descriptor for `GetCommunitiesResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCommunitiesResponseDescriptor = $convert.base64Decode(
+    'ChZHZXRDb21tdW5pdGllc1Jlc3BvbnNlEjYKC2NvbW11bml0aWVzGAEgAygLMhQuaW52b2x0Ln'
+    'YxLkNvbW11bml0eVILY29tbXVuaXRpZXM=');
+
 @$core.Deprecated('Use getCustomersRequestDescriptor instead')
 const GetCustomersRequest$json = {
   '1': 'GetCustomersRequest',
@@ -163,6 +237,7 @@ const GetCustomersRequest$json = {
     {'1': 'page_number', '3': 3, '4': 1, '5': 5, '10': 'pageNumber'},
     {'1': 'page_size', '3': 4, '4': 1, '5': 5, '10': 'pageSize'},
     {'1': 'exclude_period_id', '3': 5, '4': 1, '5': 9, '10': 'excludePeriodId'},
+    {'1': 'community_id', '3': 6, '4': 1, '5': 9, '10': 'communityId'},
   ],
 };
 
@@ -171,7 +246,8 @@ final $typed_data.Uint8List getCustomersRequestDescriptor = $convert.base64Decod
     'ChNHZXRDdXN0b21lcnNSZXF1ZXN0EhsKCXNlY3Rvcl9pZBgBIAEoCVIIc2VjdG9ySWQSIQoMc2'
     'VhcmNoX3F1ZXJ5GAIgASgJUgtzZWFyY2hRdWVyeRIfCgtwYWdlX251bWJlchgDIAEoBVIKcGFn'
     'ZU51bWJlchIbCglwYWdlX3NpemUYBCABKAVSCHBhZ2VTaXplEioKEWV4Y2x1ZGVfcGVyaW9kX2'
-    'lkGAUgASgJUg9leGNsdWRlUGVyaW9kSWQ=');
+    'lkGAUgASgJUg9leGNsdWRlUGVyaW9kSWQSIQoMY29tbXVuaXR5X2lkGAYgASgJUgtjb21tdW5p'
+    'dHlJZA==');
 
 @$core.Deprecated('Use getCustomersResponseDescriptor instead')
 const GetCustomersResponse$json = {
@@ -505,6 +581,7 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'GetUsers', '2': '.involt.v1.GetUsersRequest', '3': '.involt.v1.GetUsersResponse'},
     {'1': 'UpsertUser', '2': '.involt.v1.UpsertUserRequest', '3': '.involt.v1.UpsertUserResponse'},
     {'1': 'GetSectors', '2': '.involt.v1.GetSectorsRequest', '3': '.involt.v1.GetSectorsResponse'},
+    {'1': 'GetCommunities', '2': '.involt.v1.GetCommunitiesRequest', '3': '.involt.v1.GetCommunitiesResponse'},
     {'1': 'GetCustomers', '2': '.involt.v1.GetCustomersRequest', '3': '.involt.v1.GetCustomersResponse'},
     {'1': 'GetReadings', '2': '.involt.v1.GetReadingsRequest', '3': '.involt.v1.GetReadingsResponse'},
     {'1': 'GetSettings', '2': '.involt.v1.GetSettingsRequest', '3': '.involt.v1.GetSettingsResponse'},
@@ -516,6 +593,8 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'GetPeriodStats', '2': '.involt.v1.GetPeriodStatsRequest', '3': '.involt.v1.GetPeriodStatsResponse'},
     {'1': 'OpenPeriod', '2': '.involt.v1.OpenPeriodRequest', '3': '.involt.v1.OpenPeriodResponse'},
     {'1': 'ClosePeriod', '2': '.involt.v1.ClosePeriodRequest', '3': '.involt.v1.ClosePeriodResponse'},
+    {'1': 'UpsertSector', '2': '.involt.v1.UpsertSectorRequest', '3': '.involt.v1.UpsertSectorResponse'},
+    {'1': 'UpsertCommunity', '2': '.involt.v1.UpsertCommunityRequest', '3': '.involt.v1.UpsertCommunityResponse'},
   ],
 };
 
@@ -531,6 +610,9 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.GetSectorsRequest': GetSectorsRequest$json,
   '.involt.v1.GetSectorsResponse': GetSectorsResponse$json,
   '.involt.v1.Sector': $0.Sector$json,
+  '.involt.v1.GetCommunitiesRequest': GetCommunitiesRequest$json,
+  '.involt.v1.GetCommunitiesResponse': GetCommunitiesResponse$json,
+  '.involt.v1.Community': $0.Community$json,
   '.involt.v1.GetCustomersRequest': GetCustomersRequest$json,
   '.involt.v1.GetCustomersResponse': GetCustomersResponse$json,
   '.involt.v1.Customer': $0.Customer$json,
@@ -559,6 +641,10 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.OpenPeriodResponse': OpenPeriodResponse$json,
   '.involt.v1.ClosePeriodRequest': ClosePeriodRequest$json,
   '.involt.v1.ClosePeriodResponse': ClosePeriodResponse$json,
+  '.involt.v1.UpsertSectorRequest': UpsertSectorRequest$json,
+  '.involt.v1.UpsertSectorResponse': UpsertSectorResponse$json,
+  '.involt.v1.UpsertCommunityRequest': UpsertCommunityRequest$json,
+  '.involt.v1.UpsertCommunityResponse': UpsertCommunityResponse$json,
 };
 
 /// Descriptor for `AdminService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -568,21 +654,26 @@ final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
     'ZXN0GhsuaW52b2x0LnYxLkdldFVzZXJzUmVzcG9uc2USSQoKVXBzZXJ0VXNlchIcLmludm9sdC'
     '52MS5VcHNlcnRVc2VyUmVxdWVzdBodLmludm9sdC52MS5VcHNlcnRVc2VyUmVzcG9uc2USSQoK'
     'R2V0U2VjdG9ycxIcLmludm9sdC52MS5HZXRTZWN0b3JzUmVxdWVzdBodLmludm9sdC52MS5HZX'
-    'RTZWN0b3JzUmVzcG9uc2USTwoMR2V0Q3VzdG9tZXJzEh4uaW52b2x0LnYxLkdldEN1c3RvbWVy'
-    'c1JlcXVlc3QaHy5pbnZvbHQudjEuR2V0Q3VzdG9tZXJzUmVzcG9uc2USTAoLR2V0UmVhZGluZ3'
-    'MSHS5pbnZvbHQudjEuR2V0UmVhZGluZ3NSZXF1ZXN0Gh4uaW52b2x0LnYxLkdldFJlYWRpbmdz'
-    'UmVzcG9uc2USTAoLR2V0U2V0dGluZ3MSHS5pbnZvbHQudjEuR2V0U2V0dGluZ3NSZXF1ZXN0Gh'
-    '4uaW52b2x0LnYxLkdldFNldHRpbmdzUmVzcG9uc2USVQoOVXBkYXRlU2V0dGluZ3MSIC5pbnZv'
-    'bHQudjEuVXBkYXRlU2V0dGluZ3NSZXF1ZXN0GiEuaW52b2x0LnYxLlVwZGF0ZVNldHRpbmdzUm'
-    'VzcG9uc2USVQoOVXBzZXJ0Q3VzdG9tZXISIC5pbnZvbHQudjEuVXBzZXJ0Q3VzdG9tZXJSZXF1'
-    'ZXN0GiEuaW52b2x0LnYxLlVwc2VydEN1c3RvbWVyUmVzcG9uc2USVQoORGVsZXRlQ3VzdG9tZX'
-    'ISIC5pbnZvbHQudjEuRGVsZXRlQ3VzdG9tZXJSZXF1ZXN0GiEuaW52b2x0LnYxLkRlbGV0ZUN1'
-    'c3RvbWVyUmVzcG9uc2USXgoRR2V0RGFzaGJvYXJkU3RhdHMSIy5pbnZvbHQudjEuR2V0RGFzaG'
-    'JvYXJkU3RhdHNSZXF1ZXN0GiQuaW52b2x0LnYxLkdldERhc2hib2FyZFN0YXRzUmVzcG9uc2US'
-    'TAoLTGlzdFBlcmlvZHMSHS5pbnZvbHQudjEuTGlzdFBlcmlvZHNSZXF1ZXN0Gh4uaW52b2x0Ln'
-    'YxLkxpc3RQZXJpb2RzUmVzcG9uc2USVQoOR2V0UGVyaW9kU3RhdHMSIC5pbnZvbHQudjEuR2V0'
-    'UGVyaW9kU3RhdHNSZXF1ZXN0GiEuaW52b2x0LnYxLkdldFBlcmlvZFN0YXRzUmVzcG9uc2USSQ'
-    'oKT3BlblBlcmlvZBIcLmludm9sdC52MS5PcGVuUGVyaW9kUmVxdWVzdBodLmludm9sdC52MS5P'
-    'cGVuUGVyaW9kUmVzcG9uc2USTAoLQ2xvc2VQZXJpb2QSHS5pbnZvbHQudjEuQ2xvc2VQZXJpb2'
-    'RSZXF1ZXN0Gh4uaW52b2x0LnYxLkNsb3NlUGVyaW9kUmVzcG9uc2U=');
+    'RTZWN0b3JzUmVzcG9uc2USVQoOR2V0Q29tbXVuaXRpZXMSIC5pbnZvbHQudjEuR2V0Q29tbXVu'
+    'aXRpZXNSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENvbW11bml0aWVzUmVzcG9uc2USTwoMR2V0Q3'
+    'VzdG9tZXJzEh4uaW52b2x0LnYxLkdldEN1c3RvbWVyc1JlcXVlc3QaHy5pbnZvbHQudjEuR2V0'
+    'Q3VzdG9tZXJzUmVzcG9uc2USTAoLR2V0UmVhZGluZ3MSHS5pbnZvbHQudjEuR2V0UmVhZGluZ3'
+    'NSZXF1ZXN0Gh4uaW52b2x0LnYxLkdldFJlYWRpbmdzUmVzcG9uc2USTAoLR2V0U2V0dGluZ3MS'
+    'HS5pbnZvbHQudjEuR2V0U2V0dGluZ3NSZXF1ZXN0Gh4uaW52b2x0LnYxLkdldFNldHRpbmdzUm'
+    'VzcG9uc2USVQoOVXBkYXRlU2V0dGluZ3MSIC5pbnZvbHQudjEuVXBkYXRlU2V0dGluZ3NSZXF1'
+    'ZXN0GiEuaW52b2x0LnYxLlVwZGF0ZVNldHRpbmdzUmVzcG9uc2USVQoOVXBzZXJ0Q3VzdG9tZX'
+    'ISIC5pbnZvbHQudjEuVXBzZXJ0Q3VzdG9tZXJSZXF1ZXN0GiEuaW52b2x0LnYxLlVwc2VydEN1'
+    'c3RvbWVyUmVzcG9uc2USVQoORGVsZXRlQ3VzdG9tZXISIC5pbnZvbHQudjEuRGVsZXRlQ3VzdG'
+    '9tZXJSZXF1ZXN0GiEuaW52b2x0LnYxLkRlbGV0ZUN1c3RvbWVyUmVzcG9uc2USXgoRR2V0RGFz'
+    'aGJvYXJkU3RhdHMSIy5pbnZvbHQudjEuR2V0RGFzaGJvYXJkU3RhdHNSZXF1ZXN0GiQuaW52b2'
+    'x0LnYxLkdldERhc2hib2FyZFN0YXRzUmVzcG9uc2USTAoLTGlzdFBlcmlvZHMSHS5pbnZvbHQu'
+    'djEuTGlzdFBlcmlvZHNSZXF1ZXN0Gh4uaW52b2x0LnYxLkxpc3RQZXJpb2RzUmVzcG9uc2USVQ'
+    'oOR2V0UGVyaW9kU3RhdHMSIC5pbnZvbHQudjEuR2V0UGVyaW9kU3RhdHNSZXF1ZXN0GiEuaW52'
+    'b2x0LnYxLkdldFBlcmlvZFN0YXRzUmVzcG9uc2USSQoKT3BlblBlcmlvZBIcLmludm9sdC52MS'
+    '5PcGVuUGVyaW9kUmVxdWVzdBodLmludm9sdC52MS5PcGVuUGVyaW9kUmVzcG9uc2USTAoLQ2xv'
+    'c2VQZXJpb2QSHS5pbnZvbHQudjEuQ2xvc2VQZXJpb2RSZXF1ZXN0Gh4uaW52b2x0LnYxLkNsb3'
+    'NlUGVyaW9kUmVzcG9uc2USTwoMVXBzZXJ0U2VjdG9yEh4uaW52b2x0LnYxLlVwc2VydFNlY3Rv'
+    'clJlcXVlc3QaHy5pbnZvbHQudjEuVXBzZXJ0U2VjdG9yUmVzcG9uc2USWAoPVXBzZXJ0Q29tbX'
+    'VuaXR5EiEuaW52b2x0LnYxLlVwc2VydENvbW11bml0eVJlcXVlc3QaIi5pbnZvbHQudjEuVXBz'
+    'ZXJ0Q29tbXVuaXR5UmVzcG9uc2U=');
 

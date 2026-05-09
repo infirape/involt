@@ -25,6 +25,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
   $async.Future<$1.GetUsersResponse> getUsers($pb.ServerContext ctx, $1.GetUsersRequest request);
   $async.Future<$1.UpsertUserResponse> upsertUser($pb.ServerContext ctx, $1.UpsertUserRequest request);
   $async.Future<$1.GetSectorsResponse> getSectors($pb.ServerContext ctx, $1.GetSectorsRequest request);
+  $async.Future<$1.GetCommunitiesResponse> getCommunities($pb.ServerContext ctx, $1.GetCommunitiesRequest request);
   $async.Future<$1.GetCustomersResponse> getCustomers($pb.ServerContext ctx, $1.GetCustomersRequest request);
   $async.Future<$1.GetReadingsResponse> getReadings($pb.ServerContext ctx, $1.GetReadingsRequest request);
   $async.Future<$1.GetSettingsResponse> getSettings($pb.ServerContext ctx, $1.GetSettingsRequest request);
@@ -36,6 +37,8 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
   $async.Future<$1.GetPeriodStatsResponse> getPeriodStats($pb.ServerContext ctx, $1.GetPeriodStatsRequest request);
   $async.Future<$1.OpenPeriodResponse> openPeriod($pb.ServerContext ctx, $1.OpenPeriodRequest request);
   $async.Future<$1.ClosePeriodResponse> closePeriod($pb.ServerContext ctx, $1.ClosePeriodRequest request);
+  $async.Future<$1.UpsertSectorResponse> upsertSector($pb.ServerContext ctx, $1.UpsertSectorRequest request);
+  $async.Future<$1.UpsertCommunityResponse> upsertCommunity($pb.ServerContext ctx, $1.UpsertCommunityRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -43,6 +46,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'GetUsers': return $1.GetUsersRequest();
       case 'UpsertUser': return $1.UpsertUserRequest();
       case 'GetSectors': return $1.GetSectorsRequest();
+      case 'GetCommunities': return $1.GetCommunitiesRequest();
       case 'GetCustomers': return $1.GetCustomersRequest();
       case 'GetReadings': return $1.GetReadingsRequest();
       case 'GetSettings': return $1.GetSettingsRequest();
@@ -54,6 +58,8 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'GetPeriodStats': return $1.GetPeriodStatsRequest();
       case 'OpenPeriod': return $1.OpenPeriodRequest();
       case 'ClosePeriod': return $1.ClosePeriodRequest();
+      case 'UpsertSector': return $1.UpsertSectorRequest();
+      case 'UpsertCommunity': return $1.UpsertCommunityRequest();
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }
@@ -64,6 +70,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'GetUsers': return this.getUsers(ctx, request as $1.GetUsersRequest);
       case 'UpsertUser': return this.upsertUser(ctx, request as $1.UpsertUserRequest);
       case 'GetSectors': return this.getSectors(ctx, request as $1.GetSectorsRequest);
+      case 'GetCommunities': return this.getCommunities(ctx, request as $1.GetCommunitiesRequest);
       case 'GetCustomers': return this.getCustomers(ctx, request as $1.GetCustomersRequest);
       case 'GetReadings': return this.getReadings(ctx, request as $1.GetReadingsRequest);
       case 'GetSettings': return this.getSettings(ctx, request as $1.GetSettingsRequest);
@@ -75,6 +82,8 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'GetPeriodStats': return this.getPeriodStats(ctx, request as $1.GetPeriodStatsRequest);
       case 'OpenPeriod': return this.openPeriod(ctx, request as $1.OpenPeriodRequest);
       case 'ClosePeriod': return this.closePeriod(ctx, request as $1.ClosePeriodRequest);
+      case 'UpsertSector': return this.upsertSector(ctx, request as $1.UpsertSectorRequest);
+      case 'UpsertCommunity': return this.upsertCommunity(ctx, request as $1.UpsertCommunityRequest);
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }

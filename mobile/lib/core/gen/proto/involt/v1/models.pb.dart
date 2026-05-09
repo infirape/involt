@@ -22,6 +22,7 @@ class Community extends $pb.GeneratedMessage {
   factory Community({
     $core.String? id,
     $core.String? name,
+    $core.int? customerCount,
   }) {
     final $result = create();
     if (id != null) {
@@ -29,6 +30,9 @@ class Community extends $pb.GeneratedMessage {
     }
     if (name != null) {
       $result.name = name;
+    }
+    if (customerCount != null) {
+      $result.customerCount = customerCount;
     }
     return $result;
   }
@@ -39,6 +43,7 @@ class Community extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Community', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'id')
     ..aOS(2, _omitFieldNames ? '' : 'name')
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'customerCount', $pb.PbFieldType.OU3)
     ..hasRequiredFields = false
   ;
 
@@ -80,6 +85,15 @@ class Community extends $pb.GeneratedMessage {
   $core.bool hasName() => $_has(1);
   @$pb.TagNumber(2)
   void clearName() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get customerCount => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set customerCount($core.int v) { $_setUnsignedInt32(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasCustomerCount() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearCustomerCount() => clearField(3);
 }
 
 /// Sector represents a specific area within a community (e.g., Sector A, Tambillo Alto).
@@ -421,6 +435,7 @@ class Reading extends $pb.GeneratedMessage {
     $core.String? expirationDate,
     $core.String? period,
     $core.String? observation,
+    $core.String? customerName,
   }) {
     final $result = create();
     if (id != null) {
@@ -495,6 +510,9 @@ class Reading extends $pb.GeneratedMessage {
     if (observation != null) {
       $result.observation = observation;
     }
+    if (customerName != null) {
+      $result.customerName = customerName;
+    }
     return $result;
   }
   Reading._() : super();
@@ -526,6 +544,7 @@ class Reading extends $pb.GeneratedMessage {
     ..aOS(22, _omitFieldNames ? '' : 'expirationDate')
     ..aOS(23, _omitFieldNames ? '' : 'period')
     ..aOS(24, _omitFieldNames ? '' : 'observation')
+    ..aOS(25, _omitFieldNames ? '' : 'customerName')
     ..hasRequiredFields = false
   ;
 
@@ -768,6 +787,15 @@ class Reading extends $pb.GeneratedMessage {
   $core.bool hasObservation() => $_has(23);
   @$pb.TagNumber(24)
   void clearObservation() => clearField(24);
+
+  @$pb.TagNumber(25)
+  $core.String get customerName => $_getSZ(24);
+  @$pb.TagNumber(25)
+  set customerName($core.String v) { $_setString(24, v); }
+  @$pb.TagNumber(25)
+  $core.bool hasCustomerName() => $_has(24);
+  @$pb.TagNumber(25)
+  void clearCustomerName() => clearField(25);
 }
 
 /// AppConfig contains remote configuration for the mobile application.

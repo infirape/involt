@@ -125,6 +125,7 @@ type Community struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	CustomerCount uint32                 `protobuf:"varint,3,opt,name=customer_count,json=customerCount,proto3" json:"customer_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -171,6 +172,13 @@ func (x *Community) GetName() string {
 		return x.Name
 	}
 	return ""
+}
+
+func (x *Community) GetCustomerCount() uint32 {
+	if x != nil {
+		return x.CustomerCount
+	}
+	return 0
 }
 
 // Sector represents a specific area within a community (e.g., Sector A, Tambillo Alto).
@@ -958,10 +966,11 @@ var File_involt_v1_models_proto protoreflect.FileDescriptor
 
 const file_involt_v1_models_proto_rawDesc = "" +
 	"\n" +
-	"\x16involt/v1/models.proto\x12\tinvolt.v1\"/\n" +
+	"\x16involt/v1/models.proto\x12\tinvolt.v1\"V\n" +
 	"\tCommunity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"O\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12%\n" +
+	"\x0ecustomer_count\x18\x03 \x01(\rR\rcustomerCount\"O\n" +
 	"\x06Sector\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\fcommunity_id\x18\x02 \x01(\tR\vcommunityId\x12\x12\n" +

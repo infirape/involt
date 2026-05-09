@@ -19,6 +19,214 @@ import 'models.pb.dart' as $0;
 
 export 'admin.pbenum.dart';
 
+class UpsertSectorRequest extends $pb.GeneratedMessage {
+  factory UpsertSectorRequest({
+    $0.Sector? sector,
+  }) {
+    final $result = create();
+    if (sector != null) {
+      $result.sector = sector;
+    }
+    return $result;
+  }
+  UpsertSectorRequest._() : super();
+  factory UpsertSectorRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UpsertSectorRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UpsertSectorRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOM<$0.Sector>(1, _omitFieldNames ? '' : 'sector', subBuilder: $0.Sector.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UpsertSectorRequest clone() => UpsertSectorRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UpsertSectorRequest copyWith(void Function(UpsertSectorRequest) updates) => super.copyWith((message) => updates(message as UpsertSectorRequest)) as UpsertSectorRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UpsertSectorRequest create() => UpsertSectorRequest._();
+  UpsertSectorRequest createEmptyInstance() => create();
+  static $pb.PbList<UpsertSectorRequest> createRepeated() => $pb.PbList<UpsertSectorRequest>();
+  @$core.pragma('dart2js:noInline')
+  static UpsertSectorRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpsertSectorRequest>(create);
+  static UpsertSectorRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.Sector get sector => $_getN(0);
+  @$pb.TagNumber(1)
+  set sector($0.Sector v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSector() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSector() => clearField(1);
+  @$pb.TagNumber(1)
+  $0.Sector ensureSector() => $_ensure(0);
+}
+
+class UpsertSectorResponse extends $pb.GeneratedMessage {
+  factory UpsertSectorResponse({
+    $0.Sector? sector,
+  }) {
+    final $result = create();
+    if (sector != null) {
+      $result.sector = sector;
+    }
+    return $result;
+  }
+  UpsertSectorResponse._() : super();
+  factory UpsertSectorResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UpsertSectorResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UpsertSectorResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOM<$0.Sector>(1, _omitFieldNames ? '' : 'sector', subBuilder: $0.Sector.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UpsertSectorResponse clone() => UpsertSectorResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UpsertSectorResponse copyWith(void Function(UpsertSectorResponse) updates) => super.copyWith((message) => updates(message as UpsertSectorResponse)) as UpsertSectorResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UpsertSectorResponse create() => UpsertSectorResponse._();
+  UpsertSectorResponse createEmptyInstance() => create();
+  static $pb.PbList<UpsertSectorResponse> createRepeated() => $pb.PbList<UpsertSectorResponse>();
+  @$core.pragma('dart2js:noInline')
+  static UpsertSectorResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpsertSectorResponse>(create);
+  static UpsertSectorResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.Sector get sector => $_getN(0);
+  @$pb.TagNumber(1)
+  set sector($0.Sector v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSector() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSector() => clearField(1);
+  @$pb.TagNumber(1)
+  $0.Sector ensureSector() => $_ensure(0);
+}
+
+class UpsertCommunityRequest extends $pb.GeneratedMessage {
+  factory UpsertCommunityRequest({
+    $0.Community? community,
+  }) {
+    final $result = create();
+    if (community != null) {
+      $result.community = community;
+    }
+    return $result;
+  }
+  UpsertCommunityRequest._() : super();
+  factory UpsertCommunityRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UpsertCommunityRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UpsertCommunityRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOM<$0.Community>(1, _omitFieldNames ? '' : 'community', subBuilder: $0.Community.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UpsertCommunityRequest clone() => UpsertCommunityRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UpsertCommunityRequest copyWith(void Function(UpsertCommunityRequest) updates) => super.copyWith((message) => updates(message as UpsertCommunityRequest)) as UpsertCommunityRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UpsertCommunityRequest create() => UpsertCommunityRequest._();
+  UpsertCommunityRequest createEmptyInstance() => create();
+  static $pb.PbList<UpsertCommunityRequest> createRepeated() => $pb.PbList<UpsertCommunityRequest>();
+  @$core.pragma('dart2js:noInline')
+  static UpsertCommunityRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpsertCommunityRequest>(create);
+  static UpsertCommunityRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.Community get community => $_getN(0);
+  @$pb.TagNumber(1)
+  set community($0.Community v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasCommunity() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCommunity() => clearField(1);
+  @$pb.TagNumber(1)
+  $0.Community ensureCommunity() => $_ensure(0);
+}
+
+class UpsertCommunityResponse extends $pb.GeneratedMessage {
+  factory UpsertCommunityResponse({
+    $0.Community? community,
+  }) {
+    final $result = create();
+    if (community != null) {
+      $result.community = community;
+    }
+    return $result;
+  }
+  UpsertCommunityResponse._() : super();
+  factory UpsertCommunityResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UpsertCommunityResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UpsertCommunityResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOM<$0.Community>(1, _omitFieldNames ? '' : 'community', subBuilder: $0.Community.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UpsertCommunityResponse clone() => UpsertCommunityResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UpsertCommunityResponse copyWith(void Function(UpsertCommunityResponse) updates) => super.copyWith((message) => updates(message as UpsertCommunityResponse)) as UpsertCommunityResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UpsertCommunityResponse create() => UpsertCommunityResponse._();
+  UpsertCommunityResponse createEmptyInstance() => create();
+  static $pb.PbList<UpsertCommunityResponse> createRepeated() => $pb.PbList<UpsertCommunityResponse>();
+  @$core.pragma('dart2js:noInline')
+  static UpsertCommunityResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpsertCommunityResponse>(create);
+  static UpsertCommunityResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.Community get community => $_getN(0);
+  @$pb.TagNumber(1)
+  set community($0.Community v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasCommunity() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCommunity() => clearField(1);
+  @$pb.TagNumber(1)
+  $0.Community ensureCommunity() => $_ensure(0);
+}
+
 class DeleteCustomerRequest extends $pb.GeneratedMessage {
   factory DeleteCustomerRequest({
     $core.String? id,
@@ -519,6 +727,82 @@ class GetSectorsResponse extends $pb.GeneratedMessage {
   $core.List<$0.Sector> get sectors => $_getList(0);
 }
 
+class GetCommunitiesRequest extends $pb.GeneratedMessage {
+  factory GetCommunitiesRequest() => create();
+  GetCommunitiesRequest._() : super();
+  factory GetCommunitiesRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetCommunitiesRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetCommunitiesRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetCommunitiesRequest clone() => GetCommunitiesRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetCommunitiesRequest copyWith(void Function(GetCommunitiesRequest) updates) => super.copyWith((message) => updates(message as GetCommunitiesRequest)) as GetCommunitiesRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetCommunitiesRequest create() => GetCommunitiesRequest._();
+  GetCommunitiesRequest createEmptyInstance() => create();
+  static $pb.PbList<GetCommunitiesRequest> createRepeated() => $pb.PbList<GetCommunitiesRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetCommunitiesRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetCommunitiesRequest>(create);
+  static GetCommunitiesRequest? _defaultInstance;
+}
+
+class GetCommunitiesResponse extends $pb.GeneratedMessage {
+  factory GetCommunitiesResponse({
+    $core.Iterable<$0.Community>? communities,
+  }) {
+    final $result = create();
+    if (communities != null) {
+      $result.communities.addAll(communities);
+    }
+    return $result;
+  }
+  GetCommunitiesResponse._() : super();
+  factory GetCommunitiesResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetCommunitiesResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetCommunitiesResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..pc<$0.Community>(1, _omitFieldNames ? '' : 'communities', $pb.PbFieldType.PM, subBuilder: $0.Community.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetCommunitiesResponse clone() => GetCommunitiesResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetCommunitiesResponse copyWith(void Function(GetCommunitiesResponse) updates) => super.copyWith((message) => updates(message as GetCommunitiesResponse)) as GetCommunitiesResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetCommunitiesResponse create() => GetCommunitiesResponse._();
+  GetCommunitiesResponse createEmptyInstance() => create();
+  static $pb.PbList<GetCommunitiesResponse> createRepeated() => $pb.PbList<GetCommunitiesResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetCommunitiesResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetCommunitiesResponse>(create);
+  static GetCommunitiesResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$0.Community> get communities => $_getList(0);
+}
+
 class GetCustomersRequest extends $pb.GeneratedMessage {
   factory GetCustomersRequest({
     $core.String? sectorId,
@@ -526,6 +810,7 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
     $core.int? pageNumber,
     $core.int? pageSize,
     $core.String? excludePeriodId,
+    $core.String? communityId,
   }) {
     final $result = create();
     if (sectorId != null) {
@@ -543,6 +828,9 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
     if (excludePeriodId != null) {
       $result.excludePeriodId = excludePeriodId;
     }
+    if (communityId != null) {
+      $result.communityId = communityId;
+    }
     return $result;
   }
   GetCustomersRequest._() : super();
@@ -555,6 +843,7 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
     ..a<$core.int>(3, _omitFieldNames ? '' : 'pageNumber', $pb.PbFieldType.O3)
     ..a<$core.int>(4, _omitFieldNames ? '' : 'pageSize', $pb.PbFieldType.O3)
     ..aOS(5, _omitFieldNames ? '' : 'excludePeriodId')
+    ..aOS(6, _omitFieldNames ? '' : 'communityId')
     ..hasRequiredFields = false
   ;
 
@@ -623,6 +912,15 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
   $core.bool hasExcludePeriodId() => $_has(4);
   @$pb.TagNumber(5)
   void clearExcludePeriodId() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.String get communityId => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set communityId($core.String v) { $_setString(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasCommunityId() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearCommunityId() => clearField(6);
 }
 
 class GetCustomersResponse extends $pb.GeneratedMessage {
@@ -2133,6 +2431,9 @@ class AdminServiceApi {
   $async.Future<GetSectorsResponse> getSectors($pb.ClientContext? ctx, GetSectorsRequest request) =>
     _client.invoke<GetSectorsResponse>(ctx, 'AdminService', 'GetSectors', request, GetSectorsResponse())
   ;
+  $async.Future<GetCommunitiesResponse> getCommunities($pb.ClientContext? ctx, GetCommunitiesRequest request) =>
+    _client.invoke<GetCommunitiesResponse>(ctx, 'AdminService', 'GetCommunities', request, GetCommunitiesResponse())
+  ;
   $async.Future<GetCustomersResponse> getCustomers($pb.ClientContext? ctx, GetCustomersRequest request) =>
     _client.invoke<GetCustomersResponse>(ctx, 'AdminService', 'GetCustomers', request, GetCustomersResponse())
   ;
@@ -2165,6 +2466,12 @@ class AdminServiceApi {
   ;
   $async.Future<ClosePeriodResponse> closePeriod($pb.ClientContext? ctx, ClosePeriodRequest request) =>
     _client.invoke<ClosePeriodResponse>(ctx, 'AdminService', 'ClosePeriod', request, ClosePeriodResponse())
+  ;
+  $async.Future<UpsertSectorResponse> upsertSector($pb.ClientContext? ctx, UpsertSectorRequest request) =>
+    _client.invoke<UpsertSectorResponse>(ctx, 'AdminService', 'UpsertSector', request, UpsertSectorResponse())
+  ;
+  $async.Future<UpsertCommunityResponse> upsertCommunity($pb.ClientContext? ctx, UpsertCommunityRequest request) =>
+    _client.invoke<UpsertCommunityResponse>(ctx, 'AdminService', 'UpsertCommunity', request, UpsertCommunityResponse())
   ;
 }
 

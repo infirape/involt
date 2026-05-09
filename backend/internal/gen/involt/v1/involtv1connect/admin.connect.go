@@ -41,6 +41,9 @@ const (
 	AdminServiceUpsertUserProcedure = "/involt.v1.AdminService/UpsertUser"
 	// AdminServiceGetSectorsProcedure is the fully-qualified name of the AdminService's GetSectors RPC.
 	AdminServiceGetSectorsProcedure = "/involt.v1.AdminService/GetSectors"
+	// AdminServiceGetCommunitiesProcedure is the fully-qualified name of the AdminService's
+	// GetCommunities RPC.
+	AdminServiceGetCommunitiesProcedure = "/involt.v1.AdminService/GetCommunities"
 	// AdminServiceGetCustomersProcedure is the fully-qualified name of the AdminService's GetCustomers
 	// RPC.
 	AdminServiceGetCustomersProcedure = "/involt.v1.AdminService/GetCustomers"
@@ -73,6 +76,12 @@ const (
 	// AdminServiceClosePeriodProcedure is the fully-qualified name of the AdminService's ClosePeriod
 	// RPC.
 	AdminServiceClosePeriodProcedure = "/involt.v1.AdminService/ClosePeriod"
+	// AdminServiceUpsertSectorProcedure is the fully-qualified name of the AdminService's UpsertSector
+	// RPC.
+	AdminServiceUpsertSectorProcedure = "/involt.v1.AdminService/UpsertSector"
+	// AdminServiceUpsertCommunityProcedure is the fully-qualified name of the AdminService's
+	// UpsertCommunity RPC.
+	AdminServiceUpsertCommunityProcedure = "/involt.v1.AdminService/UpsertCommunity"
 )
 
 // AdminServiceClient is a client for the involt.v1.AdminService service.
@@ -85,6 +94,8 @@ type AdminServiceClient interface {
 	UpsertUser(context.Context, *connect.Request[v1.UpsertUserRequest]) (*connect.Response[v1.UpsertUserResponse], error)
 	// GetSectors returns all available sectors for assignment.
 	GetSectors(context.Context, *connect.Request[v1.GetSectorsRequest]) (*connect.Response[v1.GetSectorsResponse], error)
+	// GetCommunities returns all available communities.
+	GetCommunities(context.Context, *connect.Request[v1.GetCommunitiesRequest]) (*connect.Response[v1.GetCommunitiesResponse], error)
 	// GetCustomers returns a list of all customers.
 	GetCustomers(context.Context, *connect.Request[v1.GetCustomersRequest]) (*connect.Response[v1.GetCustomersResponse], error)
 	// GetReadings returns a list of readings, optionally filtered.
@@ -107,6 +118,10 @@ type AdminServiceClient interface {
 	OpenPeriod(context.Context, *connect.Request[v1.OpenPeriodRequest]) (*connect.Response[v1.OpenPeriodResponse], error)
 	// ClosePeriod closes a billing period and optionally opens the next one.
 	ClosePeriod(context.Context, *connect.Request[v1.ClosePeriodRequest]) (*connect.Response[v1.ClosePeriodResponse], error)
+	// UpsertSector creates or updates a sector.
+	UpsertSector(context.Context, *connect.Request[v1.UpsertSectorRequest]) (*connect.Response[v1.UpsertSectorResponse], error)
+	// UpsertCommunity creates or updates a community.
+	UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error)
 }
 
 // NewAdminServiceClient constructs a client for the involt.v1.AdminService service. By default, it
@@ -142,6 +157,12 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			httpClient,
 			baseURL+AdminServiceGetSectorsProcedure,
 			connect.WithSchema(adminServiceMethods.ByName("GetSectors")),
+			connect.WithClientOptions(opts...),
+		),
+		getCommunities: connect.NewClient[v1.GetCommunitiesRequest, v1.GetCommunitiesResponse](
+			httpClient,
+			baseURL+AdminServiceGetCommunitiesProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetCommunities")),
 			connect.WithClientOptions(opts...),
 		),
 		getCustomers: connect.NewClient[v1.GetCustomersRequest, v1.GetCustomersResponse](
@@ -210,6 +231,18 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("ClosePeriod")),
 			connect.WithClientOptions(opts...),
 		),
+		upsertSector: connect.NewClient[v1.UpsertSectorRequest, v1.UpsertSectorResponse](
+			httpClient,
+			baseURL+AdminServiceUpsertSectorProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("UpsertSector")),
+			connect.WithClientOptions(opts...),
+		),
+		upsertCommunity: connect.NewClient[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse](
+			httpClient,
+			baseURL+AdminServiceUpsertCommunityProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("UpsertCommunity")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -219,6 +252,7 @@ type adminServiceClient struct {
 	getUsers          *connect.Client[v1.GetUsersRequest, v1.GetUsersResponse]
 	upsertUser        *connect.Client[v1.UpsertUserRequest, v1.UpsertUserResponse]
 	getSectors        *connect.Client[v1.GetSectorsRequest, v1.GetSectorsResponse]
+	getCommunities    *connect.Client[v1.GetCommunitiesRequest, v1.GetCommunitiesResponse]
 	getCustomers      *connect.Client[v1.GetCustomersRequest, v1.GetCustomersResponse]
 	getReadings       *connect.Client[v1.GetReadingsRequest, v1.GetReadingsResponse]
 	getSettings       *connect.Client[v1.GetSettingsRequest, v1.GetSettingsResponse]
@@ -230,6 +264,8 @@ type adminServiceClient struct {
 	getPeriodStats    *connect.Client[v1.GetPeriodStatsRequest, v1.GetPeriodStatsResponse]
 	openPeriod        *connect.Client[v1.OpenPeriodRequest, v1.OpenPeriodResponse]
 	closePeriod       *connect.Client[v1.ClosePeriodRequest, v1.ClosePeriodResponse]
+	upsertSector      *connect.Client[v1.UpsertSectorRequest, v1.UpsertSectorResponse]
+	upsertCommunity   *connect.Client[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse]
 }
 
 // Login calls involt.v1.AdminService.Login.
@@ -250,6 +286,11 @@ func (c *adminServiceClient) UpsertUser(ctx context.Context, req *connect.Reques
 // GetSectors calls involt.v1.AdminService.GetSectors.
 func (c *adminServiceClient) GetSectors(ctx context.Context, req *connect.Request[v1.GetSectorsRequest]) (*connect.Response[v1.GetSectorsResponse], error) {
 	return c.getSectors.CallUnary(ctx, req)
+}
+
+// GetCommunities calls involt.v1.AdminService.GetCommunities.
+func (c *adminServiceClient) GetCommunities(ctx context.Context, req *connect.Request[v1.GetCommunitiesRequest]) (*connect.Response[v1.GetCommunitiesResponse], error) {
+	return c.getCommunities.CallUnary(ctx, req)
 }
 
 // GetCustomers calls involt.v1.AdminService.GetCustomers.
@@ -307,6 +348,16 @@ func (c *adminServiceClient) ClosePeriod(ctx context.Context, req *connect.Reque
 	return c.closePeriod.CallUnary(ctx, req)
 }
 
+// UpsertSector calls involt.v1.AdminService.UpsertSector.
+func (c *adminServiceClient) UpsertSector(ctx context.Context, req *connect.Request[v1.UpsertSectorRequest]) (*connect.Response[v1.UpsertSectorResponse], error) {
+	return c.upsertSector.CallUnary(ctx, req)
+}
+
+// UpsertCommunity calls involt.v1.AdminService.UpsertCommunity.
+func (c *adminServiceClient) UpsertCommunity(ctx context.Context, req *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error) {
+	return c.upsertCommunity.CallUnary(ctx, req)
+}
+
 // AdminServiceHandler is an implementation of the involt.v1.AdminService service.
 type AdminServiceHandler interface {
 	// Login authenticates a user and returns a JWT token.
@@ -317,6 +368,8 @@ type AdminServiceHandler interface {
 	UpsertUser(context.Context, *connect.Request[v1.UpsertUserRequest]) (*connect.Response[v1.UpsertUserResponse], error)
 	// GetSectors returns all available sectors for assignment.
 	GetSectors(context.Context, *connect.Request[v1.GetSectorsRequest]) (*connect.Response[v1.GetSectorsResponse], error)
+	// GetCommunities returns all available communities.
+	GetCommunities(context.Context, *connect.Request[v1.GetCommunitiesRequest]) (*connect.Response[v1.GetCommunitiesResponse], error)
 	// GetCustomers returns a list of all customers.
 	GetCustomers(context.Context, *connect.Request[v1.GetCustomersRequest]) (*connect.Response[v1.GetCustomersResponse], error)
 	// GetReadings returns a list of readings, optionally filtered.
@@ -339,6 +392,10 @@ type AdminServiceHandler interface {
 	OpenPeriod(context.Context, *connect.Request[v1.OpenPeriodRequest]) (*connect.Response[v1.OpenPeriodResponse], error)
 	// ClosePeriod closes a billing period and optionally opens the next one.
 	ClosePeriod(context.Context, *connect.Request[v1.ClosePeriodRequest]) (*connect.Response[v1.ClosePeriodResponse], error)
+	// UpsertSector creates or updates a sector.
+	UpsertSector(context.Context, *connect.Request[v1.UpsertSectorRequest]) (*connect.Response[v1.UpsertSectorResponse], error)
+	// UpsertCommunity creates or updates a community.
+	UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error)
 }
 
 // NewAdminServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -370,6 +427,12 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		AdminServiceGetSectorsProcedure,
 		svc.GetSectors,
 		connect.WithSchema(adminServiceMethods.ByName("GetSectors")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetCommunitiesHandler := connect.NewUnaryHandler(
+		AdminServiceGetCommunitiesProcedure,
+		svc.GetCommunities,
+		connect.WithSchema(adminServiceMethods.ByName("GetCommunities")),
 		connect.WithHandlerOptions(opts...),
 	)
 	adminServiceGetCustomersHandler := connect.NewUnaryHandler(
@@ -438,6 +501,18 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("ClosePeriod")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceUpsertSectorHandler := connect.NewUnaryHandler(
+		AdminServiceUpsertSectorProcedure,
+		svc.UpsertSector,
+		connect.WithSchema(adminServiceMethods.ByName("UpsertSector")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceUpsertCommunityHandler := connect.NewUnaryHandler(
+		AdminServiceUpsertCommunityProcedure,
+		svc.UpsertCommunity,
+		connect.WithSchema(adminServiceMethods.ByName("UpsertCommunity")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/involt.v1.AdminService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AdminServiceLoginProcedure:
@@ -448,6 +523,8 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceUpsertUserHandler.ServeHTTP(w, r)
 		case AdminServiceGetSectorsProcedure:
 			adminServiceGetSectorsHandler.ServeHTTP(w, r)
+		case AdminServiceGetCommunitiesProcedure:
+			adminServiceGetCommunitiesHandler.ServeHTTP(w, r)
 		case AdminServiceGetCustomersProcedure:
 			adminServiceGetCustomersHandler.ServeHTTP(w, r)
 		case AdminServiceGetReadingsProcedure:
@@ -470,6 +547,10 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceOpenPeriodHandler.ServeHTTP(w, r)
 		case AdminServiceClosePeriodProcedure:
 			adminServiceClosePeriodHandler.ServeHTTP(w, r)
+		case AdminServiceUpsertSectorProcedure:
+			adminServiceUpsertSectorHandler.ServeHTTP(w, r)
+		case AdminServiceUpsertCommunityProcedure:
+			adminServiceUpsertCommunityHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -493,6 +574,10 @@ func (UnimplementedAdminServiceHandler) UpsertUser(context.Context, *connect.Req
 
 func (UnimplementedAdminServiceHandler) GetSectors(context.Context, *connect.Request[v1.GetSectorsRequest]) (*connect.Response[v1.GetSectorsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetSectors is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetCommunities(context.Context, *connect.Request[v1.GetCommunitiesRequest]) (*connect.Response[v1.GetCommunitiesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCommunities is not implemented"))
 }
 
 func (UnimplementedAdminServiceHandler) GetCustomers(context.Context, *connect.Request[v1.GetCustomersRequest]) (*connect.Response[v1.GetCustomersResponse], error) {
@@ -537,4 +622,12 @@ func (UnimplementedAdminServiceHandler) OpenPeriod(context.Context, *connect.Req
 
 func (UnimplementedAdminServiceHandler) ClosePeriod(context.Context, *connect.Request[v1.ClosePeriodRequest]) (*connect.Response[v1.ClosePeriodResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.ClosePeriod is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) UpsertSector(context.Context, *connect.Request[v1.UpsertSectorRequest]) (*connect.Response[v1.UpsertSectorResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.UpsertSector is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.UpsertCommunity is not implemented"))
 }

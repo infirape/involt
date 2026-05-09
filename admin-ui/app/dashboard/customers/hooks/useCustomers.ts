@@ -29,6 +29,7 @@ export function useCustomers() {
   const [filters, setFilters] = useState({
     sectorId: "",
     searchQuery: "",
+    communityId: "",
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +40,8 @@ export function useCustomers() {
     page: number, 
     size: number, 
     sectorId: string, 
-    searchQuery: string
+    searchQuery: string,
+    communityId: string
   ) => {
     try {
       const [customersResp, sectorsResp] = await Promise.all([
@@ -48,6 +50,7 @@ export function useCustomers() {
           searchQuery,
           pageNumber: page,
           pageSize: size,
+          communityId,
         }),
         adminClient.getSectors({}),
       ]);
@@ -69,28 +72,30 @@ export function useCustomers() {
     }
   }, []);
 
-  const { sectorId, searchQuery } = filters;
+  const { sectorId, searchQuery, communityId } = filters;
   const { pageNumber, pageSize } = pagination;
 
   useEffect(() => {
-    fetchAll(pageNumber, pageSize, sectorId, searchQuery);
-  }, [pageNumber, pageSize, sectorId, searchQuery, fetchAll]);
+    fetchAll(pageNumber, pageSize, sectorId, searchQuery, communityId);
+  }, [pageNumber, pageSize, sectorId, searchQuery, communityId, fetchAll]);
 
   const handleOpenModal = useCallback((customer: Partial<Customer> | null = null) => {
-    setEditingCustomer(
-      customer || {
-        id: crypto.randomUUID(),
-        name: "",
-        code: "",
-        address: "",
-        connectionType: ConnectionType.MONOFASICA,
-        sectorId: data.sectors[0]?.id || "",
-        latitude: 0,
-        longitude: 0,
-        initialReading: 0,
-        tariff: 1.5,
-      },
-    );
+    const defaultCustomer: Partial<Customer> = {
+      id: crypto.randomUUID(),
+      name: "",
+      code: "",
+      address: "",
+      connectionType: ConnectionType.MONOFASICA,
+      sectorId: data.sectors[0]?.id || "",
+      latitude: 0,
+      longitude: 0,
+      initialReading: 0,
+    };
+
+    setEditingCustomer({
+      ...defaultCustomer,
+      ...customer
+    } as any);
     setIsModalOpen(true);
   }, [data.sectors]);
 
@@ -109,7 +114,7 @@ export function useCustomers() {
         customer: customerToSave,
       });
       toast.success("Cliente guardado correctamente");
-      await fetchAll(pageNumber, pageSize, sectorId, searchQuery);
+      await fetchAll(pageNumber, pageSize, sectorId, searchQuery, communityId);
       setIsModalOpen(false);
     } catch (err) {
       console.error("Failed to save customer:", err);
@@ -117,7 +122,7 @@ export function useCustomers() {
     } finally {
       setSaving(false);
     }
-  }, [editingCustomer, data.sectors, fetchAll, pageNumber, pageSize, sectorId, searchQuery]);
+  }, [editingCustomer, data.sectors, fetchAll, pageNumber, pageSize, sectorId, searchQuery, communityId]);
 
   const handleDeleteCustomer = useCallback(async (id: string) => {
     if (!confirm("¿Estás seguro de que deseas dar de baja este suministro? Esta acción no se puede deshacer.")) {
@@ -126,12 +131,12 @@ export function useCustomers() {
     try {
       await adminClient.deleteCustomer({ id });
       toast.success("Suministro dado de baja");
-      await fetchAll(pageNumber, pageSize, sectorId, searchQuery);
+      await fetchAll(pageNumber, pageSize, sectorId, searchQuery, communityId);
     } catch (err) {
       console.error("Failed to delete customer:", err);
       toast.error("Error al eliminar cliente");
     }
-  }, [fetchAll, pageNumber, pageSize, sectorId, searchQuery]);
+  }, [fetchAll, pageNumber, pageSize, sectorId, searchQuery, communityId]);
 
   const totalPages = useMemo(
     () => Math.ceil(data.totalCount / pageSize),

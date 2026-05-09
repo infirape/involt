@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ClosePeriodRequest, ClosePeriodResponse, DeleteCustomerRequest, DeleteCustomerResponse, GetCustomersRequest, GetCustomersResponse, GetDashboardStatsRequest, GetDashboardStatsResponse, GetPeriodStatsRequest, GetPeriodStatsResponse, GetReadingsRequest, GetReadingsResponse, GetSectorsRequest, GetSectorsResponse, GetSettingsRequest, GetSettingsResponse, GetUsersRequest, GetUsersResponse, ListPeriodsRequest, ListPeriodsResponse, LoginRequest, LoginResponse, OpenPeriodRequest, OpenPeriodResponse, UpdateSettingsRequest, UpdateSettingsResponse, UpsertCustomerRequest, UpsertCustomerResponse, UpsertUserRequest, UpsertUserResponse } from "./admin_pb";
+import { ClosePeriodRequest, ClosePeriodResponse, DeleteCustomerRequest, DeleteCustomerResponse, GetCommunitiesRequest, GetCommunitiesResponse, GetCustomersRequest, GetCustomersResponse, GetDashboardStatsRequest, GetDashboardStatsResponse, GetPeriodStatsRequest, GetPeriodStatsResponse, GetReadingsRequest, GetReadingsResponse, GetSectorsRequest, GetSectorsResponse, GetSettingsRequest, GetSettingsResponse, GetUsersRequest, GetUsersResponse, ListPeriodsRequest, ListPeriodsResponse, LoginRequest, LoginResponse, OpenPeriodRequest, OpenPeriodResponse, UpdateSettingsRequest, UpdateSettingsResponse, UpsertCommunityRequest, UpsertCommunityResponse, UpsertCustomerRequest, UpsertCustomerResponse, UpsertSectorRequest, UpsertSectorResponse, UpsertUserRequest, UpsertUserResponse } from "./admin_pb";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -56,6 +56,17 @@ export const AdminService = {
       name: "GetSectors",
       I: GetSectorsRequest,
       O: GetSectorsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * GetCommunities returns all available communities.
+     *
+     * @generated from rpc involt.v1.AdminService.GetCommunities
+     */
+    getCommunities: {
+      name: "GetCommunities",
+      I: GetCommunitiesRequest,
+      O: GetCommunitiesResponse,
       kind: MethodKind.Unary,
     },
     /**
@@ -177,6 +188,28 @@ export const AdminService = {
       name: "ClosePeriod",
       I: ClosePeriodRequest,
       O: ClosePeriodResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * UpsertSector creates or updates a sector.
+     *
+     * @generated from rpc involt.v1.AdminService.UpsertSector
+     */
+    upsertSector: {
+      name: "UpsertSector",
+      I: UpsertSectorRequest,
+      O: UpsertSectorResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * UpsertCommunity creates or updates a community.
+     *
+     * @generated from rpc involt.v1.AdminService.UpsertCommunity
+     */
+    upsertCommunity: {
+      name: "UpsertCommunity",
+      I: UpsertCommunityRequest,
+      O: UpsertCommunityResponse,
       kind: MethodKind.Unary,
     },
   }

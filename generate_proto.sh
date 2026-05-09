@@ -28,6 +28,7 @@ protoc --proto_path="$PROTO_SRC" \
        proto/involt/v1/*.proto
 
 echo "⚙️ Generating TypeScript code (Connect ES)..."
+# We only want TS from buf generate to avoid overwriting Go files if buf.gen.yaml is not perfectly aligned
 export PATH="$PATH:$(pwd)/admin-ui/node_modules/.bin"
 admin-ui/node_modules/.bin/buf generate proto --template buf.gen.yaml
 

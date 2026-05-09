@@ -37,10 +37,7 @@ const CustomerMap = dynamic(
 
 export default function DashboardPage() {
   const router = useRouter();
-  const {
-    data,
-    consumptionDelta,
-  } = useDashboard();
+  const { data, consumptionDelta } = useDashboard();
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   useEffect(() => {
@@ -124,15 +121,6 @@ export default function DashboardPage() {
           <p className="text-muted-foreground/40 font-bold uppercase text-[10px] tracking-[0.3em]">
             Gestión de Suministro Eléctrico • Chetilla, Cajamarca
           </p>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="text-right hidden md:block mr-4">
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
-              Última Sincronización
-            </p>
-            <p className="text-sm font-black text-white">{new Date().toLocaleDateString()}</p>
-          </div>
         </div>
       </div>
 
@@ -284,7 +272,7 @@ export default function DashboardPage() {
               </div>
             </CardContent>
             <div className="p-6 bg-white/2 border-t border-white/5 mt-auto">
-              <button 
+              <button
                 onClick={() => router.push("/dashboard/readings")}
                 className="w-full py-4 rounded-2xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/10 hover:border-primary/40 transition-all shadow-xl"
               >

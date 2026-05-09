@@ -195,6 +195,104 @@ func (h *AdminHandler) GetSectors(
 	return connect.NewResponse(resp), nil
 }
 
+func (h *AdminHandler) UpsertSector(
+	ctx context.Context,
+	req *connect.Request[involtv1.UpsertSectorRequest],
+) (*connect.Response[involtv1.UpsertSectorResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can manage sectors"))
+	}
+
+	s := req.Msg.Sector
+	if s.Name == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("sector name is required"))
+	}
+
+	domainSector := domain.Sector{
+		ID:          s.Id,
+		CommunityID: s.CommunityId,
+		Name:        s.Name,
+	}
+
+	if domainSector.ID == "" {
+		domainSector.ID = uuid.New().String()
+	}
+
+	// SaveSectors takes a slice
+	err := h.metaRepo.SaveSectors(ctx, []domain.Sector{domainSector})
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	return connect.NewResponse(&involtv1.UpsertSectorResponse{
+		Sector: &involtv1.Sector{
+			Id:          domainSector.ID,
+			CommunityId: domainSector.CommunityID,
+			Name:        domainSector.Name,
+		},
+	}), nil
+}
+
+func (h *AdminHandler) GetCommunities(
+	ctx context.Context,
+	req *connect.Request[involtv1.GetCommunitiesRequest],
+) (*connect.Response[involtv1.GetCommunitiesResponse], error) {
+	communities, err := h.metaRepo.ListCommunities(ctx)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	resp := &involtv1.GetCommunitiesResponse{
+		Communities: make([]*involtv1.Community, len(communities)),
+	}
+	for i, c := range communities {
+		resp.Communities[i] = &involtv1.Community{
+			Id:            c.ID,
+			Name:          c.Name,
+			CustomerCount: uint32(c.CustomerCount),
+		}
+	}
+
+	return connect.NewResponse(resp), nil
+}
+
+func (h *AdminHandler) UpsertCommunity(
+	ctx context.Context,
+	req *connect.Request[involtv1.UpsertCommunityRequest],
+) (*connect.Response[involtv1.UpsertCommunityResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can manage communities"))
+	}
+
+	c := req.Msg.Community
+	if c.Name == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("community name is required"))
+	}
+
+	domainCommunity := domain.Community{
+		ID:   c.Id,
+		Name: c.Name,
+	}
+
+	if domainCommunity.ID == "" {
+		domainCommunity.ID = uuid.New().String()
+	}
+
+	err := h.metaRepo.SaveCommunities(ctx, []domain.Community{domainCommunity})
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	return connect.NewResponse(&involtv1.UpsertCommunityResponse{
+		Community: &involtv1.Community{
+			Id:   domainCommunity.ID,
+			Name: domainCommunity.Name,
+		},
+	}), nil
+}
+
 func (h *AdminHandler) GetCustomers(
 	ctx context.Context,
 	req *connect.Request[involtv1.GetCustomersRequest],
@@ -227,8 +325,8 @@ func (h *AdminHandler) GetCustomers(
 		allowedSectors = []string{req.Msg.SectorId}
 	}
 
-	log.Printf("🔍 Admin: GetCustomers (Sector: %s, Search: %s, ExcludePeriod: %s)", req.Msg.SectorId, req.Msg.SearchQuery, req.Msg.ExcludePeriodId)
-	customers, total, err := h.customerRepo.List(ctx, allowedSectors, req.Msg.SearchQuery, int(pageSize), int(offset), req.Msg.ExcludePeriodId)
+	log.Printf("🔍 Admin: GetCustomers (Sector: %s, Community: %s, Search: %s, ExcludePeriod: %s)", req.Msg.SectorId, req.Msg.CommunityId, req.Msg.SearchQuery, req.Msg.ExcludePeriodId)
+	customers, total, err := h.customerRepo.List(ctx, allowedSectors, req.Msg.SearchQuery, int(pageSize), int(offset), req.Msg.ExcludePeriodId, req.Msg.CommunityId)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}

@@ -50,12 +50,14 @@ const Community$json = {
   '2': [
     {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
     {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
+    {'1': 'customer_count', '3': 3, '4': 1, '5': 13, '10': 'customerCount'},
   ],
 };
 
 /// Descriptor for `Community`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List communityDescriptor = $convert.base64Decode(
-    'CglDb21tdW5pdHkSDgoCaWQYASABKAlSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWU=');
+    'CglDb21tdW5pdHkSDgoCaWQYASABKAlSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWUSJQoOY3VzdG'
+    '9tZXJfY291bnQYAyABKA1SDWN1c3RvbWVyQ291bnQ=');
 
 @$core.Deprecated('Use sectorDescriptor instead')
 const Sector$json = {
@@ -133,6 +135,7 @@ const Reading$json = {
     {'1': 'expiration_date', '3': 22, '4': 1, '5': 9, '10': 'expirationDate'},
     {'1': 'period', '3': 23, '4': 1, '5': 9, '10': 'period'},
     {'1': 'observation', '3': 24, '4': 1, '5': 9, '10': 'observation'},
+    {'1': 'customer_name', '3': 25, '4': 1, '5': 9, '10': 'customerName'},
   ],
 };
 
@@ -152,7 +155,8 @@ final $typed_data.Uint8List readingDescriptor = $convert.base64Decode(
     'ZmZXJlbmNlGBMgASgBUg9yb3VuZERpZmZlcmVuY2USKQoQcHJldmlvdXNfYmFsYW5jZRgUIAEo'
     'AVIPcHJldmlvdXNCYWxhbmNlEiMKDW92ZXJkdWVfdG90YWwYFSABKAFSDG92ZXJkdWVUb3RhbB'
     'InCg9leHBpcmF0aW9uX2RhdGUYFiABKAlSDmV4cGlyYXRpb25EYXRlEhYKBnBlcmlvZBgXIAEo'
-    'CVIGcGVyaW9kEiAKC29ic2VydmF0aW9uGBggASgJUgtvYnNlcnZhdGlvbg==');
+    'CVIGcGVyaW9kEiAKC29ic2VydmF0aW9uGBggASgJUgtvYnNlcnZhdGlvbhIjCg1jdXN0b21lcl'
+    '9uYW1lGBkgASgJUgxjdXN0b21lck5hbWU=');
 
 @$core.Deprecated('Use appConfigDescriptor instead')
 const AppConfig$json = {

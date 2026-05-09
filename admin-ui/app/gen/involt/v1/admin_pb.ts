@@ -4,7 +4,7 @@
 
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { Customer, Period, Reading, Sector, Settings } from "./models_pb";
+import type { Community, Customer, Period, Reading, Sector, Settings } from "./models_pb";
 import { file_involt_v1_models } from "./models_pb";
 import type { Message } from "@bufbuild/protobuf";
 
@@ -12,7 +12,75 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file involt/v1/admin.proto.
  */
 export const file_involt_v1_admin: GenFile = /*@__PURE__*/
-  fileDesc("ChVpbnZvbHQvdjEvYWRtaW4ucHJvdG8SCWludm9sdC52MSIjChVEZWxldGVDdXN0b21lclJlcXVlc3QSCgoCaWQYASABKAkiKQoWRGVsZXRlQ3VzdG9tZXJSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIIi8KDExvZ2luUmVxdWVzdBINCgVlbWFpbBgBIAEoCRIQCghwYXNzd29yZBgCIAEoCSI9Cg1Mb2dpblJlc3BvbnNlEg0KBXRva2VuGAEgASgJEh0KBHVzZXIYAiABKAsyDy5pbnZvbHQudjEuVXNlciIRCg9HZXRVc2Vyc1JlcXVlc3QiMgoQR2V0VXNlcnNSZXNwb25zZRIeCgV1c2VycxgBIAMoCzIPLmludm9sdC52MS5Vc2VyIkQKEVVwc2VydFVzZXJSZXF1ZXN0Eh0KBHVzZXIYASABKAsyDy5pbnZvbHQudjEuVXNlchIQCghwYXNzd29yZBgCIAEoCSIzChJVcHNlcnRVc2VyUmVzcG9uc2USHQoEdXNlchgBIAEoCzIPLmludm9sdC52MS5Vc2VyIhMKEUdldFNlY3RvcnNSZXF1ZXN0IjgKEkdldFNlY3RvcnNSZXNwb25zZRIiCgdzZWN0b3JzGAEgAygLMhEuaW52b2x0LnYxLlNlY3RvciKBAQoTR2V0Q3VzdG9tZXJzUmVxdWVzdBIRCglzZWN0b3JfaWQYASABKAkSFAoMc2VhcmNoX3F1ZXJ5GAIgASgJEhMKC3BhZ2VfbnVtYmVyGAMgASgFEhEKCXBhZ2Vfc2l6ZRgEIAEoBRIZChFleGNsdWRlX3BlcmlvZF9pZBgFIAEoCSJTChRHZXRDdXN0b21lcnNSZXNwb25zZRImCgljdXN0b21lcnMYASADKAsyEy5pbnZvbHQudjEuQ3VzdG9tZXISEwoLdG90YWxfY291bnQYAiABKAUidAoSR2V0UmVhZGluZ3NSZXF1ZXN0EhMKC2N1c3RvbWVyX2lkGAEgASgJEhEKCXNlY3Rvcl9pZBgCIAEoCRIOCgZwZXJpb2QYAyABKAkSEwoLcGFnZV9udW1iZXIYBCABKAUSEQoJcGFnZV9zaXplGAUgASgFIlAKE0dldFJlYWRpbmdzUmVzcG9uc2USJAoIcmVhZGluZ3MYASADKAsyEi5pbnZvbHQudjEuUmVhZGluZxITCgt0b3RhbF9jb3VudBgCIAEoBSIUChJHZXRTZXR0aW5nc1JlcXVlc3QiPAoTR2V0U2V0dGluZ3NSZXNwb25zZRIlCghzZXR0aW5ncxgBIAEoCzITLmludm9sdC52MS5TZXR0aW5ncyI+ChVVcGRhdGVTZXR0aW5nc1JlcXVlc3QSJQoIc2V0dGluZ3MYASABKAsyEy5pbnZvbHQudjEuU2V0dGluZ3MiPwoWVXBkYXRlU2V0dGluZ3NSZXNwb25zZRIlCghzZXR0aW5ncxgBIAEoCzITLmludm9sdC52MS5TZXR0aW5ncyI+ChVVcHNlcnRDdXN0b21lclJlcXVlc3QSJQoIY3VzdG9tZXIYASABKAsyEy5pbnZvbHQudjEuQ3VzdG9tZXIiPwoWVXBzZXJ0Q3VzdG9tZXJSZXNwb25zZRIlCghjdXN0b21lchgBIAEoCzITLmludm9sdC52MS5DdXN0b21lciJhCgRVc2VyEgoKAmlkGAEgASgJEg0KBWVtYWlsGAIgASgJEiEKBHJvbGUYAyABKA4yEy5pbnZvbHQudjEuVXNlclJvbGUSGwoTYXNzaWduZWRfc2VjdG9yX2lkcxgEIAMoCSIqChhHZXREYXNoYm9hcmRTdGF0c1JlcXVlc3QSDgoGcGVyaW9kGAEgASgJIo4CChlHZXREYXNoYm9hcmRTdGF0c1Jlc3BvbnNlEhcKD3RvdGFsX2N1c3RvbWVycxgBIAEoBRITCgt0b3RhbF91c2VycxgCIAEoBRIdChV0b3RhbF9yZWFkaW5nc19wZXJpb2QYAyABKAUSHwoXcGVuZGluZ19yZWFkaW5nc19wZXJpb2QYBCABKAUSFQoNdG90YWxfcmV2ZW51ZRgFIAEoARIdChV0b3RhbF9jb25zdW1wdGlvbl9rd2gYBiABKAESIAoYcHJldmlvdXNfY29uc3VtcHRpb25fa3doGAcgASgBEisKDHNlY3Rvcl9zdGF0cxgIIAMoCzIVLmludm9sdC52MS5TZWN0b3JTdGF0IpsBCgpTZWN0b3JTdGF0EhEKCXNlY3Rvcl9pZBgBIAEoCRITCgtzZWN0b3JfbmFtZRgCIAEoCRIYChByZWdpc3RlcmVkX2NvdW50GAMgASgFEhMKC3RvdGFsX2NvdW50GAQgASgFEhsKE3Byb2dyZXNzX3BlcmNlbnRhZ2UYBSABKAUSGQoRdG90YWxfY29uc3VtcHRpb24YBiABKAEiFAoSTGlzdFBlcmlvZHNSZXF1ZXN0IjkKE0xpc3RQZXJpb2RzUmVzcG9uc2USIgoHcGVyaW9kcxgBIAMoCzIRLmludm9sdC52MS5QZXJpb2QiKgoVR2V0UGVyaW9kU3RhdHNSZXF1ZXN0EhEKCXBlcmlvZF9pZBgBIAEoCSKdAQoWR2V0UGVyaW9kU3RhdHNSZXNwb25zZRIXCg90b3RhbF9jdXN0b21lcnMYASABKAUSGQoRcmVhZGluZ3NfY2FwdHVyZWQYAiABKAUSGAoQbWlzc2luZ19yZWFkaW5ncxgDIAEoBRI1ChFtaXNzaW5nX2N1c3RvbWVycxgEIAMoCzIaLmludm9sdC52MS5NaXNzaW5nQ3VzdG9tZXIiYgoPTWlzc2luZ0N1c3RvbWVyEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDAoEY29kZRgDIAEoCRITCgtzZWN0b3JfbmFtZRgEIAEoCRISCgpzdXBlcnZpc29yGAUgASgJIkUKEU9wZW5QZXJpb2RSZXF1ZXN0EgoKAmlkGAEgASgJEhIKCnN0YXJ0X2RhdGUYAiABKAkSEAoIZW5kX2RhdGUYAyABKAkiNwoST3BlblBlcmlvZFJlc3BvbnNlEiEKBnBlcmlvZBgBIAEoCzIRLmludm9sdC52MS5QZXJpb2QiMwoSQ2xvc2VQZXJpb2RSZXF1ZXN0EgoKAmlkGAEgASgJEhEKCW9wZW5fbmV4dBgCIAEoCCJnChNDbG9zZVBlcmlvZFJlc3BvbnNlEigKDWNsb3NlZF9wZXJpb2QYASABKAsyES5pbnZvbHQudjEuUGVyaW9kEiYKC25leHRfcGVyaW9kGAIgASgLMhEuaW52b2x0LnYxLlBlcmlvZCpqCghVc2VyUm9sZRIZChVVU0VSX1JPTEVfVU5TUEVDSUZJRUQQABITCg9VU0VSX1JPTEVfQURNSU4QARIYChRVU0VSX1JPTEVfU1VQRVJWSVNPUhACEhQKEFVTRVJfUk9MRV9SRUFERVIQAzK1CQoMQWRtaW5TZXJ2aWNlEjoKBUxvZ2luEhcuaW52b2x0LnYxLkxvZ2luUmVxdWVzdBoYLmludm9sdC52MS5Mb2dpblJlc3BvbnNlEkMKCEdldFVzZXJzEhouaW52b2x0LnYxLkdldFVzZXJzUmVxdWVzdBobLmludm9sdC52MS5HZXRVc2Vyc1Jlc3BvbnNlEkkKClVwc2VydFVzZXISHC5pbnZvbHQudjEuVXBzZXJ0VXNlclJlcXVlc3QaHS5pbnZvbHQudjEuVXBzZXJ0VXNlclJlc3BvbnNlEkkKCkdldFNlY3RvcnMSHC5pbnZvbHQudjEuR2V0U2VjdG9yc1JlcXVlc3QaHS5pbnZvbHQudjEuR2V0U2VjdG9yc1Jlc3BvbnNlEk8KDEdldEN1c3RvbWVycxIeLmludm9sdC52MS5HZXRDdXN0b21lcnNSZXF1ZXN0Gh8uaW52b2x0LnYxLkdldEN1c3RvbWVyc1Jlc3BvbnNlEkwKC0dldFJlYWRpbmdzEh0uaW52b2x0LnYxLkdldFJlYWRpbmdzUmVxdWVzdBoeLmludm9sdC52MS5HZXRSZWFkaW5nc1Jlc3BvbnNlEkwKC0dldFNldHRpbmdzEh0uaW52b2x0LnYxLkdldFNldHRpbmdzUmVxdWVzdBoeLmludm9sdC52MS5HZXRTZXR0aW5nc1Jlc3BvbnNlElUKDlVwZGF0ZVNldHRpbmdzEiAuaW52b2x0LnYxLlVwZGF0ZVNldHRpbmdzUmVxdWVzdBohLmludm9sdC52MS5VcGRhdGVTZXR0aW5nc1Jlc3BvbnNlElUKDlVwc2VydEN1c3RvbWVyEiAuaW52b2x0LnYxLlVwc2VydEN1c3RvbWVyUmVxdWVzdBohLmludm9sdC52MS5VcHNlcnRDdXN0b21lclJlc3BvbnNlElUKDkRlbGV0ZUN1c3RvbWVyEiAuaW52b2x0LnYxLkRlbGV0ZUN1c3RvbWVyUmVxdWVzdBohLmludm9sdC52MS5EZWxldGVDdXN0b21lclJlc3BvbnNlEl4KEUdldERhc2hib2FyZFN0YXRzEiMuaW52b2x0LnYxLkdldERhc2hib2FyZFN0YXRzUmVxdWVzdBokLmludm9sdC52MS5HZXREYXNoYm9hcmRTdGF0c1Jlc3BvbnNlEkwKC0xpc3RQZXJpb2RzEh0uaW52b2x0LnYxLkxpc3RQZXJpb2RzUmVxdWVzdBoeLmludm9sdC52MS5MaXN0UGVyaW9kc1Jlc3BvbnNlElUKDkdldFBlcmlvZFN0YXRzEiAuaW52b2x0LnYxLkdldFBlcmlvZFN0YXRzUmVxdWVzdBohLmludm9sdC52MS5HZXRQZXJpb2RTdGF0c1Jlc3BvbnNlEkkKCk9wZW5QZXJpb2QSHC5pbnZvbHQudjEuT3BlblBlcmlvZFJlcXVlc3QaHS5pbnZvbHQudjEuT3BlblBlcmlvZFJlc3BvbnNlEkwKC0Nsb3NlUGVyaW9kEh0uaW52b2x0LnYxLkNsb3NlUGVyaW9kUmVxdWVzdBoeLmludm9sdC52MS5DbG9zZVBlcmlvZFJlc3BvbnNlQkJaQGdpdGh1Yi5jb20vaW5maXJhL2ludm9sdC9iYWNrZW5kL2ludGVybmFsL2dlbi9pbnZvbHQvdjE7aW52b2x0djFiBnByb3RvMw", [file_involt_v1_models]);
+  fileDesc("ChVpbnZvbHQvdjEvYWRtaW4ucHJvdG8SCWludm9sdC52MSI4ChNVcHNlcnRTZWN0b3JSZXF1ZXN0EiEKBnNlY3RvchgBIAEoCzIRLmludm9sdC52MS5TZWN0b3IiOQoUVXBzZXJ0U2VjdG9yUmVzcG9uc2USIQoGc2VjdG9yGAEgASgLMhEuaW52b2x0LnYxLlNlY3RvciJBChZVcHNlcnRDb21tdW5pdHlSZXF1ZXN0EicKCWNvbW11bml0eRgBIAEoCzIULmludm9sdC52MS5Db21tdW5pdHkiQgoXVXBzZXJ0Q29tbXVuaXR5UmVzcG9uc2USJwoJY29tbXVuaXR5GAEgASgLMhQuaW52b2x0LnYxLkNvbW11bml0eSIjChVEZWxldGVDdXN0b21lclJlcXVlc3QSCgoCaWQYASABKAkiKQoWRGVsZXRlQ3VzdG9tZXJSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIIi8KDExvZ2luUmVxdWVzdBINCgVlbWFpbBgBIAEoCRIQCghwYXNzd29yZBgCIAEoCSI9Cg1Mb2dpblJlc3BvbnNlEg0KBXRva2VuGAEgASgJEh0KBHVzZXIYAiABKAsyDy5pbnZvbHQudjEuVXNlciIRCg9HZXRVc2Vyc1JlcXVlc3QiMgoQR2V0VXNlcnNSZXNwb25zZRIeCgV1c2VycxgBIAMoCzIPLmludm9sdC52MS5Vc2VyIkQKEVVwc2VydFVzZXJSZXF1ZXN0Eh0KBHVzZXIYASABKAsyDy5pbnZvbHQudjEuVXNlchIQCghwYXNzd29yZBgCIAEoCSIzChJVcHNlcnRVc2VyUmVzcG9uc2USHQoEdXNlchgBIAEoCzIPLmludm9sdC52MS5Vc2VyIhMKEUdldFNlY3RvcnNSZXF1ZXN0IjgKEkdldFNlY3RvcnNSZXNwb25zZRIiCgdzZWN0b3JzGAEgAygLMhEuaW52b2x0LnYxLlNlY3RvciIXChVHZXRDb21tdW5pdGllc1JlcXVlc3QiQwoWR2V0Q29tbXVuaXRpZXNSZXNwb25zZRIpCgtjb21tdW5pdGllcxgBIAMoCzIULmludm9sdC52MS5Db21tdW5pdHkilwEKE0dldEN1c3RvbWVyc1JlcXVlc3QSEQoJc2VjdG9yX2lkGAEgASgJEhQKDHNlYXJjaF9xdWVyeRgCIAEoCRITCgtwYWdlX251bWJlchgDIAEoBRIRCglwYWdlX3NpemUYBCABKAUSGQoRZXhjbHVkZV9wZXJpb2RfaWQYBSABKAkSFAoMY29tbXVuaXR5X2lkGAYgASgJIlMKFEdldEN1c3RvbWVyc1Jlc3BvbnNlEiYKCWN1c3RvbWVycxgBIAMoCzITLmludm9sdC52MS5DdXN0b21lchITCgt0b3RhbF9jb3VudBgCIAEoBSJ0ChJHZXRSZWFkaW5nc1JlcXVlc3QSEwoLY3VzdG9tZXJfaWQYASABKAkSEQoJc2VjdG9yX2lkGAIgASgJEg4KBnBlcmlvZBgDIAEoCRITCgtwYWdlX251bWJlchgEIAEoBRIRCglwYWdlX3NpemUYBSABKAUiUAoTR2V0UmVhZGluZ3NSZXNwb25zZRIkCghyZWFkaW5ncxgBIAMoCzISLmludm9sdC52MS5SZWFkaW5nEhMKC3RvdGFsX2NvdW50GAIgASgFIhQKEkdldFNldHRpbmdzUmVxdWVzdCI8ChNHZXRTZXR0aW5nc1Jlc3BvbnNlEiUKCHNldHRpbmdzGAEgASgLMhMuaW52b2x0LnYxLlNldHRpbmdzIj4KFVVwZGF0ZVNldHRpbmdzUmVxdWVzdBIlCghzZXR0aW5ncxgBIAEoCzITLmludm9sdC52MS5TZXR0aW5ncyI/ChZVcGRhdGVTZXR0aW5nc1Jlc3BvbnNlEiUKCHNldHRpbmdzGAEgASgLMhMuaW52b2x0LnYxLlNldHRpbmdzIj4KFVVwc2VydEN1c3RvbWVyUmVxdWVzdBIlCghjdXN0b21lchgBIAEoCzITLmludm9sdC52MS5DdXN0b21lciI/ChZVcHNlcnRDdXN0b21lclJlc3BvbnNlEiUKCGN1c3RvbWVyGAEgASgLMhMuaW52b2x0LnYxLkN1c3RvbWVyImEKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSIQoEcm9sZRgDIAEoDjITLmludm9sdC52MS5Vc2VyUm9sZRIbChNhc3NpZ25lZF9zZWN0b3JfaWRzGAQgAygJIioKGEdldERhc2hib2FyZFN0YXRzUmVxdWVzdBIOCgZwZXJpb2QYASABKAkijgIKGUdldERhc2hib2FyZFN0YXRzUmVzcG9uc2USFwoPdG90YWxfY3VzdG9tZXJzGAEgASgFEhMKC3RvdGFsX3VzZXJzGAIgASgFEh0KFXRvdGFsX3JlYWRpbmdzX3BlcmlvZBgDIAEoBRIfChdwZW5kaW5nX3JlYWRpbmdzX3BlcmlvZBgEIAEoBRIVCg10b3RhbF9yZXZlbnVlGAUgASgBEh0KFXRvdGFsX2NvbnN1bXB0aW9uX2t3aBgGIAEoARIgChhwcmV2aW91c19jb25zdW1wdGlvbl9rd2gYByABKAESKwoMc2VjdG9yX3N0YXRzGAggAygLMhUuaW52b2x0LnYxLlNlY3RvclN0YXQimwEKClNlY3RvclN0YXQSEQoJc2VjdG9yX2lkGAEgASgJEhMKC3NlY3Rvcl9uYW1lGAIgASgJEhgKEHJlZ2lzdGVyZWRfY291bnQYAyABKAUSEwoLdG90YWxfY291bnQYBCABKAUSGwoTcHJvZ3Jlc3NfcGVyY2VudGFnZRgFIAEoBRIZChF0b3RhbF9jb25zdW1wdGlvbhgGIAEoASIUChJMaXN0UGVyaW9kc1JlcXVlc3QiOQoTTGlzdFBlcmlvZHNSZXNwb25zZRIiCgdwZXJpb2RzGAEgAygLMhEuaW52b2x0LnYxLlBlcmlvZCIqChVHZXRQZXJpb2RTdGF0c1JlcXVlc3QSEQoJcGVyaW9kX2lkGAEgASgJIp0BChZHZXRQZXJpb2RTdGF0c1Jlc3BvbnNlEhcKD3RvdGFsX2N1c3RvbWVycxgBIAEoBRIZChFyZWFkaW5nc19jYXB0dXJlZBgCIAEoBRIYChBtaXNzaW5nX3JlYWRpbmdzGAMgASgFEjUKEW1pc3NpbmdfY3VzdG9tZXJzGAQgAygLMhouaW52b2x0LnYxLk1pc3NpbmdDdXN0b21lciJiCg9NaXNzaW5nQ3VzdG9tZXISCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIMCgRjb2RlGAMgASgJEhMKC3NlY3Rvcl9uYW1lGAQgASgJEhIKCnN1cGVydmlzb3IYBSABKAkiRQoRT3BlblBlcmlvZFJlcXVlc3QSCgoCaWQYASABKAkSEgoKc3RhcnRfZGF0ZRgCIAEoCRIQCghlbmRfZGF0ZRgDIAEoCSI3ChJPcGVuUGVyaW9kUmVzcG9uc2USIQoGcGVyaW9kGAEgASgLMhEuaW52b2x0LnYxLlBlcmlvZCIzChJDbG9zZVBlcmlvZFJlcXVlc3QSCgoCaWQYASABKAkSEQoJb3Blbl9uZXh0GAIgASgIImcKE0Nsb3NlUGVyaW9kUmVzcG9uc2USKAoNY2xvc2VkX3BlcmlvZBgBIAEoCzIRLmludm9sdC52MS5QZXJpb2QSJgoLbmV4dF9wZXJpb2QYAiABKAsyES5pbnZvbHQudjEuUGVyaW9kKmoKCFVzZXJSb2xlEhkKFVVTRVJfUk9MRV9VTlNQRUNJRklFRBAAEhMKD1VTRVJfUk9MRV9BRE1JThABEhgKFFVTRVJfUk9MRV9TVVBFUlZJU09SEAISFAoQVVNFUl9ST0xFX1JFQURFUhADMrcLCgxBZG1pblNlcnZpY2USOgoFTG9naW4SFy5pbnZvbHQudjEuTG9naW5SZXF1ZXN0GhguaW52b2x0LnYxLkxvZ2luUmVzcG9uc2USQwoIR2V0VXNlcnMSGi5pbnZvbHQudjEuR2V0VXNlcnNSZXF1ZXN0GhsuaW52b2x0LnYxLkdldFVzZXJzUmVzcG9uc2USSQoKVXBzZXJ0VXNlchIcLmludm9sdC52MS5VcHNlcnRVc2VyUmVxdWVzdBodLmludm9sdC52MS5VcHNlcnRVc2VyUmVzcG9uc2USSQoKR2V0U2VjdG9ycxIcLmludm9sdC52MS5HZXRTZWN0b3JzUmVxdWVzdBodLmludm9sdC52MS5HZXRTZWN0b3JzUmVzcG9uc2USVQoOR2V0Q29tbXVuaXRpZXMSIC5pbnZvbHQudjEuR2V0Q29tbXVuaXRpZXNSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENvbW11bml0aWVzUmVzcG9uc2USTwoMR2V0Q3VzdG9tZXJzEh4uaW52b2x0LnYxLkdldEN1c3RvbWVyc1JlcXVlc3QaHy5pbnZvbHQudjEuR2V0Q3VzdG9tZXJzUmVzcG9uc2USTAoLR2V0UmVhZGluZ3MSHS5pbnZvbHQudjEuR2V0UmVhZGluZ3NSZXF1ZXN0Gh4uaW52b2x0LnYxLkdldFJlYWRpbmdzUmVzcG9uc2USTAoLR2V0U2V0dGluZ3MSHS5pbnZvbHQudjEuR2V0U2V0dGluZ3NSZXF1ZXN0Gh4uaW52b2x0LnYxLkdldFNldHRpbmdzUmVzcG9uc2USVQoOVXBkYXRlU2V0dGluZ3MSIC5pbnZvbHQudjEuVXBkYXRlU2V0dGluZ3NSZXF1ZXN0GiEuaW52b2x0LnYxLlVwZGF0ZVNldHRpbmdzUmVzcG9uc2USVQoOVXBzZXJ0Q3VzdG9tZXISIC5pbnZvbHQudjEuVXBzZXJ0Q3VzdG9tZXJSZXF1ZXN0GiEuaW52b2x0LnYxLlVwc2VydEN1c3RvbWVyUmVzcG9uc2USVQoORGVsZXRlQ3VzdG9tZXISIC5pbnZvbHQudjEuRGVsZXRlQ3VzdG9tZXJSZXF1ZXN0GiEuaW52b2x0LnYxLkRlbGV0ZUN1c3RvbWVyUmVzcG9uc2USXgoRR2V0RGFzaGJvYXJkU3RhdHMSIy5pbnZvbHQudjEuR2V0RGFzaGJvYXJkU3RhdHNSZXF1ZXN0GiQuaW52b2x0LnYxLkdldERhc2hib2FyZFN0YXRzUmVzcG9uc2USTAoLTGlzdFBlcmlvZHMSHS5pbnZvbHQudjEuTGlzdFBlcmlvZHNSZXF1ZXN0Gh4uaW52b2x0LnYxLkxpc3RQZXJpb2RzUmVzcG9uc2USVQoOR2V0UGVyaW9kU3RhdHMSIC5pbnZvbHQudjEuR2V0UGVyaW9kU3RhdHNSZXF1ZXN0GiEuaW52b2x0LnYxLkdldFBlcmlvZFN0YXRzUmVzcG9uc2USSQoKT3BlblBlcmlvZBIcLmludm9sdC52MS5PcGVuUGVyaW9kUmVxdWVzdBodLmludm9sdC52MS5PcGVuUGVyaW9kUmVzcG9uc2USTAoLQ2xvc2VQZXJpb2QSHS5pbnZvbHQudjEuQ2xvc2VQZXJpb2RSZXF1ZXN0Gh4uaW52b2x0LnYxLkNsb3NlUGVyaW9kUmVzcG9uc2USTwoMVXBzZXJ0U2VjdG9yEh4uaW52b2x0LnYxLlVwc2VydFNlY3RvclJlcXVlc3QaHy5pbnZvbHQudjEuVXBzZXJ0U2VjdG9yUmVzcG9uc2USWAoPVXBzZXJ0Q29tbXVuaXR5EiEuaW52b2x0LnYxLlVwc2VydENvbW11bml0eVJlcXVlc3QaIi5pbnZvbHQudjEuVXBzZXJ0Q29tbXVuaXR5UmVzcG9uc2VCQlpAZ2l0aHViLmNvbS9pbmZpcmEvaW52b2x0L2JhY2tlbmQvaW50ZXJuYWwvZ2VuL2ludm9sdC92MTtpbnZvbHR2MWIGcHJvdG8z", [file_involt_v1_models]);
+
+/**
+ * @generated from message involt.v1.UpsertSectorRequest
+ */
+export type UpsertSectorRequest = Message<"involt.v1.UpsertSectorRequest"> & {
+  /**
+   * @generated from field: involt.v1.Sector sector = 1;
+   */
+  sector?: Sector | undefined;
+};
+
+/**
+ * Describes the message involt.v1.UpsertSectorRequest.
+ * Use `create(UpsertSectorRequestSchema)` to create a new message.
+ */
+export const UpsertSectorRequestSchema: GenMessage<UpsertSectorRequest> = /*@__PURE__*/
+  messageDesc(file_involt_v1_admin, 0);
+
+/**
+ * @generated from message involt.v1.UpsertSectorResponse
+ */
+export type UpsertSectorResponse = Message<"involt.v1.UpsertSectorResponse"> & {
+  /**
+   * @generated from field: involt.v1.Sector sector = 1;
+   */
+  sector?: Sector | undefined;
+};
+
+/**
+ * Describes the message involt.v1.UpsertSectorResponse.
+ * Use `create(UpsertSectorResponseSchema)` to create a new message.
+ */
+export const UpsertSectorResponseSchema: GenMessage<UpsertSectorResponse> = /*@__PURE__*/
+  messageDesc(file_involt_v1_admin, 1);
+
+/**
+ * @generated from message involt.v1.UpsertCommunityRequest
+ */
+export type UpsertCommunityRequest = Message<"involt.v1.UpsertCommunityRequest"> & {
+  /**
+   * @generated from field: involt.v1.Community community = 1;
+   */
+  community?: Community | undefined;
+};
+
+/**
+ * Describes the message involt.v1.UpsertCommunityRequest.
+ * Use `create(UpsertCommunityRequestSchema)` to create a new message.
+ */
+export const UpsertCommunityRequestSchema: GenMessage<UpsertCommunityRequest> = /*@__PURE__*/
+  messageDesc(file_involt_v1_admin, 2);
+
+/**
+ * @generated from message involt.v1.UpsertCommunityResponse
+ */
+export type UpsertCommunityResponse = Message<"involt.v1.UpsertCommunityResponse"> & {
+  /**
+   * @generated from field: involt.v1.Community community = 1;
+   */
+  community?: Community | undefined;
+};
+
+/**
+ * Describes the message involt.v1.UpsertCommunityResponse.
+ * Use `create(UpsertCommunityResponseSchema)` to create a new message.
+ */
+export const UpsertCommunityResponseSchema: GenMessage<UpsertCommunityResponse> = /*@__PURE__*/
+  messageDesc(file_involt_v1_admin, 3);
 
 /**
  * @generated from message involt.v1.DeleteCustomerRequest
@@ -29,7 +97,7 @@ export type DeleteCustomerRequest = Message<"involt.v1.DeleteCustomerRequest"> &
  * Use `create(DeleteCustomerRequestSchema)` to create a new message.
  */
 export const DeleteCustomerRequestSchema: GenMessage<DeleteCustomerRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 0);
+  messageDesc(file_involt_v1_admin, 4);
 
 /**
  * @generated from message involt.v1.DeleteCustomerResponse
@@ -46,7 +114,7 @@ export type DeleteCustomerResponse = Message<"involt.v1.DeleteCustomerResponse">
  * Use `create(DeleteCustomerResponseSchema)` to create a new message.
  */
 export const DeleteCustomerResponseSchema: GenMessage<DeleteCustomerResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 1);
+  messageDesc(file_involt_v1_admin, 5);
 
 /**
  * @generated from message involt.v1.LoginRequest
@@ -68,7 +136,7 @@ export type LoginRequest = Message<"involt.v1.LoginRequest"> & {
  * Use `create(LoginRequestSchema)` to create a new message.
  */
 export const LoginRequestSchema: GenMessage<LoginRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 2);
+  messageDesc(file_involt_v1_admin, 6);
 
 /**
  * @generated from message involt.v1.LoginResponse
@@ -90,7 +158,7 @@ export type LoginResponse = Message<"involt.v1.LoginResponse"> & {
  * Use `create(LoginResponseSchema)` to create a new message.
  */
 export const LoginResponseSchema: GenMessage<LoginResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 3);
+  messageDesc(file_involt_v1_admin, 7);
 
 /**
  * @generated from message involt.v1.GetUsersRequest
@@ -103,7 +171,7 @@ export type GetUsersRequest = Message<"involt.v1.GetUsersRequest"> & {
  * Use `create(GetUsersRequestSchema)` to create a new message.
  */
 export const GetUsersRequestSchema: GenMessage<GetUsersRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 4);
+  messageDesc(file_involt_v1_admin, 8);
 
 /**
  * @generated from message involt.v1.GetUsersResponse
@@ -120,7 +188,7 @@ export type GetUsersResponse = Message<"involt.v1.GetUsersResponse"> & {
  * Use `create(GetUsersResponseSchema)` to create a new message.
  */
 export const GetUsersResponseSchema: GenMessage<GetUsersResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 5);
+  messageDesc(file_involt_v1_admin, 9);
 
 /**
  * @generated from message involt.v1.UpsertUserRequest
@@ -142,7 +210,7 @@ export type UpsertUserRequest = Message<"involt.v1.UpsertUserRequest"> & {
  * Use `create(UpsertUserRequestSchema)` to create a new message.
  */
 export const UpsertUserRequestSchema: GenMessage<UpsertUserRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 6);
+  messageDesc(file_involt_v1_admin, 10);
 
 /**
  * @generated from message involt.v1.UpsertUserResponse
@@ -159,7 +227,7 @@ export type UpsertUserResponse = Message<"involt.v1.UpsertUserResponse"> & {
  * Use `create(UpsertUserResponseSchema)` to create a new message.
  */
 export const UpsertUserResponseSchema: GenMessage<UpsertUserResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 7);
+  messageDesc(file_involt_v1_admin, 11);
 
 /**
  * @generated from message involt.v1.GetSectorsRequest
@@ -172,7 +240,7 @@ export type GetSectorsRequest = Message<"involt.v1.GetSectorsRequest"> & {
  * Use `create(GetSectorsRequestSchema)` to create a new message.
  */
 export const GetSectorsRequestSchema: GenMessage<GetSectorsRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 8);
+  messageDesc(file_involt_v1_admin, 12);
 
 /**
  * @generated from message involt.v1.GetSectorsResponse
@@ -189,7 +257,37 @@ export type GetSectorsResponse = Message<"involt.v1.GetSectorsResponse"> & {
  * Use `create(GetSectorsResponseSchema)` to create a new message.
  */
 export const GetSectorsResponseSchema: GenMessage<GetSectorsResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 9);
+  messageDesc(file_involt_v1_admin, 13);
+
+/**
+ * @generated from message involt.v1.GetCommunitiesRequest
+ */
+export type GetCommunitiesRequest = Message<"involt.v1.GetCommunitiesRequest"> & {
+};
+
+/**
+ * Describes the message involt.v1.GetCommunitiesRequest.
+ * Use `create(GetCommunitiesRequestSchema)` to create a new message.
+ */
+export const GetCommunitiesRequestSchema: GenMessage<GetCommunitiesRequest> = /*@__PURE__*/
+  messageDesc(file_involt_v1_admin, 14);
+
+/**
+ * @generated from message involt.v1.GetCommunitiesResponse
+ */
+export type GetCommunitiesResponse = Message<"involt.v1.GetCommunitiesResponse"> & {
+  /**
+   * @generated from field: repeated involt.v1.Community communities = 1;
+   */
+  communities: Community[];
+};
+
+/**
+ * Describes the message involt.v1.GetCommunitiesResponse.
+ * Use `create(GetCommunitiesResponseSchema)` to create a new message.
+ */
+export const GetCommunitiesResponseSchema: GenMessage<GetCommunitiesResponse> = /*@__PURE__*/
+  messageDesc(file_involt_v1_admin, 15);
 
 /**
  * @generated from message involt.v1.GetCustomersRequest
@@ -219,6 +317,11 @@ export type GetCustomersRequest = Message<"involt.v1.GetCustomersRequest"> & {
    * @generated from field: string exclude_period_id = 5;
    */
   excludePeriodId: string;
+
+  /**
+   * @generated from field: string community_id = 6;
+   */
+  communityId: string;
 };
 
 /**
@@ -226,7 +329,7 @@ export type GetCustomersRequest = Message<"involt.v1.GetCustomersRequest"> & {
  * Use `create(GetCustomersRequestSchema)` to create a new message.
  */
 export const GetCustomersRequestSchema: GenMessage<GetCustomersRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 10);
+  messageDesc(file_involt_v1_admin, 16);
 
 /**
  * @generated from message involt.v1.GetCustomersResponse
@@ -248,7 +351,7 @@ export type GetCustomersResponse = Message<"involt.v1.GetCustomersResponse"> & {
  * Use `create(GetCustomersResponseSchema)` to create a new message.
  */
 export const GetCustomersResponseSchema: GenMessage<GetCustomersResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 11);
+  messageDesc(file_involt_v1_admin, 17);
 
 /**
  * @generated from message involt.v1.GetReadingsRequest
@@ -285,7 +388,7 @@ export type GetReadingsRequest = Message<"involt.v1.GetReadingsRequest"> & {
  * Use `create(GetReadingsRequestSchema)` to create a new message.
  */
 export const GetReadingsRequestSchema: GenMessage<GetReadingsRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 12);
+  messageDesc(file_involt_v1_admin, 18);
 
 /**
  * @generated from message involt.v1.GetReadingsResponse
@@ -307,7 +410,7 @@ export type GetReadingsResponse = Message<"involt.v1.GetReadingsResponse"> & {
  * Use `create(GetReadingsResponseSchema)` to create a new message.
  */
 export const GetReadingsResponseSchema: GenMessage<GetReadingsResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 13);
+  messageDesc(file_involt_v1_admin, 19);
 
 /**
  * @generated from message involt.v1.GetSettingsRequest
@@ -320,7 +423,7 @@ export type GetSettingsRequest = Message<"involt.v1.GetSettingsRequest"> & {
  * Use `create(GetSettingsRequestSchema)` to create a new message.
  */
 export const GetSettingsRequestSchema: GenMessage<GetSettingsRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 14);
+  messageDesc(file_involt_v1_admin, 20);
 
 /**
  * @generated from message involt.v1.GetSettingsResponse
@@ -337,7 +440,7 @@ export type GetSettingsResponse = Message<"involt.v1.GetSettingsResponse"> & {
  * Use `create(GetSettingsResponseSchema)` to create a new message.
  */
 export const GetSettingsResponseSchema: GenMessage<GetSettingsResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 15);
+  messageDesc(file_involt_v1_admin, 21);
 
 /**
  * @generated from message involt.v1.UpdateSettingsRequest
@@ -354,7 +457,7 @@ export type UpdateSettingsRequest = Message<"involt.v1.UpdateSettingsRequest"> &
  * Use `create(UpdateSettingsRequestSchema)` to create a new message.
  */
 export const UpdateSettingsRequestSchema: GenMessage<UpdateSettingsRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 16);
+  messageDesc(file_involt_v1_admin, 22);
 
 /**
  * @generated from message involt.v1.UpdateSettingsResponse
@@ -371,7 +474,7 @@ export type UpdateSettingsResponse = Message<"involt.v1.UpdateSettingsResponse">
  * Use `create(UpdateSettingsResponseSchema)` to create a new message.
  */
 export const UpdateSettingsResponseSchema: GenMessage<UpdateSettingsResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 17);
+  messageDesc(file_involt_v1_admin, 23);
 
 /**
  * @generated from message involt.v1.UpsertCustomerRequest
@@ -388,7 +491,7 @@ export type UpsertCustomerRequest = Message<"involt.v1.UpsertCustomerRequest"> &
  * Use `create(UpsertCustomerRequestSchema)` to create a new message.
  */
 export const UpsertCustomerRequestSchema: GenMessage<UpsertCustomerRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 18);
+  messageDesc(file_involt_v1_admin, 24);
 
 /**
  * @generated from message involt.v1.UpsertCustomerResponse
@@ -405,7 +508,7 @@ export type UpsertCustomerResponse = Message<"involt.v1.UpsertCustomerResponse">
  * Use `create(UpsertCustomerResponseSchema)` to create a new message.
  */
 export const UpsertCustomerResponseSchema: GenMessage<UpsertCustomerResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 19);
+  messageDesc(file_involt_v1_admin, 25);
 
 /**
  * @generated from message involt.v1.User
@@ -437,7 +540,7 @@ export type User = Message<"involt.v1.User"> & {
  * Use `create(UserSchema)` to create a new message.
  */
 export const UserSchema: GenMessage<User> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 20);
+  messageDesc(file_involt_v1_admin, 26);
 
 /**
  * @generated from message involt.v1.GetDashboardStatsRequest
@@ -454,7 +557,7 @@ export type GetDashboardStatsRequest = Message<"involt.v1.GetDashboardStatsReque
  * Use `create(GetDashboardStatsRequestSchema)` to create a new message.
  */
 export const GetDashboardStatsRequestSchema: GenMessage<GetDashboardStatsRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 21);
+  messageDesc(file_involt_v1_admin, 27);
 
 /**
  * @generated from message involt.v1.GetDashboardStatsResponse
@@ -506,7 +609,7 @@ export type GetDashboardStatsResponse = Message<"involt.v1.GetDashboardStatsResp
  * Use `create(GetDashboardStatsResponseSchema)` to create a new message.
  */
 export const GetDashboardStatsResponseSchema: GenMessage<GetDashboardStatsResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 22);
+  messageDesc(file_involt_v1_admin, 28);
 
 /**
  * @generated from message involt.v1.SectorStat
@@ -548,7 +651,7 @@ export type SectorStat = Message<"involt.v1.SectorStat"> & {
  * Use `create(SectorStatSchema)` to create a new message.
  */
 export const SectorStatSchema: GenMessage<SectorStat> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 23);
+  messageDesc(file_involt_v1_admin, 29);
 
 /**
  * @generated from message involt.v1.ListPeriodsRequest
@@ -561,7 +664,7 @@ export type ListPeriodsRequest = Message<"involt.v1.ListPeriodsRequest"> & {
  * Use `create(ListPeriodsRequestSchema)` to create a new message.
  */
 export const ListPeriodsRequestSchema: GenMessage<ListPeriodsRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 24);
+  messageDesc(file_involt_v1_admin, 30);
 
 /**
  * @generated from message involt.v1.ListPeriodsResponse
@@ -578,7 +681,7 @@ export type ListPeriodsResponse = Message<"involt.v1.ListPeriodsResponse"> & {
  * Use `create(ListPeriodsResponseSchema)` to create a new message.
  */
 export const ListPeriodsResponseSchema: GenMessage<ListPeriodsResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 25);
+  messageDesc(file_involt_v1_admin, 31);
 
 /**
  * @generated from message involt.v1.GetPeriodStatsRequest
@@ -595,7 +698,7 @@ export type GetPeriodStatsRequest = Message<"involt.v1.GetPeriodStatsRequest"> &
  * Use `create(GetPeriodStatsRequestSchema)` to create a new message.
  */
 export const GetPeriodStatsRequestSchema: GenMessage<GetPeriodStatsRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 26);
+  messageDesc(file_involt_v1_admin, 32);
 
 /**
  * @generated from message involt.v1.GetPeriodStatsResponse
@@ -627,7 +730,7 @@ export type GetPeriodStatsResponse = Message<"involt.v1.GetPeriodStatsResponse">
  * Use `create(GetPeriodStatsResponseSchema)` to create a new message.
  */
 export const GetPeriodStatsResponseSchema: GenMessage<GetPeriodStatsResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 27);
+  messageDesc(file_involt_v1_admin, 33);
 
 /**
  * @generated from message involt.v1.MissingCustomer
@@ -664,7 +767,7 @@ export type MissingCustomer = Message<"involt.v1.MissingCustomer"> & {
  * Use `create(MissingCustomerSchema)` to create a new message.
  */
 export const MissingCustomerSchema: GenMessage<MissingCustomer> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 28);
+  messageDesc(file_involt_v1_admin, 34);
 
 /**
  * @generated from message involt.v1.OpenPeriodRequest
@@ -693,7 +796,7 @@ export type OpenPeriodRequest = Message<"involt.v1.OpenPeriodRequest"> & {
  * Use `create(OpenPeriodRequestSchema)` to create a new message.
  */
 export const OpenPeriodRequestSchema: GenMessage<OpenPeriodRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 29);
+  messageDesc(file_involt_v1_admin, 35);
 
 /**
  * @generated from message involt.v1.OpenPeriodResponse
@@ -710,7 +813,7 @@ export type OpenPeriodResponse = Message<"involt.v1.OpenPeriodResponse"> & {
  * Use `create(OpenPeriodResponseSchema)` to create a new message.
  */
 export const OpenPeriodResponseSchema: GenMessage<OpenPeriodResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 30);
+  messageDesc(file_involt_v1_admin, 36);
 
 /**
  * @generated from message involt.v1.ClosePeriodRequest
@@ -732,7 +835,7 @@ export type ClosePeriodRequest = Message<"involt.v1.ClosePeriodRequest"> & {
  * Use `create(ClosePeriodRequestSchema)` to create a new message.
  */
 export const ClosePeriodRequestSchema: GenMessage<ClosePeriodRequest> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 31);
+  messageDesc(file_involt_v1_admin, 37);
 
 /**
  * @generated from message involt.v1.ClosePeriodResponse
@@ -754,7 +857,7 @@ export type ClosePeriodResponse = Message<"involt.v1.ClosePeriodResponse"> & {
  * Use `create(ClosePeriodResponseSchema)` to create a new message.
  */
 export const ClosePeriodResponseSchema: GenMessage<ClosePeriodResponse> = /*@__PURE__*/
-  messageDesc(file_involt_v1_admin, 32);
+  messageDesc(file_involt_v1_admin, 38);
 
 /**
  * @generated from enum involt.v1.UserRole
@@ -832,6 +935,16 @@ export const AdminService: GenService<{
     methodKind: "unary";
     input: typeof GetSectorsRequestSchema;
     output: typeof GetSectorsResponseSchema;
+  },
+  /**
+   * GetCommunities returns all available communities.
+   *
+   * @generated from rpc involt.v1.AdminService.GetCommunities
+   */
+  getCommunities: {
+    methodKind: "unary";
+    input: typeof GetCommunitiesRequestSchema;
+    output: typeof GetCommunitiesResponseSchema;
   },
   /**
    * GetCustomers returns a list of all customers.
@@ -942,6 +1055,26 @@ export const AdminService: GenService<{
     methodKind: "unary";
     input: typeof ClosePeriodRequestSchema;
     output: typeof ClosePeriodResponseSchema;
+  },
+  /**
+   * UpsertSector creates or updates a sector.
+   *
+   * @generated from rpc involt.v1.AdminService.UpsertSector
+   */
+  upsertSector: {
+    methodKind: "unary";
+    input: typeof UpsertSectorRequestSchema;
+    output: typeof UpsertSectorResponseSchema;
+  },
+  /**
+   * UpsertCommunity creates or updates a community.
+   *
+   * @generated from rpc involt.v1.AdminService.UpsertCommunity
+   */
+  upsertCommunity: {
+    methodKind: "unary";
+    input: typeof UpsertCommunityRequestSchema;
+    output: typeof UpsertCommunityResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_involt_v1_admin, 0);

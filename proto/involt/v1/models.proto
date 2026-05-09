@@ -8,6 +8,7 @@ option go_package = "github.com/infira/involt/backend/internal/gen/involt/v1;inv
 message Community {
   string id = 1;
   string name = 2;
+  uint32 customer_count = 3;
 }
 
 // Sector represents a specific area within a community (e.g., Sector A, Tambillo Alto).

@@ -20,6 +20,9 @@ service AdminService {
   // GetSectors returns all available sectors for assignment.
   rpc GetSectors(GetSectorsRequest) returns (GetSectorsResponse);
 
+  // GetCommunities returns all available communities.
+  rpc GetCommunities(GetCommunitiesRequest) returns (GetCommunitiesResponse);
+
   // GetCustomers returns a list of all customers.
   rpc GetCustomers(GetCustomersRequest) returns (GetCustomersResponse);
 
@@ -52,6 +55,28 @@ service AdminService {
 
   // ClosePeriod closes a billing period and optionally opens the next one.
   rpc ClosePeriod(ClosePeriodRequest) returns (ClosePeriodResponse);
+
+  // UpsertSector creates or updates a sector.
+  rpc UpsertSector(UpsertSectorRequest) returns (UpsertSectorResponse);
+
+  // UpsertCommunity creates or updates a community.
+  rpc UpsertCommunity(UpsertCommunityRequest) returns (UpsertCommunityResponse);
+}
+
+message UpsertSectorRequest {
+  Sector sector = 1;
+}
+
+message UpsertSectorResponse {
+  Sector sector = 1;
+}
+
+message UpsertCommunityRequest {
+  Community community = 1;
+}
+
+message UpsertCommunityResponse {
+  Community community = 1;
 }
 
 message DeleteCustomerRequest {
@@ -93,12 +118,19 @@ message GetSectorsResponse {
   repeated Sector sectors = 1;
 }
 
+message GetCommunitiesRequest {}
+
+message GetCommunitiesResponse {
+  repeated Community communities = 1;
+}
+
 message GetCustomersRequest {
   string sector_id = 1;
   string search_query = 2;
   int32 page_number = 3;
   int32 page_size = 4;
   string exclude_period_id = 5;
+  string community_id = 6;
 }
 
 message GetCustomersResponse {

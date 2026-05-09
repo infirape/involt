@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Menu,
   X,
+  MapPin,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -82,6 +83,7 @@ export default function DashboardLayout({
     ...(isAdmin
       ? [
           { href: "/dashboard/users", label: "Usuarios", icon: Users },
+          { href: "/dashboard/communities", label: "Comunidades", icon: MapPin },
           { href: "/dashboard/periods", label: "Periodos", icon: Calendar },
           {
             href: "/dashboard/settings",

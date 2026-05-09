@@ -42,7 +42,7 @@ func (r *PostgresCustomerRepository) GetByID(ctx context.Context, id string) (*d
 	return &customer, nil
 }
 
-func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int, excludePeriodID string) ([]domain.Customer, int, error) {
+func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int, excludePeriodID string, communityID string) ([]domain.Customer, int, error) {
 	var customers []domain.Customer
 	var total int
 
@@ -51,11 +51,16 @@ func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs 
 		"limit":             limit,
 		"offset":            offset,
 		"exclude_period_id": excludePeriodID,
+		"community_id":      communityID,
 	}
 
 	if len(allowedSectorIDs) > 0 {
 		where += " AND sector_id IN (:allowed_sector_ids)"
 		args["allowed_sector_ids"] = allowedSectorIDs
+	}
+
+	if communityID != "" {
+		where += " AND community_id = :community_id"
 	}
 
 	if searchQuery != "" {

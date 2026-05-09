@@ -18,7 +18,12 @@ func NewPostgresMetadataRepository(db *sqlx.DB) *PostgresMetadataRepository {
 
 func (r *PostgresMetadataRepository) ListCommunities(ctx context.Context) ([]domain.Community, error) {
 	var communities []domain.Community
-	query := "SELECT id, name FROM communities ORDER BY name ASC"
+	query := `
+		SELECT c.id, c.name, COALESCE(COUNT(cust.id), 0) as customer_count 
+		FROM communities c 
+		LEFT JOIN customers cust ON c.id = cust.community_id 
+		GROUP BY c.id, c.name 
+		ORDER BY c.name ASC`
 	err := r.db.SelectContext(ctx, &communities, query)
 	if err != nil {
 		return nil, fmt.Errorf("error listing communities: %w", err)
