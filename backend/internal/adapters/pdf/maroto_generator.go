@@ -123,7 +123,7 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 			col.New(4).Add(
 				image.NewFromFile("assets/logo_chetilla.png", props.Rect{
 					Center:  true,
-					Percent: 85,
+					Percent: 80,
 					Top:     2,
 				}),
 			).WithStyle(&props.Cell{BorderType: border.Top, BorderThickness: borderThick}),
