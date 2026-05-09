@@ -41,6 +41,7 @@ func MapProtoToReading(p *involtv1.Reading) *Reading {
 		OverdueTotal:     p.OverdueTotal,
 		ExpirationDate:   ed,
 		Period:           period,
+		Observation:      p.Observation,
 	}
 }
 
@@ -75,6 +76,7 @@ func MapReadingToProto(d *Reading) *involtv1.Reading {
 		OverdueTotal:     d.OverdueTotal,
 		ExpirationDate:   d.ExpirationDate.Format(time.RFC3339),
 		Period:           period,
+		Observation:      d.Observation,
 	}
 }
 

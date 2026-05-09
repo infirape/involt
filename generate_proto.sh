@@ -27,4 +27,8 @@ protoc --proto_path="$PROTO_SRC" \
        --dart_out="$DART_OUT" \
        proto/involt/v1/*.proto
 
+echo "⚙️ Generating TypeScript code (Connect ES)..."
+export PATH="$PATH:$(pwd)/admin-ui/node_modules/.bin"
+admin-ui/node_modules/.bin/buf generate proto --template buf.gen.yaml
+
 echo "✅ Generation complete!"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Search,
   Save,
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useBulkReadings } from "../hooks/useBulkReadings";
+import { type Customer, type Period } from "@/app/gen/involt/v1/models_pb";
 
 export default function BulkReadingsPage() {
   const router = useRouter();
@@ -28,6 +29,8 @@ export default function BulkReadingsPage() {
     handleInputChange,
     handlePreviousInputChange,
     bulkPreviousReadings,
+    handleObservationChange,
+    bulkObservations,
     handleSave,
     saveSingleReading,
     getPreviousPeriod,
@@ -64,100 +67,90 @@ export default function BulkReadingsPage() {
         </div>
 
         <div className="flex items-center gap-6">
-          <div className="text-right">
-            <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/30">
-              Progreso
-            </p>
-            <p className="text-sm font-black text-primary font-mono">
+          <div className="flex flex-col items-end">
+            <span className="text-[10px] font-black text-white leading-none">
               {data.totalReadings} / {data.totalCount}
-            </p>
+            </span>
+            <div className="w-32 h-1 bg-white/5 rounded-full mt-1 overflow-hidden">
+              <div 
+                className="h-full bg-primary transition-all duration-1000" 
+                style={{ width: `${(data.totalReadings / data.totalCount) * 100}%` }}
+              />
+            </div>
           </div>
-
           <Button
             onClick={handleSave}
-            className="h-10 px-6 font-black uppercase tracking-widest rounded-xl bg-primary text-black hover:scale-105 transition-all shadow-lg shadow-primary/20 disabled:opacity-20 text-[10px]"
+            disabled={loading}
+            className="bg-primary hover:bg-primary/80 text-black font-black px-6 rounded-2xl h-10 shadow-lg shadow-primary/20 flex gap-2 group transition-all active:scale-95"
           >
-            <Save className="w-4 h-4 mr-2" />
-            Guardar
+            <Save className="w-4 h-4 group-hover:scale-110 transition-transform" />
+            GUARDAR TODOS
           </Button>
         </div>
       </div>
 
-      {/* Filters Bar Ultra Compact */}
-      <div className="flex items-center gap-4 p-2 bg-white/5 backdrop-blur-md rounded-xl border border-white/5">
-        <div className="flex-1 flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">
-              Sector:
-            </Label>
-            <select
-              className="bg-zinc-900 border border-white/10 rounded-lg px-2 py-1 text-[11px] font-bold focus:outline-none focus:border-primary/50"
-              value={filters.sectorId}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, sectorId: e.target.value }))
-              }
-            >
-              <option value="">Todos</option>
-              {data.sectors.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* Filters & Search Compact */}
+      <div className="grid grid-cols-12 gap-3">
+        <div className="col-span-3">
+          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 block ml-1">
+            Sector
+          </Label>
+          <select
+            value={filters.sectorId}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, sectorId: e.target.value, page: 1 }))
+            }
+            className="w-full bg-black/40 border-2 border-white/5 rounded-2xl px-4 py-2 text-xs font-bold text-white outline-none focus:border-primary/40 transition-all appearance-none"
+          >
+            <option value="">TODOS LOS SECTORES</option>
+            {data.sectors.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          <div className="flex items-center gap-2 border-l border-white/10 pl-4">
-            <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">
-              Periodo:
-            </Label>
-            <select
-              className="bg-zinc-900 border border-white/10 rounded-lg px-2 py-1 text-[11px] font-bold focus:outline-none focus:border-primary/50"
-              value={filters.periodId}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, periodId: e.target.value }))
-              }
-            >
-              {data.periods.map((p) => (
+        <div className="col-span-3">
+          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1 block ml-1">
+            Periodo
+          </Label>
+          <select
+            value={filters.periodId}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, periodId: e.target.value, page: 1 }))
+            }
+            className="w-full bg-black/40 border-2 border-white/5 rounded-2xl px-4 py-2 text-xs font-bold text-white outline-none focus:border-primary/40 transition-all appearance-none"
+          >
+            {[...data.periods]
+              .sort((a, b) => b.id.localeCompare(a.id))
+              .map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.id}
+                  {p.id} {p.status === 2 ? "(CERRADO)" : ""}
                 </option>
               ))}
-            </select>
-          </div>
+          </select>
+        </div>
 
-          <div className="flex-1 relative group pl-4 border-l border-white/10">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground/30" />
+        <div className="col-span-6 relative flex flex-col justify-end">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30" />
             <input
-              placeholder="Buscar por nombre o código..."
-              className="w-full bg-zinc-900 border border-white/10 rounded-lg py-1 pl-8 pr-3 text-[11px] font-bold focus:outline-none focus:border-primary/50"
+              type="text"
+              placeholder="BUSCAR SUMINISTRO O NOMBRE..."
               value={filters.searchQuery}
               onChange={(e) =>
-                setFilters((prev) => ({ ...prev, searchQuery: e.target.value }))
+                setFilters((prev) => ({ ...prev, searchQuery: e.target.value, page: 1 }))
               }
+              className="w-full bg-black/40 border-2 border-white/5 rounded-2xl pl-12 pr-4 py-2 text-xs font-black placeholder:text-white/10 text-white outline-none focus:border-primary/40 transition-all"
             />
-          </div>
-
-          <div className="flex items-center gap-2 pl-4 border-l border-white/10">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={filters.showMissing}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, showMissing: e.target.checked }))
-                }
-                className="w-4 h-4 rounded bg-white/10 border-white/20 text-primary focus:ring-primary"
-              />
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-                Solo Faltan
-              </span>
-            </label>
           </div>
         </div>
       </div>
 
-      {/* Main Table Ultra Compact */}
-      <Card className="border-white/5 bg-card/10 backdrop-blur-3xl overflow-hidden rounded-2xl shadow-xl">
-        <div className="overflow-x-auto">
+      {/* Main Table Content */}
+      <Card className="bg-black/40 border-white/5 overflow-hidden rounded-3xl shadow-2xl backdrop-blur-xl">
+        <div className="overflow-x-auto max-h-[60vh] scrollbar-thin scrollbar-thumb-white/10">
           <table className="w-full">
             <thead>
               <tr className="border-b border-white/5 bg-white/2">
@@ -181,20 +174,23 @@ export default function BulkReadingsPage() {
                 <th className="px-4 py-2 text-center text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
                   Consumo
                 </th>
+                <th className="px-4 py-2 text-left text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                  Observación
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {loading ? (
                 [1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                   <tr key={i} className="animate-pulse">
-                    <td colSpan={6} className="px-8 py-6">
+                    <td colSpan={7} className="px-8 py-6">
                       <div className="h-8 bg-white/5 rounded-2xl w-full" />
                     </td>
                   </tr>
                 ))
               ) : filteredCustomers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-8 py-20 text-center">
+                  <td colSpan={7} className="px-8 py-20 text-center">
                     <div className="flex flex-col items-center gap-4 opacity-20">
                       <Database className="w-16 h-16" />
                       <p className="text-[10px] font-black uppercase tracking-[0.4em]">
@@ -204,113 +200,25 @@ export default function BulkReadingsPage() {
                   </td>
                 </tr>
               ) : (
-                filteredCustomers.map((customer, index) => {
-                  const isSynced = syncedReadings.has(customer.id);
-                  const prevVal = (customer.lastReadingValue === 0 || isSynced) && 
-                                   bulkPreviousReadings[customer.id] !== undefined && 
-                                   bulkPreviousReadings[customer.id] !== "" 
-                                   ? parseFloat(bulkPreviousReadings[customer.id]) 
-                                   : customer.lastReadingValue;
-
-                  return (
-                    <tr
-                      key={customer.id}
-                      className="hover:bg-white/3 transition-all duration-300 group"
-                    >
-                      <td className="px-4 py-1.5">
-                        <div className="text-[10px] font-black font-mono text-muted-foreground/40">
-                          {(filters.page - 1) * 500 + index + 1}
-                        </div>
-                      </td>
-                      <td className="px-4 py-1.5">
-                        <div className="text-[10px] font-black font-mono text-primary">
-                          {customer.code}
-                        </div>
-                      </td>
-                      <td className="px-4 py-1.5">
-                        <div className="flex flex-col">
-                          <span className="text-[11px] font-black text-white group-hover:text-primary transition-colors tracking-tight">
-                            {customer.name}
-                          </span>
-                        </div>
-                      </td>
-                      {!isOldestPeriod && (
-                        <td className="px-4 py-1.5 text-center">
-                          {customer.lastReadingValue === 0 ? (
-                            <div className="relative w-20 mx-auto">
-                              <input
-                                type="text"
-                                value={bulkPreviousReadings[customer.id] !== undefined ? bulkPreviousReadings[customer.id] : ""}
-                                onChange={(e) => handlePreviousInputChange(customer.id, e.target.value)}
-                                disabled={isSynced}
-                                placeholder="0"
-                                className={`w-full bg-black/40 border-2 rounded-xl px-2 py-1.5 text-xs font-black font-mono transition-all outline-none text-center 
-                                  ${isSynced 
-                                    ? "border-green-500/20 text-green-400/50 cursor-not-allowed" 
-                                    : "border-white/10 text-muted-foreground focus:border-primary focus:bg-black/60"}`}
-                              />
-                            </div>
-                          ) : (
-                            <span className="text-xs font-black font-mono text-muted-foreground/30 tracking-tighter">
-                              {prevVal.toLocaleString()}
-                            </span>
-                          )}
-                        </td>
-                      )}
-                      <td className="px-4 py-1.5 flex justify-center">
-                        <div className="relative w-32 group/input">
-                          <input
-                            id={`input-${customer.id}`}
-                            type="text"
-                            value={bulkReadings[customer.id] || ""}
-                            onChange={(e) => handleInputChange(customer.id, e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                // Save immediately on Enter
-                                saveSingleReading(customer.id, bulkReadings[customer.id]);
-                                
-                                const nextInput = document.getElementById(
-                                  `input-${filteredCustomers[filteredCustomers.indexOf(customer) + 1]?.id}`,
-                                ) as HTMLInputElement;
-                                if (nextInput) nextInput.focus();
-                              }
-                            }}
-                            disabled={isSynced}
-                            placeholder="0.00"
-                            className={`w-full bg-black/40 border-2 rounded-2xl px-4 py-2 text-sm font-black font-mono transition-all outline-none text-center
-                              ${isSynced 
-                                ? "border-green-500/50 text-green-400 cursor-not-allowed" 
-                                : "border-white/10 text-white focus:border-primary focus:bg-black/60 shadow-2xl focus:shadow-primary/20"}`}
-                          />
-                        </div>
-                        <div className="ml-2 flex items-center">
-                          {isSynced ? (
-                            <CheckCircle2 className="w-4 h-4 text-green-500 animate-in zoom-in duration-300" />
-                          ) : bulkReadings[customer.id] ? (
-                            <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-                          ) : null}
-                        </div>
-                      </td>
-                      <td className="px-4 py-1.5 text-center">
-                        {bulkReadings[customer.id] && (
-                          <span
-                            className={`text-xs font-black font-mono tracking-tighter ${
-                              parseFloat(bulkReadings[customer.id]) - prevVal < 0 
-                                ? "text-red-500" 
-                                : "text-cyan-400 font-bold"
-                            }`}
-                          >
-                            {(() => {
-                              const isBilling = data.periods.find((p) => p.id === filters.periodId)?.isBillingPeriod !== false;
-                              if (!isBilling && prevVal === 0) return "-";
-                              return (parseFloat(bulkReadings[customer.id]) - prevVal).toFixed(2);
-                            })()}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })
+                filteredCustomers.map((customer, index) => (
+                  <ReadingRow
+                    key={customer.id}
+                    index={index}
+                    customer={customer}
+                    filters={filters}
+                    isSynced={syncedReadings.has(customer.id)}
+                    bulkReadings={bulkReadings}
+                    bulkPreviousReadings={bulkPreviousReadings}
+                    bulkObservations={bulkObservations}
+                    isOldestPeriod={isOldestPeriod}
+                    handleInputChange={handleInputChange}
+                    handlePreviousInputChange={handlePreviousInputChange}
+                    handleObservationChange={handleObservationChange}
+                    saveSingleReading={saveSingleReading}
+                    filteredCustomers={filteredCustomers}
+                    data={data}
+                  />
+                ))
               )}
             </tbody>
           </table>
@@ -352,17 +260,214 @@ export default function BulkReadingsPage() {
             </Button>
           </div>
         </div>
-      </Card>
-
-      {/* Footer Info Compact */}
-      <div className="flex items-center justify-center gap-8 py-2 opacity-20">
-        <div className="flex items-center gap-2">
-          <AlertCircle className="w-3 h-3" />
-          <span className="text-[8px] font-black uppercase tracking-[0.1em]">
-            Cálculos automáticos en servidor
-          </span>
-        </div>
-      </div>
+</Card>
     </div>
+  );
+}
+
+interface ReadingRowProps {
+  index: number;
+  customer: Customer;
+  filters: {
+    sectorId: string;
+    periodId: string;
+    searchQuery: string;
+    page: number;
+    showMissing: boolean;
+  };
+  isSynced: boolean;
+  bulkReadings: Record<string, string>;
+  bulkPreviousReadings: Record<string, string>;
+  bulkObservations: Record<string, string>;
+  isOldestPeriod: boolean;
+  handleInputChange: (customerId: string, value: string, isPrevious?: boolean) => void;
+  handlePreviousInputChange: (customerId: string, value: string) => void;
+  handleObservationChange: (customerId: string, value: string) => void;
+  saveSingleReading: (customerId: string, value: string) => Promise<void>;
+  filteredCustomers: Customer[];
+  data: {
+    periods: Period[];
+  };
+}
+
+// Sub-component for individual rows to handle local UI state (like 'Other' toggle)
+function ReadingRow({ 
+  index, 
+  customer, 
+  filters, 
+  isSynced, 
+  bulkReadings, 
+  bulkPreviousReadings, 
+  bulkObservations,
+  isOldestPeriod,
+  handleInputChange,
+  handlePreviousInputChange,
+  handleObservationChange,
+  saveSingleReading,
+  filteredCustomers,
+  data
+}: ReadingRowProps) {
+  const PRESETS = ["NO SE PUDO ACCEDER", "MEDIDOR MALOGRADO", "VIVIENDA DESHABITADA", "PERRO AGRESIVO"];
+  
+  const currentObs = bulkObservations[customer.id] || "";
+  const isPreset = PRESETS.includes(currentObs);
+  const [showCustomInput, setShowCustomInput] = useState(currentObs !== "" && !isPreset);
+
+  const prevVal = (customer.lastReadingValue === 0 || isSynced) && 
+                   bulkPreviousReadings[customer.id] !== undefined && 
+                   bulkPreviousReadings[customer.id] !== "" 
+                   ? parseFloat(bulkPreviousReadings[customer.id]) 
+                   : customer.lastReadingValue;
+
+  const rawCurrent = bulkReadings[customer.id] || "";
+  const currentVal = rawCurrent !== "" ? parseFloat(rawCurrent) : null;
+  const consumption = currentVal !== null ? currentVal - prevVal : 0;
+  const isNegative = currentVal !== null && consumption < 0;
+
+  const currentPeriod = data.periods.find((p: Period) => p.id === filters.periodId);
+  const isPeriodOpen = currentPeriod?.status === 1; // 1 = OPEN
+  const canEdit = isPeriodOpen;
+
+  return (
+    <tr className="hover:bg-white/3 transition-all duration-300 group">
+      <td className="px-4 py-1.5">
+        <div className="text-[10px] font-black font-mono text-muted-foreground/40">
+          {(filters.page - 1) * 500 + index + 1}
+        </div>
+      </td>
+      <td className="px-4 py-1.5">
+        <div className="text-[10px] font-black font-mono text-primary">
+          {customer.code}
+        </div>
+      </td>
+      <td className="px-4 py-1.5">
+        <div className="flex flex-col">
+          <div className="text-[10px] font-black tracking-tight text-white leading-none">
+            {customer.name}
+          </div>
+          <div className="text-[8px] font-bold text-muted-foreground/40 mt-1 uppercase">
+            {customer.meterNumber}
+          </div>
+        </div>
+      </td>
+      {!isOldestPeriod && (
+        <td className="px-4 py-1.5">
+          <div className="flex justify-center">
+            {customer.lastReadingValue === 0 ? (
+              <input
+                type="text"
+                value={bulkPreviousReadings[customer.id] !== undefined ? bulkPreviousReadings[customer.id] : ""}
+                onChange={(e) => handlePreviousInputChange(customer.id, e.target.value)}
+                disabled={isSynced}
+                className={`w-20 bg-transparent border-b border-transparent text-center text-[10px] font-mono font-bold outline-none transition-all
+                  ${isSynced ? "text-muted-foreground/20" : "text-yellow-500/50 focus:border-yellow-500/30 focus:text-yellow-500"}`}
+              />
+            ) : (
+              <span className="text-[10px] font-black font-mono text-muted-foreground/30">
+                {prevVal.toLocaleString()}
+              </span>
+            )}
+          </div>
+        </td>
+      )}
+      <td className="px-4 py-1.5 flex justify-center">
+        <div className="relative w-32 group/input">
+          <input
+            id={`input-${customer.id}`}
+            type="text"
+            value={bulkReadings[customer.id] || ""}
+            onChange={(e) => handleInputChange(customer.id, e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                saveSingleReading(customer.id, bulkReadings[customer.id]);
+                const nextInput = document.getElementById(
+                  `input-${filteredCustomers[filteredCustomers.indexOf(customer) + 1]?.id}`,
+                ) as HTMLInputElement;
+                if (nextInput) nextInput.focus();
+              }
+            }}
+            disabled={!canEdit || currentObs !== ""}
+            placeholder="0.00"
+            className={`w-full bg-black/40 border-2 rounded-2xl px-4 py-2 text-sm font-black font-mono transition-all outline-none text-center
+              ${isSynced 
+                ? currentObs !== "" 
+                  ? "border-amber-500/50 text-amber-400 cursor-not-allowed" 
+                  : "border-green-500/50 text-green-400 cursor-not-allowed" 
+                : "border-white/10 text-white focus:border-primary focus:bg-black/60 shadow-2xl focus:shadow-primary/20"}`}
+          />
+        </div>
+        <div className="ml-2 flex items-center">
+          {isSynced ? (
+            currentObs !== "" ? (
+              <CheckCircle2 className="w-4 h-4 text-amber-500 animate-in zoom-in duration-300" />
+            ) : (
+              <CheckCircle2 className="w-4 h-4 text-green-500 animate-in zoom-in duration-300" />
+            )
+          ) : bulkReadings[customer.id] ? (
+            <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+          ) : null}
+        </div>
+      </td>
+      <td className="px-4 py-1.5">
+        <div className={`text-center text-[10px] font-black font-mono transition-colors
+          ${isNegative ? "text-red-500" : "text-cyan-400/60"}`}>
+          {isNegative ? (
+            <span className="flex items-center justify-center gap-1 text-red-500 font-bold animate-pulse">
+              <AlertCircle className="w-3 h-3" />
+              {consumption.toFixed(2)}
+            </span>
+          ) : (
+            <span>
+              {(() => {
+                if (currentVal === null || consumption === 0) return "-";
+                const isBilling = data.periods.find((p: Period) => p.id === filters.periodId)?.isBillingPeriod !== false;
+                if (!isBilling && prevVal === 0) return "-";
+                return consumption > 0 ? `+${consumption.toFixed(2)}` : consumption.toFixed(2);
+              })()}
+            </span>
+          )}
+        </div>
+      </td>
+      <td className="px-4 py-1.5">
+        <div className="flex gap-2 items-center">
+          <select
+            value={showCustomInput ? "OTRO" : currentObs}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === "OTRO") {
+                setShowCustomInput(true);
+                handleObservationChange(customer.id, "");
+              } else {
+                setShowCustomInput(false);
+                handleObservationChange(customer.id, val);
+              }
+            }}
+            disabled={!canEdit}
+            className={`bg-black/40 border-2 rounded-xl px-2 py-1 text-[10px] font-black uppercase tracking-tight outline-none transition-all w-32
+              ${isSynced ? "border-green-500/10 text-green-400/20" : "border-white/5 focus:border-primary text-muted-foreground"}`}
+          >
+            <option value="">Ninguna</option>
+            <option value="NO SE PUDO ACCEDER">Acceso Denegado</option>
+            <option value="MEDIDOR MALOGRADO">Malogrado</option>
+            <option value="VIVIENDA DESHABITADA">Deshabitada</option>
+            <option value="PERRO AGRESIVO">Perro Agresivo</option>
+            <option value="OTRO">Otro...</option>
+          </select>
+
+          {showCustomInput && (
+            <input
+              type="text"
+              placeholder="Escriba el motivo..."
+              value={currentObs}
+              onChange={(e) => handleObservationChange(customer.id, e.target.value.toUpperCase())}
+              disabled={!canEdit}
+              className={`flex-1 min-w-[120px] bg-black/60 border-2 rounded-xl px-3 py-1 text-[10px] font-bold outline-none transition-all
+                ${isSynced ? "border-green-500/10 text-green-400/20" : "border-primary/30 focus:border-primary text-white"}`}
+              autoFocus
+            />
+          )}
+        </div>
+      </td>
+    </tr>
   );
 }

@@ -132,6 +132,7 @@ const Reading$json = {
     {'1': 'overdue_total', '3': 21, '4': 1, '5': 1, '10': 'overdueTotal'},
     {'1': 'expiration_date', '3': 22, '4': 1, '5': 9, '10': 'expirationDate'},
     {'1': 'period', '3': 23, '4': 1, '5': 9, '10': 'period'},
+    {'1': 'observation', '3': 24, '4': 1, '5': 9, '10': 'observation'},
   ],
 };
 
@@ -151,7 +152,7 @@ final $typed_data.Uint8List readingDescriptor = $convert.base64Decode(
     'ZmZXJlbmNlGBMgASgBUg9yb3VuZERpZmZlcmVuY2USKQoQcHJldmlvdXNfYmFsYW5jZRgUIAEo'
     'AVIPcHJldmlvdXNCYWxhbmNlEiMKDW92ZXJkdWVfdG90YWwYFSABKAFSDG92ZXJkdWVUb3RhbB'
     'InCg9leHBpcmF0aW9uX2RhdGUYFiABKAlSDmV4cGlyYXRpb25EYXRlEhYKBnBlcmlvZBgXIAEo'
-    'CVIGcGVyaW9k');
+    'CVIGcGVyaW9kEiAKC29ic2VydmF0aW9uGBggASgJUgtvYnNlcnZhdGlvbg==');
 
 @$core.Deprecated('Use appConfigDescriptor instead')
 const AppConfig$json = {

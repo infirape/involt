@@ -28,14 +28,14 @@ func (r *PostgresReadingRepository) Save(ctx context.Context, reading *domain.Re
 				photo_url, timestamp, latitude, longitude, period_start, period_end,
 				cargo_fijo, alumbrado_publico, mantenimiento, adjustment, subtotal, 
 				saldo_redondeo, round_difference, total_to_pay, previous_balance, 
-				overdue_total, expiration_date, period
+				overdue_total, expiration_date, period, observation
 			  ) 
 	          VALUES (
 				:id, :customer_id, :previous_value, :current_value, :consumption, 
 				:photo_url, :timestamp, :latitude, :longitude, :period_start, :period_end,
 				:cargo_fijo, :alumbrado_publico, :mantenimiento, :adjustment, :subtotal, 
 				:saldo_redondeo, :round_difference, :total_to_pay, :previous_balance, 
-				:overdue_total, :expiration_date, :period
+				:overdue_total, :expiration_date, :period, :observation
 			  ) 
 		ON CONFLICT (id) DO UPDATE SET 
 				previous_value = EXCLUDED.previous_value,
@@ -53,7 +53,8 @@ func (r *PostgresReadingRepository) Save(ctx context.Context, reading *domain.Re
 				saldo_redondeo = EXCLUDED.saldo_redondeo,
 				round_difference = EXCLUDED.round_difference,
 				expiration_date = EXCLUDED.expiration_date,
-				period = EXCLUDED.period`
+				period = EXCLUDED.period,
+				observation = EXCLUDED.observation`
 
 	_, err = tx.NamedExecContext(ctx, query, reading)
 	if err != nil {

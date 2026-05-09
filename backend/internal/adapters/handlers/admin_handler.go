@@ -320,30 +320,7 @@ func (h *AdminHandler) GetReadings(
 		TotalCount: int32(total),
 	}
 	for i, r := range readings {
-		resp.Readings[i] = &involtv1.Reading{
-			Id:               r.ID,
-			CustomerId:       r.CustomerID,
-			PreviousValue:    r.PreviousValue,
-			CurrentValue:     r.CurrentValue,
-			Consumption:      r.Consumption,
-			PhotoUrl:         r.PhotoURL,
-			Timestamp:        r.Timestamp.Format(time.RFC3339),
-			Latitude:         r.Latitude,
-			Longitude:        r.Longitude,
-			PeriodStart:      r.PeriodStart.Format(time.RFC3339),
-			PeriodEnd:        r.PeriodEnd.Format(time.RFC3339),
-			CargoFijo:        r.CargoFijo,
-			AlumbradoPublico: r.AlumbradoPublico,
-			Mantenimiento:    r.Mantenimiento,
-			Adjustment:       r.Adjustment,
-			Subtotal:         r.Subtotal,
-			SaldoRedondeo:    r.SaldoRedondeo,
-			RoundDifference:  r.RoundDifference,
-			PreviousBalance:  r.PreviousBalance,
-			OverdueTotal:     r.OverdueTotal,
-			TotalToPay:       r.TotalToPay,
-			ExpirationDate:   r.ExpirationDate.Format(time.RFC3339),
-		}
+		resp.Readings[i] = domain.MapReadingToProto(&r)
 	}
 
 	return connect.NewResponse(resp), nil

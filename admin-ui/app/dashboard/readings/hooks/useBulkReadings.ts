@@ -50,6 +50,7 @@ export function useBulkReadings() {
   const [bulkReadings, setBulkReadings] = useState<Record<string, string>>({});
   const [bulkPreviousReadings, setBulkPreviousReadings] = useState<Record<string, string>>({});
   const [syncedReadings, setSyncedReadings] = useState<Set<string>>(new Set());
+  const [bulkObservations, setBulkObservations] = useState<Record<string, string>>({});
 
   const fetchReadingsAndCustomers = useCallback(
     async (
@@ -100,6 +101,7 @@ export function useBulkReadings() {
           setBulkReadings((prev) => {
             const newMap = isNewPeriod ? {} : { ...prev };
             const newPrevMap = isNewPeriod ? {} : { ...bulkPreviousReadings };
+            const newObsMap = isNewPeriod ? {} : { ...bulkObservations };
 
             readingsResp.readings.forEach((r) => {
               // Populate current values
@@ -110,11 +112,16 @@ export function useBulkReadings() {
               if (!newPrevMap[r.customerId]) {
                 newPrevMap[r.customerId] = r.previousValue.toString();
               }
+              // Populate observations
+              if (!newObsMap[r.customerId]) {
+                newObsMap[r.customerId] = r.observation;
+              }
               syncedSet.add(r.customerId);
             });
 
-            // We need to update bulkPreviousReadings too
+            // We need to update state
             setBulkPreviousReadings(newPrevMap);
+            setBulkObservations(newObsMap);
             
             return newMap;
           });
@@ -262,8 +269,27 @@ const filteredCustomers = useMemo(() => {
     }
   };
 
+  const handleObservationChange = (customerId: string, value: string) => {
+    setBulkObservations((prev) => ({
+      ...prev,
+      [customerId]: value,
+    }));
+
+    // If an observation is set, automatically set current reading to previous reading
+    if (value !== "") {
+      const prevVal = bulkPreviousReadings[customerId];
+      const customer = data.customers.find((c) => c.id === customerId);
+      const ant = prevVal !== undefined && prevVal !== "" ? prevVal : (customer?.lastReadingValue.toString() || "0");
+      
+      handleInputChange(customerId, ant);
+    }
+  };
+
   const saveSingleReading = async (customerId: string, value: string) => {
-    if (!value || !filters.periodId || syncedReadings.has(customerId)) return;
+    const period = data.periods.find((p) => p.id === filters.periodId);
+    const isPeriodOpen = period?.status === 1;
+
+    if (!value || !filters.periodId || (syncedReadings.has(customerId) && !isPeriodOpen)) return;
 
     const customer = data.customers.find((c) => c.id === customerId);
     const currentValue = parseFloat(value);
@@ -279,6 +305,8 @@ const filteredCustomers = useMemo(() => {
         customerId,
         previousValue,
         currentValue,
+        consumption: currentValue - previousValue,
+        observation: bulkObservations[customerId] || "",
         period: filters.periodId,
         timestamp: new Date().toISOString(),
       });
@@ -293,8 +321,11 @@ const filteredCustomers = useMemo(() => {
   };
 
   const handleSave = async () => {
+    const period = data.periods.find((p) => p.id === filters.periodId);
+    const isPeriodOpen = period?.status === 1;
+
     const entries = Object.entries(bulkReadings).filter(
-      ([customerId, val]) => val !== "" && !syncedReadings.has(customerId),
+      ([customerId, val]) => (val !== "" || bulkObservations[customerId]) && (!syncedReadings.has(customerId) || isPeriodOpen),
     );
 
     if (entries.length === 0) {
@@ -323,13 +354,19 @@ const filteredCustomers = useMemo(() => {
 
       const readingsToPush = entries.map(([customerId, value]) => {
         const customer = data.customers.find((c) => c.id === customerId);
+        const prevVal = bulkPreviousReadings[customerId] !== undefined && bulkPreviousReadings[customerId] !== "" 
+          ? parseFloat(bulkPreviousReadings[customerId]) 
+          : (customer?.lastReadingValue || 0);
+        
+        const currentVal = value !== "" ? parseFloat(value) : prevVal;
+
         return create(ReadingSchema, {
           id: `read-${customerId}-${filters.periodId}`,
           customerId,
-          previousValue: bulkPreviousReadings[customerId] !== undefined && bulkPreviousReadings[customerId] !== "" 
-            ? parseFloat(bulkPreviousReadings[customerId]) 
-            : (customer?.lastReadingValue || 0),
-          currentValue: parseFloat(value),
+          previousValue: prevVal,
+          currentValue: currentVal,
+          consumption: currentVal - prevVal,
+          observation: bulkObservations[customerId] || "",
           period: filters.periodId,
           timestamp: new Date().toISOString(),
         });
@@ -383,6 +420,8 @@ const filteredCustomers = useMemo(() => {
     handleInputChange,
     handlePreviousInputChange,
     bulkPreviousReadings,
+    handleObservationChange,
+    bulkObservations,
     handleSave,
     saveSingleReading,
     focusNextRow,

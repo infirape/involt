@@ -420,6 +420,7 @@ class Reading extends $pb.GeneratedMessage {
     $core.double? overdueTotal,
     $core.String? expirationDate,
     $core.String? period,
+    $core.String? observation,
   }) {
     final $result = create();
     if (id != null) {
@@ -491,6 +492,9 @@ class Reading extends $pb.GeneratedMessage {
     if (period != null) {
       $result.period = period;
     }
+    if (observation != null) {
+      $result.observation = observation;
+    }
     return $result;
   }
   Reading._() : super();
@@ -521,6 +525,7 @@ class Reading extends $pb.GeneratedMessage {
     ..a<$core.double>(21, _omitFieldNames ? '' : 'overdueTotal', $pb.PbFieldType.OD)
     ..aOS(22, _omitFieldNames ? '' : 'expirationDate')
     ..aOS(23, _omitFieldNames ? '' : 'period')
+    ..aOS(24, _omitFieldNames ? '' : 'observation')
     ..hasRequiredFields = false
   ;
 
@@ -754,6 +759,15 @@ class Reading extends $pb.GeneratedMessage {
   $core.bool hasPeriod() => $_has(22);
   @$pb.TagNumber(23)
   void clearPeriod() => clearField(23);
+
+  @$pb.TagNumber(24)
+  $core.String get observation => $_getSZ(23);
+  @$pb.TagNumber(24)
+  set observation($core.String v) { $_setString(23, v); }
+  @$pb.TagNumber(24)
+  $core.bool hasObservation() => $_has(23);
+  @$pb.TagNumber(24)
+  void clearObservation() => clearField(24);
 }
 
 /// AppConfig contains remote configuration for the mobile application.

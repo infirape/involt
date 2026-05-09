@@ -91,6 +91,7 @@ type Reading struct {
 	PreviousBalance  float64 `db:"previous_balance"`
 	OverdueTotal     float64 `db:"overdue_total"`
 	ExpirationDate   time.Time `db:"expiration_date"`
+	Observation      string    `db:"observation"`
 }
 
 // AppConfig contains remote configuration.
