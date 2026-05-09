@@ -100,8 +100,23 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 				text.New(community, props.Text{Left: 1, Top: 2, Size: fontSmall}),
 				text.New(fmt.Sprintf("Cód: %s", customer.Code), props.Text{Left: 1, Top: 6, Size: fontSmall, Style: fontstyle.Bold}),
 				text.New(customer.Name, props.Text{Left: 1, Top: 10, Size: fontNormal, Style: fontstyle.Bold}),
-				text.New(fmt.Sprintf("Impreso: %s", time.Now().Format("02/01/2006")), props.Text{Left: 1, Top: 13.5, Size: 6, Style: fontstyle.Italic}),
-				text.New(customer.Address, props.Text{Left: 1, Top: 17, Size: fontSmall}),
+				text.New(fmt.Sprintf("Impreso: %s", time.Now().Format("02/01/2006")), props.Text{
+					Left: 1, 
+					Top: func() float64 {
+						if len(customer.Name) > 22 { return 17.5 }
+						return 13.5
+					}(), 
+					Size: 6, 
+					Style: fontstyle.Italic,
+				}),
+				text.New(customer.Address, props.Text{
+					Left: 1, 
+					Top: func() float64 {
+						if len(customer.Name) > 22 { return 21.0 }
+						return 17.0
+					}(), 
+					Size: fontSmall,
+				}),
 			).WithStyle(&props.Cell{BorderType: border.Left | border.Top, BorderThickness: borderThick}),
 
 			// Middle Column: Logo
