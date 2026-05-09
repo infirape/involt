@@ -16,7 +16,6 @@ import { Card } from "@/components/ui/card";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { ExportModal } from "@/components/dashboard/readings/ExportModal";
 import { getAdminToken, API_BASE_URL, downloadFile } from "@/lib/utils";
-import { ReadingsStats } from "@/components/dashboard/readings/ReadingsStats";
 import { useReadings } from "./hooks/useReadings";
 import { useRouter } from "next/navigation";
 
@@ -66,56 +65,87 @@ export default function ReadingsPage() {
             {data.totalCount} Registros • General
           </p>
         </div>
-        <div className="flex gap-3">
-          {!isReader && (
-            <>
-              <button
-                onClick={() => router.push("/dashboard/readings/bulk")}
-                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest"
-              >
-                <Zap className="w-4 h-4 text-primary" />
-                Carga Masiva
-              </button>
-              <button
-                onClick={() => setIsExportModalOpen(true)}
-                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-black hover:bg-primary/90 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
-              >
-                <Download className="w-4 h-4" />
-                Descargar Recibos
-              </button>
-            </>
-          )}
-          <div className="relative group">
-            <select
-              className="flex items-center gap-2 px-10 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer outline-none focus:ring-2 focus:ring-primary/20 appearance-none bg-zinc-900 min-w-[160px]"
-              value={filters.period}
-              onChange={(e) => {
-                setFilters((prev) => ({ ...prev, period: e.target.value }));
-                setPagination((prev) => ({ ...prev, pageNumber: 1 }));
-              }}
-            >
-              {data.periods.map((p) => (
-                <option
-                  key={p.id}
-                  value={p.id}
-                  className="bg-zinc-900 text-white"
+        <div className="flex items-center gap-6">
+          {/* Minimalist Stats Overlay */}
+          <div className="hidden lg:flex items-center gap-8 px-8 border-x border-white/5 h-12">
+            <div className="flex flex-col">
+              <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Consumo Total</span>
+              <span className="text-[13px] font-black text-primary italic">
+                {data.stats.totalConsumptionKwh.toLocaleString()} <span className="text-[9px] not-italic opacity-40 ml-0.5">kWh</span>
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Recaudación</span>
+              <span className="text-[13px] font-black text-white">
+                S/ {data.stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Progreso</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[13px] font-black text-cyan-500">
+                  {data.stats.syncPercentage.toFixed(1)}%
+                </span>
+                <div className="w-12 h-1 bg-white/5 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-cyan-500 transition-all duration-1000" 
+                    style={{ width: `${data.stats.syncPercentage}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            {!isReader && (
+              <>
+                <button
+                  onClick={() => router.push("/dashboard/readings/bulk")}
+                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest"
                 >
-                  {p.id}
-                </option>
-              ))}
-            </select>
-            <Calendar className="w-4 h-4 text-primary absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <Zap className="w-4 h-4 text-primary" />
+                  Carga Masiva
+                </button>
+                <button
+                  onClick={() => setIsExportModalOpen(true)}
+                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-black hover:bg-primary/90 transition-all text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+                >
+                  <Download className="w-4 h-4" />
+                  Descargar Recibos
+                </button>
+              </>
+            )}
+            <div className="relative group">
+              <select
+                className="flex items-center gap-2 px-10 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer outline-none focus:ring-2 focus:ring-primary/20 appearance-none bg-zinc-900 min-w-[160px]"
+                value={filters.period}
+                onChange={(e) => {
+                  setFilters((prev) => ({ ...prev, period: e.target.value }));
+                  setPagination((prev) => ({ ...prev, pageNumber: 1 }));
+                }}
+              >
+                {data.periods.map((p) => (
+                  <option
+                    key={p.id}
+                    value={p.id}
+                    className="bg-zinc-900 text-white"
+                  >
+                    {p.id}
+                  </option>
+                ))}
+              </select>
+              <Calendar className="w-4 h-4 text-primary absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Filters Bar */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="md:col-span-2 relative group">
+        <div className="md:col-span-3 relative group">
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
           <input
             type="text"
-            placeholder="Buscar por ID de cliente..."
+            placeholder="Buscar por ID de cliente o Nombre..."
             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-5 text-xs font-bold focus:outline-none focus:border-primary/50 transition-all placeholder:text-muted-foreground/20"
             value={filters.customerId}
             onChange={(e) => {
@@ -148,34 +178,7 @@ export default function ReadingsPage() {
             ))}
           </select>
         </div>
-        <div className="relative group">
-          <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
-          <select
-            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-5 text-xs font-bold focus:outline-none focus:border-primary/50 transition-all appearance-none cursor-pointer"
-            value={filters.period}
-            onChange={(e) => {
-              setFilters((prev) => ({ ...prev, period: e.target.value }));
-              setPagination((prev) => ({ ...prev, pageNumber: 1 }));
-            }}
-          >
-            {data.periods.map((p) => (
-              <option
-                key={p.id}
-                value={p.id}
-                className="bg-zinc-900 text-white"
-              >
-                {p.id}
-              </option>
-            ))}
-          </select>
-        </div>
       </div>
-
-      <ReadingsStats
-        totalConsumptionKwh={data.stats.totalConsumptionKwh}
-        totalRevenue={data.stats.totalRevenue}
-        syncPercentage={data.stats.syncPercentage}
-      />
 
       {/* Main Table Card */}
       <Card className="border-white/5 bg-card/10 backdrop-blur-3xl overflow-hidden rounded-[2.5rem] shadow-2xl">
