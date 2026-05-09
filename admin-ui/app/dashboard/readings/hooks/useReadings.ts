@@ -42,7 +42,7 @@ export function useReadings() {
 
   const { isBilling, colSpan } = useMemo(() => {
     const isB = data.periods.find(p => p.id === filters.period)?.isBillingPeriod !== false;
-    return { isBilling: isB, colSpan: isB ? 6 : 4 };
+    return { isBilling: isB, colSpan: 7 };
   }, [data.periods, filters.period]);
 
   const fetchReadings = useCallback(async (periodId: string, page: number, size: number, customerId: string, sectorId: string) => {

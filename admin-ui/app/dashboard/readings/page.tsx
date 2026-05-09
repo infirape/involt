@@ -195,16 +195,15 @@ export default function ReadingsPage() {
                 <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
                   Consumo
                 </th>
-                {isBilling && (
-                  <>
-                    <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
-                      Monto
-                    </th>
-                    <th className="px-8 py-3 text-right text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
-                      Recibo
-                    </th>
-                  </>
-                )}
+                <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                  Observación
+                </th>
+                <th className="px-8 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                  Monto
+                </th>
+                <th className="px-8 py-3 text-right text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+                  Recibo
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -260,41 +259,48 @@ export default function ReadingsPage() {
                     <td className="px-8 py-3">
                       <div className="flex items-baseline gap-1.5">
                         <span className="text-sm font-black font-mono text-primary tracking-tighter">
-                          {!isBilling
-                            ? "-"
-                            : reading.consumption.toLocaleString()}
+                          {reading.consumption.toLocaleString()}
                         </span>
                         <span className="text-[9px] font-bold text-muted-foreground/30 uppercase">
                           kWh
                         </span>
                       </div>
                     </td>
-                    {isBilling && (
-                      <>
-                        <td className="px-8 py-3">
-                          <span className="text-[11px] font-black text-white">
-                            S/{" "}
-                            {reading.totalToPay.toLocaleString(undefined, {
-                              minimumFractionDigits: 2,
-                            })}
+                    <td className="px-8 py-3">
+                      {reading.observation ? (
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[9px] font-black uppercase tracking-widest text-amber-500">
+                            {reading.observation}
                           </span>
-                        </td>
-                        <td className="px-8 py-3 text-right">
-                          <button
-                            onClick={() => {
-                              const token = getAdminToken();
-                              window.open(
-                                `${API_BASE_URL}/admin/readings/pdf/${reading.id}?token=${encodeURIComponent(token || "")}`,
-                                "_blank",
-                              );
-                            }}
-                            className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 border border-white/5 hover:bg-primary hover:text-black hover:border-primary transition-all group/btn"
-                          >
-                            <Receipt className="w-3.5 h-3.5" />
-                          </button>
-                        </td>
-                      </>
-                    )}
+                        </div>
+                      ) : (
+                        <span className="text-[10px] font-bold text-muted-foreground/20 italic">
+                          Sin obs.
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-8 py-3">
+                      <span className="text-[11px] font-black text-white">
+                        S/{" "}
+                        {reading.totalToPay.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                        })}
+                      </span>
+                    </td>
+                    <td className="px-8 py-3 text-right">
+                      <button
+                        onClick={() => {
+                          const token = getAdminToken();
+                          window.open(
+                            `${API_BASE_URL}/admin/readings/pdf/${reading.id}?token=${encodeURIComponent(token || "")}`,
+                            "_blank",
+                          );
+                        }}
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 border border-white/5 hover:bg-primary hover:text-black hover:border-primary transition-all group/btn"
+                      >
+                        <Receipt className="w-3.5 h-3.5" />
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}

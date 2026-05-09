@@ -37,7 +37,6 @@ func main() {
 		if err == nil {
 			break
 		}
-		log.Printf("⚠️  Database connection failed (attempt %d/5): %v. Retrying in 2s...", i+1, err)
 		time.Sleep(2 * time.Second)
 	}
 
@@ -45,13 +44,9 @@ func main() {
 		log.Fatalf("❌ Database connection failed after 5 attempts: %v", err)
 	}
 	defer db.Close()
-	log.Println("🐘 Connected to PostgreSQL")
 
 	// Initialize database schema
 	if err := initSchema(db); err != nil {
-		log.Printf("⚠️  Schema init warning: %v", err)
-	} else {
-		log.Println("✅ Database schema initialized")
 	}
 
 	// 2. Initialize Repositories

@@ -247,27 +247,30 @@ func (h *SyncHandler) PushReadings(
 			consumption = 0
 		}
 
+		// Initial calculation: only consumption
 		consumptionCharge := consumption * settings.TarifaKWh
-		subtotal := consumptionCharge + settings.CargoFijo + settings.Alumbrado + settings.Mantenimiento
-		total := subtotal + reading.SaldoRedondeo
+		
+		// Fixed charges: only if it's a billing period
+		cargoFijo := 0.0
+		alumbrado := 0.0
+		mantenimiento := 0.0
 
-		// Check if period is billing
 		if period, err := h.periodRepo.GetByID(ctx, reading.Period); err == nil && period != nil {
-			if !period.IsBillingPeriod {
-				log.Printf("   -> Non-billing period %s, setting totals to 0", reading.Period)
-				subtotal = 0
-				total = 0
-				reading.CargoFijo = 0
-				reading.AlumbradoPublico = 0
-				reading.Mantenimiento = 0
-			} else {
-				reading.CargoFijo = settings.CargoFijo
-				reading.AlumbradoPublico = settings.Alumbrado
-				reading.Mantenimiento = settings.Mantenimiento
+			if period.IsBillingPeriod {
+				cargoFijo = settings.CargoFijo
+				alumbrado = settings.Alumbrado
+				mantenimiento = settings.Mantenimiento
 			}
 		}
 
-		// Update with server calculations
+		// Final totals
+		subtotal := consumptionCharge + cargoFijo + alumbrado + mantenimiento
+		total := subtotal + reading.SaldoRedondeo
+
+		// Update reading object
+		reading.CargoFijo = cargoFijo
+		reading.AlumbradoPublico = alumbrado
+		reading.Mantenimiento = mantenimiento
 		reading.Consumption = consumption
 		reading.Subtotal = subtotal
 		reading.TotalToPay = total

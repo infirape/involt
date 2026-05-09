@@ -948,6 +948,11 @@ func (h *AdminHandler) DownloadBulkReceipts(w http.ResponseWriter, r *http.Reque
 
 	// 6. Group readings by sector if returning multiple PDFs
 	readingsBySector := make(map[string][]domain.Reading)
+	// Populate details for all readings before processing
+	for i := range readings {
+		h.populateReadingDetails(&readings[i], settings)
+	}
+
 	if sectorID == "" {
 		for _, r := range readings {
 			cust := customerMap[r.CustomerID]
@@ -1021,12 +1026,27 @@ func (h *AdminHandler) populateReadingDetails(reading *domain.Reading, settings 
 		reading.ExpirationDate = reading.Timestamp.AddDate(0, 0, days)
 	}
 
-	// Calculate subtotal on the fly if zero
-	if reading.Subtotal == 0 {
-		reading.Subtotal = (reading.Consumption * settings.TarifaKWh) + 
-			reading.CargoFijo + 
-			reading.AlumbradoPublico + 
-			settings.Mantenimiento
+	// Calculate subtotal and total on the fly if zero
+	if reading.TotalToPay == 0 && reading.Consumption > 0 {
+		// Try to use settings for fixed charges if they are zero in the reading
+		cargo := reading.CargoFijo
+		if cargo == 0 {
+			cargo = settings.CargoFijo
+		}
+		alumbrado := reading.AlumbradoPublico
+		if alumbrado == 0 {
+			alumbrado = settings.Alumbrado
+		}
+		mantenimiento := reading.Mantenimiento
+		if mantenimiento == 0 {
+			mantenimiento = settings.Mantenimiento
+		}
+
+		reading.CargoFijo = cargo
+		reading.AlumbradoPublico = alumbrado
+		reading.Mantenimiento = mantenimiento
+		reading.Subtotal = (reading.Consumption * settings.TarifaKWh) + cargo + alumbrado + mantenimiento
+		reading.TotalToPay = reading.Subtotal + reading.SaldoRedondeo
 	}
 }
 

@@ -315,11 +315,38 @@ func (h *AdminHandler) GetReadings(
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
+	settings, _ := h.metaRepo.GetSettings(ctx)
+	if settings == nil {
+		settings = &domain.Settings{}
+	}
+
 	resp := &involtv1.GetReadingsResponse{
 		Readings:   make([]*involtv1.Reading, len(readings)),
 		TotalCount: int32(total),
 	}
+
 	for i, r := range readings {
+		// If total is 0 but there is consumption, try to recalculate for display
+		if r.TotalToPay == 0 && r.Consumption > 0 {
+			consumptionCharge := r.Consumption * settings.TarifaKWh
+			cargoFijo := 0.0
+			alumbrado := 0.0
+			mantenimiento := 0.0
+
+			if p, err := h.periodRepo.GetByID(ctx, r.Period); err == nil && p != nil {
+				if p.IsBillingPeriod {
+					cargoFijo = settings.CargoFijo
+					alumbrado = settings.Alumbrado
+					mantenimiento = settings.Mantenimiento
+				}
+			}
+
+			r.Subtotal = consumptionCharge + cargoFijo + alumbrado + mantenimiento
+			r.TotalToPay = r.Subtotal + r.SaldoRedondeo
+			r.CargoFijo = cargoFijo
+			r.AlumbradoPublico = alumbrado
+			r.Mantenimiento = mantenimiento
+		}
 		resp.Readings[i] = domain.MapReadingToProto(&r)
 	}
 
