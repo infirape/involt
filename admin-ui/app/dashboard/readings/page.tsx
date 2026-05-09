@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Calendar,
   Receipt,
   ChevronLeft,
   ChevronRight,

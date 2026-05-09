@@ -15,7 +15,6 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
-import { PeriodStatus } from "@/app/gen/involt/v1/models_pb";
 import { useDashboard } from "./hooks/useDashboard";
 
 const CustomerMap = dynamic(

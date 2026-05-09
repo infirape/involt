@@ -10,7 +10,6 @@ import { adminClient, syncClient } from "@/lib/rpc";
 import {
   type Customer,
   type Sector,
-  PeriodStatus,
   ReadingSchema,
 } from "@/app/gen/involt/v1/models_pb";
 import { create } from "@bufbuild/protobuf";
