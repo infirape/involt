@@ -14,7 +14,6 @@ import (
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 
-	"github.com/infira/involt/backend/cmd/admin"
 	"github.com/infira/involt/backend/internal/adapters/auth"
 	"github.com/infira/involt/backend/internal/adapters/handlers"
 	"github.com/infira/involt/backend/internal/adapters/pdf"
@@ -67,7 +66,6 @@ func main() {
 	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, periodRepo, adminRepo, pdfGen)
 	settingsHandler := handlers.NewSettingsHandler(settingsRepo)
 	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret)
-	adminHandler := admin.NewAdminHandler(adminRepo, settingsRepo, customerRepo, readingRepo, metaRepo, pdfGen, jwtSecret)
 
 	// 4. Setup Mux
 	mux := http.NewServeMux()
@@ -99,23 +97,15 @@ func main() {
 		}
 	})
 
-	// Root redirect — apunta directo a /admin/ para evitar el doble redirect de ServeMux
+	// API Health check
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			// Respetar el proto que manda Caddy para que el Location sea https:// en prod
-			proto := r.Header.Get("X-Forwarded-Proto")
-			if proto == "" {
-				proto = "http"
-			}
-			target := proto + "://" + r.Host + "/admin/"
-			http.Redirect(w, r, target, http.StatusFound)
+			w.Write([]byte("InVolt API is running"))
 			return
 		}
 		http.NotFound(w, r)
 	})
 
-	// Admin dashboard with HTMX
-	mux.Handle("/admin/", adminHandler)
 	assetsDir := resolveAssetsDir()
 	log.Printf("🖼️ Serving assets from %s at /assets/", assetsDir)
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir))))

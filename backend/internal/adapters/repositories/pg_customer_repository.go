@@ -140,7 +140,6 @@ func (r *PostgresCustomerRepository) SaveBatch(ctx context.Context, customers []
 	          sector_id = EXCLUDED.sector_id, address = EXCLUDED.address, connection_type = EXCLUDED.connection_type, 
 	          tariff = EXCLUDED.tariff, meter_number = EXCLUDED.meter_number,
 	          latitude = EXCLUDED.latitude, longitude = EXCLUDED.longitude, 
-	          initial_reading = EXCLUDED.initial_reading,
 	          deleted_at = NULL`
 	_, err := r.db.NamedExecContext(ctx, query, customers)
 	return err
@@ -159,7 +158,6 @@ func (r *PostgresCustomerRepository) Save(ctx context.Context, c *domain.Custome
 	          sector_id = EXCLUDED.sector_id, address = EXCLUDED.address, connection_type = EXCLUDED.connection_type, 
 	          tariff = EXCLUDED.tariff, meter_number = EXCLUDED.meter_number,
 	          latitude = EXCLUDED.latitude, longitude = EXCLUDED.longitude, 
-	          initial_reading = EXCLUDED.initial_reading,
 	          deleted_at = NULL`
 	_, err := r.db.ExecContext(ctx, query,
 		c.ID, c.Code, c.Name, c.CommunityID, c.SectorID, c.Address, c.ConnectionType,

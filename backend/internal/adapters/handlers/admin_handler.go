@@ -348,7 +348,7 @@ func (h *AdminHandler) GetCustomers(
 			MeterNumber:      c.MeterNumber,
 			Latitude:         c.Latitude,
 			Longitude:        c.Longitude,
-			InitialReading:   c.InitialReading,
+			InitialReading:   0, // Always 0, calculated from reading history
 			LastReadingValue: c.LastReadingValue,
 		}
 	}
@@ -550,7 +550,7 @@ func (h *AdminHandler) UpsertCustomer(
 		MeterNumber:      c.MeterNumber,
 		Latitude:         c.Latitude,
 		Longitude:        c.Longitude,
-		InitialReading:   c.InitialReading,
+		InitialReading:   0, // Always 0, calculated from reading history
 		LastReadingValue: c.LastReadingValue,
 		ContractStart:    contractStart,
 	}

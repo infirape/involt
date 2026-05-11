@@ -18,7 +18,6 @@ RUN addgroup -S app && adduser -S app -G app
 
 COPY --from=builder /out/involt-server /app/involt-server
 COPY --from=builder /out/involt-seed /app/involt-seed
-COPY cmd/admin/templates /app/cmd/admin/templates
 
 ENV PORT=8080
 EXPOSE 8080
