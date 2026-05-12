@@ -2,49 +2,43 @@
 
 -- Users
 CREATE TABLE IF NOT EXISTS users (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    email text NOT NULL,
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    email text UNIQUE NOT NULL,
     password_hash text NOT NULL,
     role text DEFAULT 'READER'::text NOT NULL,
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now()
 );
-ALTER TABLE users ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-ALTER TABLE users ADD CONSTRAINT users_email_key UNIQUE (email);
 
 -- Communities
 CREATE TABLE IF NOT EXISTS communities (
-    id text NOT NULL,
+    id text PRIMARY KEY,
     name text NOT NULL
 );
-ALTER TABLE communities ADD CONSTRAINT communities_pkey PRIMARY KEY (id);
 
 -- Sectors
 CREATE TABLE IF NOT EXISTS sectors (
-    id text NOT NULL,
-    community_id text,
+    id text PRIMARY KEY,
+    community_id text REFERENCES communities(id),
     name text NOT NULL
 );
-ALTER TABLE sectors ADD CONSTRAINT sectors_pkey PRIMARY KEY (id);
-ALTER TABLE sectors ADD CONSTRAINT sectors_community_id_fkey FOREIGN KEY (community_id) REFERENCES communities(id);
 
 -- User Sectors
 CREATE TABLE IF NOT EXISTS user_sectors (
-    user_id uuid NOT NULL,
-    sector_id text NOT NULL
+    user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    sector_id text NOT NULL,
+    PRIMARY KEY (user_id, sector_id)
 );
-ALTER TABLE user_sectors ADD CONSTRAINT user_sectors_pkey PRIMARY KEY (user_id, sector_id);
-ALTER TABLE user_sectors ADD CONSTRAINT user_sectors_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 CREATE INDEX IF NOT EXISTS idx_user_sectors_user_id ON user_sectors(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_sectors_sector_id ON user_sectors(sector_id);
 
 -- Customers
 CREATE TABLE IF NOT EXISTS customers (
-    id text NOT NULL,
-    code text NOT NULL,
+    id text PRIMARY KEY,
+    code text UNIQUE NOT NULL,
     name text NOT NULL,
-    community_id text,
-    sector_id text,
+    community_id text REFERENCES communities(id),
+    sector_id text REFERENCES sectors(id),
     connection_type text NOT NULL,
     tariff double precision NOT NULL,
     meter_number text NOT NULL,
@@ -55,14 +49,10 @@ CREATE TABLE IF NOT EXISTS customers (
     contract_start date,
     created_at timestamp with time zone DEFAULT now()
 );
-ALTER TABLE customers ADD CONSTRAINT customers_pkey PRIMARY KEY (id);
-ALTER TABLE customers ADD CONSTRAINT customers_code_key UNIQUE (code);
-ALTER TABLE customers ADD CONSTRAINT customers_community_id_fkey FOREIGN KEY (community_id) REFERENCES communities(id);
-ALTER TABLE customers ADD CONSTRAINT customers_sector_id_fkey FOREIGN KEY (sector_id) REFERENCES sectors(id);
 
 -- Periods
 CREATE TABLE IF NOT EXISTS periods (
-    id text NOT NULL,
+    id text PRIMARY KEY,
     start_date date NOT NULL,
     end_date date NOT NULL,
     status text DEFAULT 'OPEN'::text NOT NULL,
@@ -70,12 +60,11 @@ CREATE TABLE IF NOT EXISTS periods (
     updated_at timestamp with time zone DEFAULT now(),
     is_billing_period boolean DEFAULT true
 );
-ALTER TABLE periods ADD CONSTRAINT periods_pkey PRIMARY KEY (id);
 
 -- Readings
 CREATE TABLE IF NOT EXISTS readings (
-    id text NOT NULL,
-    customer_id text,
+    id text PRIMARY KEY,
+    customer_id text REFERENCES customers(id),
     previous_value double precision NOT NULL,
     current_value double precision NOT NULL,
     consumption double precision NOT NULL,
@@ -98,12 +87,10 @@ CREATE TABLE IF NOT EXISTS readings (
     expiration_date date DEFAULT CURRENT_DATE NOT NULL,
     period character varying(10)
 );
-ALTER TABLE readings ADD CONSTRAINT readings_pkey PRIMARY KEY (id);
-ALTER TABLE readings ADD CONSTRAINT readings_customer_id_fkey FOREIGN KEY (customer_id) REFERENCES customers(id);
 
 -- Settings
 CREATE TABLE IF NOT EXISTS settings (
-    id text DEFAULT 'main'::text NOT NULL,
+    id text DEFAULT 'main'::text PRIMARY KEY,
     municipalidad text DEFAULT 'MUNICIPALIDAD DISTRITAL DE CHETILLA'::text NOT NULL,
     empresa text DEFAULT 'HIDROELECTRICA QARWAQIRU'::text NOT NULL,
     ruc text,
@@ -119,11 +106,9 @@ CREATE TABLE IF NOT EXISTS settings (
     mantenimiento double precision DEFAULT 0.00,
     igv boolean DEFAULT false
 );
-ALTER TABLE settings ADD CONSTRAINT settings_pkey PRIMARY KEY (id);
 
 -- App Configs
 CREATE TABLE IF NOT EXISTS app_configs (
-    key text NOT NULL,
+    key text PRIMARY KEY,
     value text
 );
-ALTER TABLE app_configs ADD CONSTRAINT app_configs_pkey PRIMARY KEY (key);
