@@ -4,7 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
+	"strings"
 	"time"
+	"archive/zip"
+	"bytes"
 
 	"connectrpc.com/connect"
 	"github.com/infira/involt/backend/internal/adapters/auth"
@@ -23,6 +27,7 @@ type AdminHandler struct {
 	readingRepo  ports.ReadingRepository
 	periodRepo   ports.PeriodRepository
 	jwtService   *auth.JWTService
+	pdfGen       ports.ReceiptGenerator
 }
 
 func NewAdminHandler(
@@ -32,6 +37,7 @@ func NewAdminHandler(
 	readingRepo ports.ReadingRepository,
 	periodRepo ports.PeriodRepository,
 	jwtSecret string,
+	pdfGen ports.ReceiptGenerator,
 ) *AdminHandler {
 	return &AdminHandler{
 		adminRepo:    adminRepo,
@@ -40,6 +46,7 @@ func NewAdminHandler(
 		readingRepo:  readingRepo,
 		periodRepo:   periodRepo,
 		jwtService:   auth.NewJWTService(jwtSecret),
+		pdfGen:       pdfGen,
 	}
 }
 
@@ -872,6 +879,169 @@ func mapDomainStatusToProto(s domain.PeriodStatus) involtv1.PeriodStatus {
 		return involtv1.PeriodStatus_PERIOD_STATUS_CLOSED
 	default:
 		return involtv1.PeriodStatus_PERIOD_STATUS_UNSPECIFIED
+	}
+}
+
+func (h *AdminHandler) BulkPDF(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	// 1. Authenticate User
+	tokenStr := r.URL.Query().Get("token")
+	if tokenStr == "" {
+		tokenStr = r.Header.Get("Authorization")
+		if strings.HasPrefix(tokenStr, "Bearer ") {
+			tokenStr = strings.TrimPrefix(tokenStr, "Bearer ")
+		}
+	}
+
+	if tokenStr == "" {
+		http.Error(w, "Unauthorized: missing token", http.StatusUnauthorized)
+		return
+	}
+
+	claims, err := h.jwtService.ValidateToken(tokenStr)
+	if err != nil {
+		http.Error(w, "Unauthorized: invalid token", http.StatusUnauthorized)
+		return
+	}
+
+	// 2. Parse Filters
+	period := r.URL.Query().Get("period")
+	if period == "" {
+		period = time.Now().Format("2006-01")
+	}
+	sectorID := r.URL.Query().Get("sectorId")
+
+	// 3. Permission Checks
+	var allowedSectors []string
+	if claims.Role != string(domain.RoleAdmin) {
+		if sectorID != "" {
+			allowed := false
+			for _, id := range claims.AssignedSectorIDs {
+				if id == sectorID {
+					allowed = true
+					break
+				}
+			}
+			if !allowed {
+				http.Error(w, "Forbidden: sector not assigned", http.StatusForbidden)
+				return
+			}
+			allowedSectors = []string{sectorID}
+		} else {
+			allowedSectors = claims.AssignedSectorIDs
+			if len(allowedSectors) == 0 {
+				http.Error(w, "Forbidden: no sectors assigned", http.StatusForbidden)
+				return
+			}
+		}
+	} else if sectorID != "" {
+		allowedSectors = []string{sectorID}
+	}
+
+	finalSectorID := ""
+	if len(allowedSectors) == 1 {
+		finalSectorID = allowedSectors[0]
+	} else if len(allowedSectors) > 1 {
+		finalSectorID = allowedSectors[0]
+	} else if sectorID != "" {
+		finalSectorID = sectorID
+	}
+
+	log.Printf("📊 Bulk PDF: Period=%s, Sector=%s", period, finalSectorID)
+	readings, _, err := h.readingRepo.List(ctx, "", finalSectorID, period, 2000, 0)
+	if err != nil {
+		http.Error(w, "Error fetching readings", http.StatusInternalServerError)
+		return
+	}
+
+	if len(readings) == 0 {
+		http.Error(w, "No readings found for this period", http.StatusNotFound)
+		return
+	}
+
+	allCustomers, err := h.customerRepo.ListAll(ctx)
+	if err != nil {
+		http.Error(w, "Error fetching customers", http.StatusInternalServerError)
+		return
+	}
+
+	customerMap := make(map[string]*domain.Customer)
+	for i := range allCustomers {
+		customerMap[allCustomers[i].ID] = &allCustomers[i]
+	}
+
+	communities, _ := h.metaRepo.ListCommunities(ctx)
+	sectors, _ := h.metaRepo.ListSectors(ctx)
+	
+	commMap := make(map[string]string)
+	for _, c := range communities {
+		commMap[c.ID] = c.Name
+	}
+	sectMap := make(map[string]string)
+	for _, s := range sectors {
+		sectMap[s.ID] = s.Name
+	}
+
+	for _, c := range customerMap {
+		c.CommunityName = commMap[c.CommunityID]
+		c.SectorName = sectMap[c.SectorID]
+	}
+
+	settings, err := h.metaRepo.GetSettings(ctx)
+	if err != nil {
+		settings = &domain.Settings{}
+	}
+
+	readingsBySector := make(map[string][]domain.Reading)
+	if sectorID == "" {
+		for _, r := range readings {
+			cust := customerMap[r.CustomerID]
+			sID := "sin_sector"
+			if cust != nil && cust.SectorID != "" {
+				sID = cust.SectorID
+			}
+			readingsBySector[sID] = append(readingsBySector[sID], r)
+		}
+	}
+
+	if sectorID != "" {
+		pdfData, err := h.pdfGen.GenerateBatch(ctx, readings, customerMap, settings)
+		if err != nil {
+			http.Error(w, "Error generating PDF", http.StatusInternalServerError)
+			return
+		}
+
+		fileName := fmt.Sprintf("recibos_%s_%s.pdf", sectMap[sectorID], period)
+		w.Header().Set("Content-Type", "application/pdf")
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileName))
+		w.Write(pdfData)
+	} else {
+		buf := new(bytes.Buffer)
+		zw := zip.NewWriter(buf)
+
+		for sID, rs := range readingsBySector {
+			sName := sectMap[sID]
+			if sName == "" {
+				sName = sID
+			}
+
+			pdfData, err := h.pdfGen.GenerateBatch(ctx, rs, customerMap, settings)
+			if err != nil {
+				continue
+			}
+
+			f, err := zw.Create(fmt.Sprintf("%s_%s.pdf", sName, period))
+			if err != nil {
+				continue
+			}
+			f.Write(pdfData)
+		}
+
+		zw.Close()
+		w.Header().Set("Content-Type", "application/zip")
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=recibos_todos_%s.zip", period))
+		w.Write(buf.Bytes())
 	}
 }
 

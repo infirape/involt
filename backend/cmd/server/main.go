@@ -65,7 +65,7 @@ func main() {
 
 	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, periodRepo, adminRepo, pdfGen)
 	settingsHandler := handlers.NewSettingsHandler(settingsRepo)
-	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret)
+	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret, pdfGen)
 
 	// 4. Setup Mux
 	mux := http.NewServeMux()
@@ -96,6 +96,9 @@ func main() {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
+
+	// REST endpoints for bulk PDF export
+	mux.HandleFunc("/admin/readings/bulk-pdf", adminSvcHandler.BulkPDF)
 
 	// API Health check
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
