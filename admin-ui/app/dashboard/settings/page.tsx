@@ -163,13 +163,12 @@ export default function SettingsPage() {
                     type="number"
                     step="0.01"
                     value={settings?.tarifaKwh || 0}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
                       setSettings((prev) =>
-                        prev
-                          ? { ...prev, tarifaKwh: parseFloat(e.target.value) }
-                          : null,
-                      )
-                    }
+                        prev ? { ...prev, tarifaKwh: isNaN(val) ? 0 : val } : null,
+                      );
+                    }}
                     className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
                   />
                 </div>
@@ -181,13 +180,12 @@ export default function SettingsPage() {
                     type="number"
                     step="0.01"
                     value={settings?.cargoFijo || 0}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
                       setSettings((prev) =>
-                        prev
-                          ? { ...prev, cargoFijo: parseFloat(e.target.value) }
-                          : null,
-                      )
-                    }
+                        prev ? { ...prev, cargoFijo: isNaN(val) ? 0 : val } : null,
+                      );
+                    }}
                     className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
                   />
                 </div>
@@ -201,13 +199,12 @@ export default function SettingsPage() {
                     type="number"
                     step="0.01"
                     value={settings?.alumbrado || 0}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
                       setSettings((prev) =>
-                        prev
-                          ? { ...prev, alumbrado: parseFloat(e.target.value) }
-                          : null,
-                      )
-                    }
+                        prev ? { ...prev, alumbrado: isNaN(val) ? 0 : val } : null,
+                      );
+                    }}
                     className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
                   />
                 </div>
@@ -218,16 +215,14 @@ export default function SettingsPage() {
                   <Input
                     type="number"
                     value={settings?.diasVencimiento || 0}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
                       setSettings((prev) =>
                         prev
-                          ? {
-                              ...prev,
-                              diasVencimiento: parseInt(e.target.value, 10),
-                            }
+                          ? { ...prev, diasVencimiento: isNaN(val) ? 0 : val }
                           : null,
-                      )
-                    }
+                      );
+                    }}
                     className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl"
                   />
                 </div>

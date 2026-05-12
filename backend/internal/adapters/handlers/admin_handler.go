@@ -9,6 +9,7 @@ import (
 	"time"
 	"archive/zip"
 	"bytes"
+	"math"
 
 	"connectrpc.com/connect"
 	"github.com/infira/involt/backend/internal/adapters/auth"
@@ -440,16 +441,16 @@ func (h *AdminHandler) GetReadings(
 		r.CustomerName = custMap[r.CustomerID]
 		// If total is 0 but there is consumption, try to recalculate for display
 		if r.TotalToPay == 0 && r.Consumption > 0 {
-			consumptionCharge := r.Consumption * settings.TarifaKWh
+			consumptionCharge := r.Consumption * safeFloat(settings.TarifaKWh)
 			cargoFijo := 0.0
 			alumbrado := 0.0
 			mantenimiento := 0.0
 
 			if p, err := h.periodRepo.GetByID(ctx, r.Period); err == nil && p != nil {
 				if p.IsBillingPeriod {
-					cargoFijo = settings.CargoFijo
-					alumbrado = settings.Alumbrado
-					mantenimiento = settings.Mantenimiento
+					cargoFijo = safeFloat(settings.CargoFijo)
+					alumbrado = safeFloat(settings.Alumbrado)
+					mantenimiento = safeFloat(settings.Mantenimiento)
 				}
 			}
 
@@ -491,10 +492,10 @@ func (h *AdminHandler) GetSettings(
 			Telefono:        settings.Telefono,
 			Email:           settings.Email,
 			DiasVencimiento: int32(settings.DiasVencimiento),
-			TarifaKwh:       settings.TarifaKWh,
-			CargoFijo:       settings.CargoFijo,
-			Alumbrado:       settings.Alumbrado,
-			Mantenimiento:   settings.Mantenimiento,
+			TarifaKwh:       safeFloat(settings.TarifaKWh),
+			CargoFijo:       safeFloat(settings.CargoFijo),
+			Alumbrado:       safeFloat(settings.Alumbrado),
+			Mantenimiento:   safeFloat(settings.Mantenimiento),
 			Igv:             settings.IGV,
 		},
 	}), nil
@@ -517,10 +518,10 @@ func (h *AdminHandler) UpdateSettings(
 		Telefono:        s.Telefono,
 		Email:           s.Email,
 		DiasVencimiento: int(s.DiasVencimiento),
-		TarifaKWh:       s.TarifaKwh,
-		CargoFijo:       s.CargoFijo,
-		Alumbrado:       s.Alumbrado,
-		Mantenimiento:   s.Mantenimiento,
+		TarifaKWh:       safeFloat(s.TarifaKwh),
+		CargoFijo:       safeFloat(s.CargoFijo),
+		Alumbrado:       safeFloat(s.Alumbrado),
+		Mantenimiento:   safeFloat(s.Mantenimiento),
 		IGV:             s.Igv,
 	}
 
@@ -943,16 +944,16 @@ func (h *AdminHandler) DownloadReadingPDF(w http.ResponseWriter, r *http.Request
 
 	// Recalculate components if zero (similar to GetReadings)
 	if reading.TotalToPay == 0 && reading.Consumption > 0 {
-		consumptionCharge := reading.Consumption * settings.TarifaKWh
+		consumptionCharge := reading.Consumption * safeFloat(settings.TarifaKWh)
 		cargoFijo := 0.0
 		alumbrado := 0.0
 		mantenimiento := 0.0
 
 		if p, err := h.periodRepo.GetByID(ctx, reading.Period); err == nil && p != nil {
 			if p.IsBillingPeriod {
-				cargoFijo = settings.CargoFijo
-				alumbrado = settings.Alumbrado
-				mantenimiento = settings.Mantenimiento
+				cargoFijo = safeFloat(settings.CargoFijo)
+				alumbrado = safeFloat(settings.Alumbrado)
+				mantenimiento = safeFloat(settings.Mantenimiento)
 			}
 		}
 
@@ -1154,6 +1155,13 @@ func (h *AdminHandler) BulkPDF(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=recibos_todos_%s.zip", period))
 		w.Write(buf.Bytes())
 	}
+}
+
+func safeFloat(f float64) float64 {
+	if math.IsNaN(f) || math.IsInf(f, 0) {
+		return 0
+	}
+	return f
 }
 
 // Ensure AdminHandler implements the generated interface
