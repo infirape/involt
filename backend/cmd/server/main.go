@@ -97,8 +97,9 @@ func main() {
 		}
 	})
 
-	// REST endpoints for bulk PDF export
+	// REST endpoints for PDF export
 	mux.HandleFunc("/admin/readings/bulk-pdf", adminSvcHandler.BulkPDF)
+	mux.HandleFunc("/admin/readings/pdf/", adminSvcHandler.DownloadReadingPDF)
 
 	// API Health check
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

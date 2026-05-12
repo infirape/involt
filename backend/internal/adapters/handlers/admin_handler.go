@@ -882,6 +882,117 @@ func mapDomainStatusToProto(s domain.PeriodStatus) involtv1.PeriodStatus {
 	}
 }
 
+func (h *AdminHandler) DownloadReadingPDF(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	// URL path is /admin/readings/pdf/{id}
+	readingID := strings.TrimPrefix(r.URL.Path, "/admin/readings/pdf/")
+
+	// 1. Authenticate User
+	tokenStr := r.URL.Query().Get("token")
+	if tokenStr == "" {
+		tokenStr = r.Header.Get("Authorization")
+		if strings.HasPrefix(tokenStr, "Bearer ") {
+			tokenStr = strings.TrimPrefix(tokenStr, "Bearer ")
+		}
+	}
+
+	if tokenStr == "" {
+		http.Error(w, "Unauthorized: missing token", http.StatusUnauthorized)
+		return
+	}
+
+	claims, err := h.jwtService.ValidateToken(tokenStr)
+	if err != nil {
+		http.Error(w, "Unauthorized: invalid token", http.StatusUnauthorized)
+		return
+	}
+
+	// 2. Fetch Data
+	reading, err := h.readingRepo.GetByID(ctx, readingID)
+	if err != nil {
+		http.Error(w, "Reading not found", http.StatusNotFound)
+		return
+	}
+
+	customer, err := h.customerRepo.GetByID(ctx, reading.CustomerID)
+	if err != nil {
+		http.Error(w, "Customer not found", http.StatusNotFound)
+		return
+	}
+
+	// 3. Permission Checks
+	if claims.Role != string(domain.RoleAdmin) {
+		allowed := false
+		for _, id := range claims.AssignedSectorIDs {
+			if id == customer.SectorID {
+				allowed = true
+				break
+			}
+		}
+		if !allowed {
+			http.Error(w, "Forbidden: sector not assigned", http.StatusForbidden)
+			return
+		}
+	}
+
+	// 4. Enrich and Generate
+	settings, _ := h.metaRepo.GetSettings(ctx)
+	if settings == nil {
+		settings = &domain.Settings{}
+	}
+
+	// Recalculate components if zero (similar to GetReadings)
+	if reading.TotalToPay == 0 && reading.Consumption > 0 {
+		consumptionCharge := reading.Consumption * settings.TarifaKWh
+		cargoFijo := 0.0
+		alumbrado := 0.0
+		mantenimiento := 0.0
+
+		if p, err := h.periodRepo.GetByID(ctx, reading.Period); err == nil && p != nil {
+			if p.IsBillingPeriod {
+				cargoFijo = settings.CargoFijo
+				alumbrado = settings.Alumbrado
+				mantenimiento = settings.Mantenimiento
+			}
+		}
+
+		reading.Subtotal = consumptionCharge + cargoFijo + alumbrado + mantenimiento
+		reading.TotalToPay = reading.Subtotal + reading.SaldoRedondeo
+		reading.CargoFijo = cargoFijo
+		reading.AlumbradoPublico = alumbrado
+		reading.Mantenimiento = mantenimiento
+	}
+
+	communities, _ := h.metaRepo.ListCommunities(ctx)
+	sectors, _ := h.metaRepo.ListSectors(ctx)
+	
+	commName := ""
+	for _, c := range communities {
+		if c.ID == customer.CommunityID {
+			commName = c.Name
+			break
+		}
+	}
+	
+	sectName := ""
+	for _, s := range sectors {
+		if s.ID == customer.SectorID {
+			sectName = s.Name
+			break
+		}
+	}
+
+	pdfData, err := h.pdfGen.Generate(ctx, reading, customer, settings, commName, sectName)
+	if err != nil {
+		http.Error(w, "Error generating PDF", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/pdf")
+	w.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=recibo_%s.pdf", readingID))
+	w.Write(pdfData)
+}
+
 func (h *AdminHandler) BulkPDF(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

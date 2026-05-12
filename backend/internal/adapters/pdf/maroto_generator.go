@@ -1,7 +1,6 @@
 package pdf
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"time"
@@ -19,8 +18,6 @@ import (
 	"github.com/johnfercher/maroto/v2/pkg/consts/pagesize"
 	"github.com/johnfercher/maroto/v2/pkg/core"
 	"github.com/johnfercher/maroto/v2/pkg/props"
-	"github.com/pdfcpu/pdfcpu/pkg/api"
-	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/types"
 )
 
 type MarotoGenerator struct{}
@@ -251,20 +248,7 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 }
 
 func (g *MarotoGenerator) applyWatermark(pdfData []byte) ([]byte, error) {
-	rs := bytes.NewReader(pdfData)
-	var out bytes.Buffer
-
-	wm, err := api.TextWatermark("DEMO", "rot:45, scale:0.8, op:0.1, color:0.5 0.5 0.5", true, false, types.POINTS)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create watermark: %w", err)
-	}
-
-	err = api.AddWatermarks(rs, &out, nil, wm, nil)
-	if err != nil {
-		return pdfData, nil
-	}
-
-	return out.Bytes(), nil
+	return pdfData, nil
 }
 
 func formatDate(t time.Time) string {
