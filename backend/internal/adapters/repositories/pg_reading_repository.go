@@ -197,9 +197,9 @@ func (r *PostgresReadingRepository) List(ctx context.Context, customerID, sector
 	argIdx := 1
 
 	if customerID != "" {
-		where += fmt.Sprintf(" AND r.customer_id = $%d", argIdx)
-		args = append(args, customerID)
-		argIdx++
+		where += fmt.Sprintf(" AND (r.customer_id = $%d OR c.code ILIKE $%d OR c.name ILIKE $%d)", argIdx, argIdx+1, argIdx+2)
+		args = append(args, customerID, "%"+customerID+"%", "%"+customerID+"%")
+		argIdx += 3
 	}
 
 	if sectorID != "" {
