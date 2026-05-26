@@ -53,18 +53,36 @@ export function useReadings() {
         setData((prev) => ({ ...prev, loading: true }));
       });
 
-      const [readingsResp, statsResp] = await Promise.all([
-        adminClient.getReadings({
-          customerId,
-          sectorId,
-          period: periodId,
-          pageNumber: page,
-          pageSize: size,
-        }),
-        adminClient.getDashboardStats({
-          period: periodId,
-        }),
-      ]);
+      const readingsResp = await adminClient.getReadings({
+        customerId,
+        sectorId,
+        period: periodId,
+        pageNumber: page,
+        pageSize: size,
+      });
+
+      startTransition(() => {
+        setData((prev) => ({
+          ...prev,
+          readings: readingsResp.readings,
+          totalCount: readingsResp.totalCount,
+          loading: false,
+        }));
+      });
+    } catch (err) {
+      console.error("Failed to fetch readings:", err);
+      startTransition(() => {
+        setData((prev) => ({ ...prev, loading: false }));
+      });
+    }
+  }, []);
+
+  const fetchStats = useCallback(async (periodId: string) => {
+    if (!periodId) return;
+    try {
+      const statsResp = await adminClient.getDashboardStats({
+        period: periodId,
+      });
 
       const totalReadings = statsResp.totalReadingsPeriod;
       const pendingReadings = statsResp.pendingReadingsPeriod;
@@ -73,24 +91,16 @@ export function useReadings() {
           ? (totalReadings / (totalReadings + pendingReadings)) * 100
           : 0;
 
-      startTransition(() => {
-        setData((prev) => ({
-          ...prev,
-          readings: readingsResp.readings,
-          totalCount: readingsResp.totalCount,
-          loading: false,
-          stats: {
-            totalRevenue: statsResp.totalRevenue,
-            totalConsumptionKwh: statsResp.totalConsumptionKwh,
-            syncPercentage: syncPercentage,
-          },
-        }));
-      });
+      setData((prev) => ({
+        ...prev,
+        stats: {
+          totalRevenue: statsResp.totalRevenue,
+          totalConsumptionKwh: statsResp.totalConsumptionKwh,
+          syncPercentage: syncPercentage,
+        },
+      }));
     } catch (err) {
-      console.error("Failed to fetch readings:", err);
-      startTransition(() => {
-        setData((prev) => ({ ...prev, loading: false }));
-      });
+      console.error("Failed to fetch dashboard stats:", err);
     }
   }, []);
 
@@ -112,12 +122,31 @@ export function useReadings() {
   const { customerId, sectorId } = filters;
   const { pageNumber, pageSize } = pagination;
 
+  const [debouncedCustomerId, setDebouncedCustomerId] = useState(customerId);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedCustomerId(customerId);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [customerId]);
+
+  // Re-fetch stats when selected period changes
+  useEffect(() => {
+    if (selectedPeriod) {
+      fetchStats(selectedPeriod);
+    }
+  }, [selectedPeriod, fetchStats]);
+
   // Re-fetch when global period or filters change
   useEffect(() => {
     if (selectedPeriod) {
-      fetchReadings(selectedPeriod, pageNumber, pageSize, customerId, sectorId);
+      fetchReadings(selectedPeriod, pageNumber, pageSize, debouncedCustomerId, sectorId);
     }
-  }, [selectedPeriod, pageNumber, pageSize, customerId, sectorId, fetchReadings]);
+  }, [selectedPeriod, pageNumber, pageSize, debouncedCustomerId, sectorId, fetchReadings]);
 
   const totalPages = Math.ceil(data.totalCount / pageSize);
 
@@ -131,7 +160,10 @@ export function useReadings() {
     colSpan,
     totalPages,
     isPending,
-    refresh: () => fetchReadings(selectedPeriod, pageNumber, pageSize, customerId, sectorId),
+    refresh: () => {
+      fetchReadings(selectedPeriod, pageNumber, pageSize, customerId, sectorId);
+      fetchStats(selectedPeriod);
+    },
   };
 }
 
