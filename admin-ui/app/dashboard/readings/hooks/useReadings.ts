@@ -137,14 +137,18 @@ export function useReadings() {
   // Re-fetch stats when selected period changes
   useEffect(() => {
     if (selectedPeriod) {
-      fetchStats(selectedPeriod);
+      Promise.resolve().then(() => {
+        fetchStats(selectedPeriod);
+      });
     }
   }, [selectedPeriod, fetchStats]);
 
   // Re-fetch when global period or filters change
   useEffect(() => {
     if (selectedPeriod) {
-      fetchReadings(selectedPeriod, pageNumber, pageSize, debouncedCustomerId, sectorId);
+      Promise.resolve().then(() => {
+        fetchReadings(selectedPeriod, pageNumber, pageSize, debouncedCustomerId, sectorId);
+      });
     }
   }, [selectedPeriod, pageNumber, pageSize, debouncedCustomerId, sectorId, fetchReadings]);
 
