@@ -116,7 +116,7 @@ func main() {
 
 	// 5. Start Server with h2c (HTTP/2 Cleartext) and CORS
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001"},
+		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001", "http://localhost:3002"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Connect-Protocol-Version", "Content-Type", "Authorization"},
 		ExposedHeaders:   []string{"Connect-Protocol-Version", "Content-Disposition"},

@@ -2417,15 +2417,31 @@ class ClosePeriodResponse extends $pb.GeneratedMessage {
 
 class TogglePaymentStatusRequest extends $pb.GeneratedMessage {
   factory TogglePaymentStatusRequest({
-    $core.String? id,
+    $core.String? readingId,
     $core.bool? isPaid,
+    $core.String? customerId,
+    $core.String? period,
+    $core.double? totalToPay,
+    $core.String? observation,
   }) {
     final $result = create();
-    if (id != null) {
-      $result.id = id;
+    if (readingId != null) {
+      $result.readingId = readingId;
     }
     if (isPaid != null) {
       $result.isPaid = isPaid;
+    }
+    if (customerId != null) {
+      $result.customerId = customerId;
+    }
+    if (period != null) {
+      $result.period = period;
+    }
+    if (totalToPay != null) {
+      $result.totalToPay = totalToPay;
+    }
+    if (observation != null) {
+      $result.observation = observation;
     }
     return $result;
   }
@@ -2434,8 +2450,12 @@ class TogglePaymentStatusRequest extends $pb.GeneratedMessage {
   factory TogglePaymentStatusRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'TogglePaymentStatusRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..aOS(1, _omitFieldNames ? '' : 'readingId')
     ..aOB(2, _omitFieldNames ? '' : 'isPaid')
+    ..aOS(3, _omitFieldNames ? '' : 'customerId')
+    ..aOS(4, _omitFieldNames ? '' : 'period')
+    ..a<$core.double>(5, _omitFieldNames ? '' : 'totalToPay', $pb.PbFieldType.OD)
+    ..aOS(6, _omitFieldNames ? '' : 'observation')
     ..hasRequiredFields = false
   ;
 
@@ -2461,13 +2481,13 @@ class TogglePaymentStatusRequest extends $pb.GeneratedMessage {
   static TogglePaymentStatusRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get id => $_getSZ(0);
+  $core.String get readingId => $_getSZ(0);
   @$pb.TagNumber(1)
-  set id($core.String v) { $_setString(0, v); }
+  set readingId($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasId() => $_has(0);
+  $core.bool hasReadingId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearId() => clearField(1);
+  void clearReadingId() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.bool get isPaid => $_getBF(1);
@@ -2477,15 +2497,55 @@ class TogglePaymentStatusRequest extends $pb.GeneratedMessage {
   $core.bool hasIsPaid() => $_has(1);
   @$pb.TagNumber(2)
   void clearIsPaid() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get customerId => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set customerId($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasCustomerId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearCustomerId() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get period => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set period($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasPeriod() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearPeriod() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.double get totalToPay => $_getN(4);
+  @$pb.TagNumber(5)
+  set totalToPay($core.double v) { $_setDouble(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasTotalToPay() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearTotalToPay() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.String get observation => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set observation($core.String v) { $_setString(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasObservation() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearObservation() => clearField(6);
 }
 
 class TogglePaymentStatusResponse extends $pb.GeneratedMessage {
   factory TogglePaymentStatusResponse({
-    $0.Reading? reading,
+    $core.String? readingId,
+    $core.bool? isPaid,
   }) {
     final $result = create();
-    if (reading != null) {
-      $result.reading = reading;
+    if (readingId != null) {
+      $result.readingId = readingId;
+    }
+    if (isPaid != null) {
+      $result.isPaid = isPaid;
     }
     return $result;
   }
@@ -2494,7 +2554,8 @@ class TogglePaymentStatusResponse extends $pb.GeneratedMessage {
   factory TogglePaymentStatusResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'TogglePaymentStatusResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
-    ..aOM<$0.Reading>(1, _omitFieldNames ? '' : 'reading', subBuilder: $0.Reading.create)
+    ..aOS(1, _omitFieldNames ? '' : 'readingId')
+    ..aOB(2, _omitFieldNames ? '' : 'isPaid')
     ..hasRequiredFields = false
   ;
 
@@ -2520,15 +2581,192 @@ class TogglePaymentStatusResponse extends $pb.GeneratedMessage {
   static TogglePaymentStatusResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $0.Reading get reading => $_getN(0);
+  $core.String get readingId => $_getSZ(0);
   @$pb.TagNumber(1)
-  set reading($0.Reading v) { setField(1, v); }
+  set readingId($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasReading() => $_has(0);
+  $core.bool hasReadingId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearReading() => clearField(1);
+  void clearReadingId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.bool get isPaid => $_getBF(1);
+  @$pb.TagNumber(2)
+  set isPaid($core.bool v) { $_setBool(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasIsPaid() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearIsPaid() => clearField(2);
+}
+
+class GetCollectionsRequest extends $pb.GeneratedMessage {
+  factory GetCollectionsRequest({
+    $core.String? sectorId,
+    $core.Iterable<$core.String>? periods,
+  }) {
+    final $result = create();
+    if (sectorId != null) {
+      $result.sectorId = sectorId;
+    }
+    if (periods != null) {
+      $result.periods.addAll(periods);
+    }
+    return $result;
+  }
+  GetCollectionsRequest._() : super();
+  factory GetCollectionsRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetCollectionsRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetCollectionsRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'sectorId')
+    ..pPS(2, _omitFieldNames ? '' : 'periods')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetCollectionsRequest clone() => GetCollectionsRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetCollectionsRequest copyWith(void Function(GetCollectionsRequest) updates) => super.copyWith((message) => updates(message as GetCollectionsRequest)) as GetCollectionsRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetCollectionsRequest create() => GetCollectionsRequest._();
+  GetCollectionsRequest createEmptyInstance() => create();
+  static $pb.PbList<GetCollectionsRequest> createRepeated() => $pb.PbList<GetCollectionsRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetCollectionsRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetCollectionsRequest>(create);
+  static GetCollectionsRequest? _defaultInstance;
+
   @$pb.TagNumber(1)
-  $0.Reading ensureReading() => $_ensure(0);
+  $core.String get sectorId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set sectorId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSectorId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSectorId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.String> get periods => $_getList(1);
+}
+
+class GetCollectionsResponse extends $pb.GeneratedMessage {
+  factory GetCollectionsResponse({
+    $core.Iterable<$0.Reading>? readings,
+    $core.Iterable<CollectionCustomer>? customers,
+  }) {
+    final $result = create();
+    if (readings != null) {
+      $result.readings.addAll(readings);
+    }
+    if (customers != null) {
+      $result.customers.addAll(customers);
+    }
+    return $result;
+  }
+  GetCollectionsResponse._() : super();
+  factory GetCollectionsResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetCollectionsResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetCollectionsResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..pc<$0.Reading>(1, _omitFieldNames ? '' : 'readings', $pb.PbFieldType.PM, subBuilder: $0.Reading.create)
+    ..pc<CollectionCustomer>(2, _omitFieldNames ? '' : 'customers', $pb.PbFieldType.PM, subBuilder: CollectionCustomer.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetCollectionsResponse clone() => GetCollectionsResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetCollectionsResponse copyWith(void Function(GetCollectionsResponse) updates) => super.copyWith((message) => updates(message as GetCollectionsResponse)) as GetCollectionsResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetCollectionsResponse create() => GetCollectionsResponse._();
+  GetCollectionsResponse createEmptyInstance() => create();
+  static $pb.PbList<GetCollectionsResponse> createRepeated() => $pb.PbList<GetCollectionsResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetCollectionsResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetCollectionsResponse>(create);
+  static GetCollectionsResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$0.Reading> get readings => $_getList(0);
+
+  @$pb.TagNumber(2)
+  $core.List<CollectionCustomer> get customers => $_getList(1);
+}
+
+class CollectionCustomer extends $pb.GeneratedMessage {
+  factory CollectionCustomer({
+    $0.Customer? customer,
+    $core.Iterable<$0.Reading>? readings,
+  }) {
+    final $result = create();
+    if (customer != null) {
+      $result.customer = customer;
+    }
+    if (readings != null) {
+      $result.readings.addAll(readings);
+    }
+    return $result;
+  }
+  CollectionCustomer._() : super();
+  factory CollectionCustomer.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory CollectionCustomer.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CollectionCustomer', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOM<$0.Customer>(1, _omitFieldNames ? '' : 'customer', subBuilder: $0.Customer.create)
+    ..pc<$0.Reading>(2, _omitFieldNames ? '' : 'readings', $pb.PbFieldType.PM, subBuilder: $0.Reading.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  CollectionCustomer clone() => CollectionCustomer()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  CollectionCustomer copyWith(void Function(CollectionCustomer) updates) => super.copyWith((message) => updates(message as CollectionCustomer)) as CollectionCustomer;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static CollectionCustomer create() => CollectionCustomer._();
+  CollectionCustomer createEmptyInstance() => create();
+  static $pb.PbList<CollectionCustomer> createRepeated() => $pb.PbList<CollectionCustomer>();
+  @$core.pragma('dart2js:noInline')
+  static CollectionCustomer getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CollectionCustomer>(create);
+  static CollectionCustomer? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.Customer get customer => $_getN(0);
+  @$pb.TagNumber(1)
+  set customer($0.Customer v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasCustomer() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCustomer() => clearField(1);
+  @$pb.TagNumber(1)
+  $0.Customer ensureCustomer() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.List<$0.Reading> get readings => $_getList(1);
 }
 
 class AdminServiceApi {
@@ -2591,6 +2829,9 @@ class AdminServiceApi {
   ;
   $async.Future<TogglePaymentStatusResponse> togglePaymentStatus($pb.ClientContext? ctx, TogglePaymentStatusRequest request) =>
     _client.invoke<TogglePaymentStatusResponse>(ctx, 'AdminService', 'TogglePaymentStatus', request, TogglePaymentStatusResponse())
+  ;
+  $async.Future<GetCollectionsResponse> getCollections($pb.ClientContext? ctx, GetCollectionsRequest request) =>
+    _client.invoke<GetCollectionsResponse>(ctx, 'AdminService', 'GetCollections', request, GetCollectionsResponse())
   ;
 }
 

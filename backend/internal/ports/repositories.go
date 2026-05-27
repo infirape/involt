@@ -26,6 +26,7 @@ type ReadingRepository interface {
 	ListAll(ctx context.Context) ([]domain.Reading, error)
 	UpdatePaymentStatus(ctx context.Context, readingID string, isPaid bool) error
 	ListBySector(ctx context.Context, sectorID string, periods []string) ([]domain.Reading, error)
+	GetByCustomerAndPeriod(ctx context.Context, customerID, period string) (*domain.Reading, error)
 }
 
 // CustomerRepository defines operations for customer data.
@@ -38,6 +39,7 @@ type CustomerRepository interface {
 	Save(ctx context.Context, customer *domain.Customer) error
 	Delete(ctx context.Context, id string) error
 	CountBySector(ctx context.Context, sectorID string) (int, error)
+	ListBySector(ctx context.Context, sectorID string) ([]domain.Customer, error)
 }
 
 // MetadataRepository defines operations for communities and sectors.

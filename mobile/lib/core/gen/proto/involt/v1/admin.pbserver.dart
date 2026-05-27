@@ -40,6 +40,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
   $async.Future<$1.UpsertSectorResponse> upsertSector($pb.ServerContext ctx, $1.UpsertSectorRequest request);
   $async.Future<$1.UpsertCommunityResponse> upsertCommunity($pb.ServerContext ctx, $1.UpsertCommunityRequest request);
   $async.Future<$1.TogglePaymentStatusResponse> togglePaymentStatus($pb.ServerContext ctx, $1.TogglePaymentStatusRequest request);
+  $async.Future<$1.GetCollectionsResponse> getCollections($pb.ServerContext ctx, $1.GetCollectionsRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -62,6 +63,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'UpsertSector': return $1.UpsertSectorRequest();
       case 'UpsertCommunity': return $1.UpsertCommunityRequest();
       case 'TogglePaymentStatus': return $1.TogglePaymentStatusRequest();
+      case 'GetCollections': return $1.GetCollectionsRequest();
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }
@@ -87,6 +89,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'UpsertSector': return this.upsertSector(ctx, request as $1.UpsertSectorRequest);
       case 'UpsertCommunity': return this.upsertCommunity(ctx, request as $1.UpsertCommunityRequest);
       case 'TogglePaymentStatus': return this.togglePaymentStatus(ctx, request as $1.TogglePaymentStatusRequest);
+      case 'GetCollections': return this.getCollections(ctx, request as $1.GetCollectionsRequest);
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }

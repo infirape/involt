@@ -265,6 +265,10 @@ message ClosePeriodResponse {
 message TogglePaymentStatusRequest {
   string reading_id = 1; // Reading ID
   bool is_paid = 2; // New status
+  string customer_id = 3; // Customer ID (optional, if reading_id is empty)
+  string period = 4; // Period (optional, if reading_id is empty)
+  double total_to_pay = 5; // Custom total amount to pay (optional)
+  string observation = 6; // Observation/details (optional)
 }
 
 message TogglePaymentStatusResponse {
@@ -279,4 +283,10 @@ message GetCollectionsRequest {
 
 message GetCollectionsResponse {
   repeated Reading readings = 1;
+  repeated CollectionCustomer customers = 2;
+}
+
+message CollectionCustomer {
+  Customer customer = 1;
+  repeated Reading readings = 2;
 }

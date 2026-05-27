@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/infira/involt/backend/internal/domain"
@@ -284,4 +285,17 @@ func (r *PostgresReadingRepository) ListBySector(ctx context.Context, sectorID s
 		return nil, fmt.Errorf("error listing readings by sector: %w", err)
 	}
 	return readings, nil
+}
+
+func (r *PostgresReadingRepository) GetByCustomerAndPeriod(ctx context.Context, customerID, period string) (*domain.Reading, error) {
+	var reading domain.Reading
+	query := `SELECT * FROM readings WHERE customer_id = $1 AND period = $2 LIMIT 1`
+	err := r.db.GetContext(ctx, &reading, query, customerID, period)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("error getting reading by customer and period: %w", err)
+	}
+	return &reading, nil
 }

@@ -17,7 +17,7 @@ func NewPostgresCustomerRepository(db *sqlx.DB) *PostgresCustomerRepository {
 }
 
 func (r *PostgresCustomerRepository) GetByCode(ctx context.Context, code string) (*domain.Customer, error) {
-var customer domain.Customer
+	var customer domain.Customer
 	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
 	          latitude, longitude, initial_reading
@@ -177,4 +177,19 @@ func (r *PostgresCustomerRepository) CountBySector(ctx context.Context, sectorID
 	err := r.db.GetContext(ctx, &count, query, sectorID)
 	fmt.Printf("📊 CountBySector: sector=%s, count=%d, err=%v\n", sectorID, count, err)
 	return count, err
+}
+
+func (r *PostgresCustomerRepository) ListBySector(ctx context.Context, sectorID string) ([]domain.Customer, error) {
+	var customers []domain.Customer
+	query := `SELECT id, code, name, community_id, sector_id, address,
+	          connection_type, tariff, meter_number,
+	          latitude, longitude, initial_reading
+	          FROM customers
+	          WHERE sector_id = $1 AND deleted_at IS NULL
+	          ORDER BY name ASC, code ASC`
+	err := r.db.SelectContext(ctx, &customers, query, sectorID)
+	if err != nil {
+		return nil, fmt.Errorf("error listing customers by sector: %w", err)
+	}
+	return customers, nil
 }

@@ -578,28 +578,79 @@ final $typed_data.Uint8List closePeriodResponseDescriptor = $convert.base64Decod
 const TogglePaymentStatusRequest$json = {
   '1': 'TogglePaymentStatusRequest',
   '2': [
-    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'reading_id', '3': 1, '4': 1, '5': 9, '10': 'readingId'},
     {'1': 'is_paid', '3': 2, '4': 1, '5': 8, '10': 'isPaid'},
+    {'1': 'customer_id', '3': 3, '4': 1, '5': 9, '10': 'customerId'},
+    {'1': 'period', '3': 4, '4': 1, '5': 9, '10': 'period'},
+    {'1': 'total_to_pay', '3': 5, '4': 1, '5': 1, '10': 'totalToPay'},
+    {'1': 'observation', '3': 6, '4': 1, '5': 9, '10': 'observation'},
   ],
 };
 
 /// Descriptor for `TogglePaymentStatusRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List togglePaymentStatusRequestDescriptor = $convert.base64Decode(
-    'ChpUb2dnbGVQYXltZW50U3RhdHVzUmVxdWVzdBIOCgJpZBgBIAEoCVICaWQSFwoHaXNfcGFpZB'
-    'gCIAEoCFIGaXNQYWlk');
+    'ChpUb2dnbGVQYXltZW50U3RhdHVzUmVxdWVzdBIdCgpyZWFkaW5nX2lkGAEgASgJUglyZWFkaW'
+    '5nSWQSFwoHaXNfcGFpZBgCIAEoCFIGaXNQYWlkEh8KC2N1c3RvbWVyX2lkGAMgASgJUgpjdXN0'
+    'b21lcklkEhYKBnBlcmlvZBgEIAEoCVIGcGVyaW9kEiAKDHRvdGFsX3RvX3BheRgFIAEoAVIKdG'
+    '90YWxUb1BheRIgCgtvYnNlcnZhdGlvbhgGIAEoCVILb2JzZXJ2YXRpb24=');
 
 @$core.Deprecated('Use togglePaymentStatusResponseDescriptor instead')
 const TogglePaymentStatusResponse$json = {
   '1': 'TogglePaymentStatusResponse',
   '2': [
-    {'1': 'reading', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Reading', '10': 'reading'},
+    {'1': 'reading_id', '3': 1, '4': 1, '5': 9, '10': 'readingId'},
+    {'1': 'is_paid', '3': 2, '4': 1, '5': 8, '10': 'isPaid'},
   ],
 };
 
 /// Descriptor for `TogglePaymentStatusResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List togglePaymentStatusResponseDescriptor = $convert.base64Decode(
-    'ChtUb2dnbGVQYXltZW50U3RhdHVzUmVzcG9uc2USLAoHcmVhZGluZxgBIAEoCzISLmludm9sdC'
-    '52MS5SZWFkaW5nUgdyZWFkaW5n');
+    'ChtUb2dnbGVQYXltZW50U3RhdHVzUmVzcG9uc2USHQoKcmVhZGluZ19pZBgBIAEoCVIJcmVhZG'
+    'luZ0lkEhcKB2lzX3BhaWQYAiABKAhSBmlzUGFpZA==');
+
+@$core.Deprecated('Use getCollectionsRequestDescriptor instead')
+const GetCollectionsRequest$json = {
+  '1': 'GetCollectionsRequest',
+  '2': [
+    {'1': 'sector_id', '3': 1, '4': 1, '5': 9, '10': 'sectorId'},
+    {'1': 'periods', '3': 2, '4': 3, '5': 9, '10': 'periods'},
+  ],
+};
+
+/// Descriptor for `GetCollectionsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCollectionsRequestDescriptor = $convert.base64Decode(
+    'ChVHZXRDb2xsZWN0aW9uc1JlcXVlc3QSGwoJc2VjdG9yX2lkGAEgASgJUghzZWN0b3JJZBIYCg'
+    'dwZXJpb2RzGAIgAygJUgdwZXJpb2Rz');
+
+@$core.Deprecated('Use getCollectionsResponseDescriptor instead')
+const GetCollectionsResponse$json = {
+  '1': 'GetCollectionsResponse',
+  '2': [
+    {'1': 'readings', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.Reading', '10': 'readings'},
+    {'1': 'customers', '3': 2, '4': 3, '5': 11, '6': '.involt.v1.CollectionCustomer', '10': 'customers'},
+  ],
+};
+
+/// Descriptor for `GetCollectionsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCollectionsResponseDescriptor = $convert.base64Decode(
+    'ChZHZXRDb2xsZWN0aW9uc1Jlc3BvbnNlEi4KCHJlYWRpbmdzGAEgAygLMhIuaW52b2x0LnYxLl'
+    'JlYWRpbmdSCHJlYWRpbmdzEjsKCWN1c3RvbWVycxgCIAMoCzIdLmludm9sdC52MS5Db2xsZWN0'
+    'aW9uQ3VzdG9tZXJSCWN1c3RvbWVycw==');
+
+@$core.Deprecated('Use collectionCustomerDescriptor instead')
+const CollectionCustomer$json = {
+  '1': 'CollectionCustomer',
+  '2': [
+    {'1': 'customer', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Customer', '10': 'customer'},
+    {'1': 'readings', '3': 2, '4': 3, '5': 11, '6': '.involt.v1.Reading', '10': 'readings'},
+  ],
+};
+
+/// Descriptor for `CollectionCustomer`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List collectionCustomerDescriptor = $convert.base64Decode(
+    'ChJDb2xsZWN0aW9uQ3VzdG9tZXISLwoIY3VzdG9tZXIYASABKAsyEy5pbnZvbHQudjEuQ3VzdG'
+    '9tZXJSCGN1c3RvbWVyEi4KCHJlYWRpbmdzGAIgAygLMhIuaW52b2x0LnYxLlJlYWRpbmdSCHJl'
+    'YWRpbmdz');
 
 const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
   '1': 'AdminService',
@@ -623,6 +674,7 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'UpsertSector', '2': '.involt.v1.UpsertSectorRequest', '3': '.involt.v1.UpsertSectorResponse'},
     {'1': 'UpsertCommunity', '2': '.involt.v1.UpsertCommunityRequest', '3': '.involt.v1.UpsertCommunityResponse'},
     {'1': 'TogglePaymentStatus', '2': '.involt.v1.TogglePaymentStatusRequest', '3': '.involt.v1.TogglePaymentStatusResponse'},
+    {'1': 'GetCollections', '2': '.involt.v1.GetCollectionsRequest', '3': '.involt.v1.GetCollectionsResponse'},
   ],
 };
 
@@ -675,6 +727,9 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.UpsertCommunityResponse': UpsertCommunityResponse$json,
   '.involt.v1.TogglePaymentStatusRequest': TogglePaymentStatusRequest$json,
   '.involt.v1.TogglePaymentStatusResponse': TogglePaymentStatusResponse$json,
+  '.involt.v1.GetCollectionsRequest': GetCollectionsRequest$json,
+  '.involt.v1.GetCollectionsResponse': GetCollectionsResponse$json,
+  '.involt.v1.CollectionCustomer': CollectionCustomer$json,
 };
 
 /// Descriptor for `AdminService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -707,5 +762,6 @@ final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
     'VuaXR5EiEuaW52b2x0LnYxLlVwc2VydENvbW11bml0eVJlcXVlc3QaIi5pbnZvbHQudjEuVXBz'
     'ZXJ0Q29tbXVuaXR5UmVzcG9uc2USZAoTVG9nZ2xlUGF5bWVudFN0YXR1cxIlLmludm9sdC52MS'
     '5Ub2dnbGVQYXltZW50U3RhdHVzUmVxdWVzdBomLmludm9sdC52MS5Ub2dnbGVQYXltZW50U3Rh'
-    'dHVzUmVzcG9uc2U=');
+    'dHVzUmVzcG9uc2USVQoOR2V0Q29sbGVjdGlvbnMSIC5pbnZvbHQudjEuR2V0Q29sbGVjdGlvbn'
+    'NSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENvbGxlY3Rpb25zUmVzcG9uc2U=');
 
