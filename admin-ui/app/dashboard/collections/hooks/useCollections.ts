@@ -1,5 +1,5 @@
 import { create } from "@bufbuild/protobuf";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   GetCollectionsRequestSchema,
@@ -48,21 +48,10 @@ export function useCollections() {
   const [sectors, setSectors] = useState<SectorTab[]>([]);
   const [selectedSectorId, setSelectedSectorId] = useState<string>("");
 
-  const [selectedYear, setSelectedYear] = useState<number>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("involt_collections_year");
-      if (saved) return parseInt(saved, 10);
-    }
-    return new Date().getFullYear();
-  });
-
-  const [selectedHalf, setSelectedHalf] = useState<"H1" | "H2">(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("involt_collections_half");
-      if (saved === "H1" || saved === "H2") return saved;
-    }
-    return new Date().getMonth() + 1 <= 6 ? "H1" : "H2";
-  });
+  // Safe server-compatible defaults — do NOT read localStorage here (SSR hydration mismatch)
+  const currentMonth = new Date().getMonth() + 1;
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [selectedHalf, setSelectedHalf] = useState<"H1" | "H2">(currentMonth <= 6 ? "H1" : "H2");
 
   // Memoize periods based on selectedYear and selectedHalf (H1: Jun to Jan, H2: Dec to Jul)
   const periods = useMemo<string[]>(() => {
@@ -79,85 +68,29 @@ export function useCollections() {
   const [modalLoading, setModalLoading] = useState(false);
   const hasFetched = useRef(false);
 
-  // Sync state to localStorage
+  // Hydrate from localStorage after mount (client-only, avoids SSR mismatch)
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("involt_collections_year", String(selectedYear));
-    }
+    startTransition(() => {
+      const savedYear = localStorage.getItem("involt_collections_year");
+      if (savedYear) setSelectedYear(parseInt(savedYear, 10));
+
+      const savedHalf = localStorage.getItem("involt_collections_half");
+      if (savedHalf === "H1" || savedHalf === "H2") setSelectedHalf(savedHalf);
+    });
+  }, []);
+
+  // Persist to localStorage on change
+  useEffect(() => {
+    localStorage.setItem("involt_collections_year", String(selectedYear));
   }, [selectedYear]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("involt_collections_half", selectedHalf);
-    }
+    localStorage.setItem("involt_collections_half", selectedHalf);
   }, [selectedHalf]);
 
-  // Load customer-first collection rows for a sector. The selected caserío maps to sector_id.
-  const loadCollections = useCallback(
-    async (sectorId: string) => {
-      if (!sectorId) return;
-      setLoading(true);
-      try {
-        const resp = await adminClient.getCollections(
-          create(GetCollectionsRequestSchema, { sectorId, periods }),
-        );
-
-        const rowMap: Record<string, CustomerRow> = {};
-        for (const collectionCustomer of resp.customers) {
-          const customer = collectionCustomer.customer;
-          if (!customer) {
-            continue;
-          }
-
-          rowMap[customer.id] = {
-            customerId: customer.id,
-            customerName: customer.name,
-            readings: Object.fromEntries(
-              periods.map((period) => [
-                period,
-                {
-                  id: "",
-                  customerId: customer.id,
-                  customerName: customer.name,
-                  period: period,
-                  totalToPay: 0,
-                  isPaid: false,
-                },
-              ]),
-            ),
-          };
-
-          for (const r of collectionCustomer.readings) {
-            rowMap[customer.id].readings[r.period] = {
-              id: r.id,
-              customerId: r.customerId,
-              customerName: r.customerName || customer.name,
-              period: r.period,
-              totalToPay: r.totalToPay,
-              isPaid: r.isPaid,
-            };
-          }
-        }
-
-        setCustomerRows(
-          Object.values(rowMap).sort((a, b) => a.customerName.localeCompare(b.customerName)),
-        );
-      } catch {
-        toast.error("Error al cargar datos de cobranza");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [periods],
-  );
-
-  const selectSector = useCallback(
-    (sectorId: string) => {
-      setSelectedSectorId(sectorId);
-      void loadCollections(sectorId);
-    },
-    [loadCollections],
-  );
+  const selectSector = useCallback((sectorId: string) => {
+    setSelectedSectorId(sectorId);
+  }, []);
 
   // Load communities & sectors once from the external RPC system.
   useEffect(() => {
@@ -193,10 +126,70 @@ export function useCollections() {
 
   // Reactively reload collections whenever selected sector or periods change
   useEffect(() => {
-    if (selectedSectorId) {
-      void loadCollections(selectedSectorId);
+    if (!selectedSectorId) return;
+
+    let cancelled = false;
+
+    async function fetchCollections() {
+      setLoading(true);
+      try {
+        const resp = await adminClient.getCollections(
+          create(GetCollectionsRequestSchema, { sectorId: selectedSectorId, periods }),
+        );
+
+        if (cancelled) return;
+
+        const rowMap: Record<string, CustomerRow> = {};
+        for (const collectionCustomer of resp.customers) {
+          const customer = collectionCustomer.customer;
+          if (!customer) continue;
+
+          rowMap[customer.id] = {
+            customerId: customer.id,
+            customerName: customer.name,
+            readings: Object.fromEntries(
+              periods.map((period) => [
+                period,
+                {
+                  id: "",
+                  customerId: customer.id,
+                  customerName: customer.name,
+                  period,
+                  totalToPay: 0,
+                  isPaid: false,
+                },
+              ]),
+            ),
+          };
+
+          for (const r of collectionCustomer.readings) {
+            rowMap[customer.id].readings[r.period] = {
+              id: r.id,
+              customerId: r.customerId,
+              customerName: r.customerName || customer.name,
+              period: r.period,
+              totalToPay: r.totalToPay,
+              isPaid: r.isPaid,
+            };
+          }
+        }
+
+        setCustomerRows(
+          Object.values(rowMap).sort((a, b) => a.customerName.localeCompare(b.customerName)),
+        );
+      } catch {
+        if (!cancelled) toast.error("Error al cargar datos de cobranza");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
-  }, [selectedSectorId, loadCollections]);
+
+    void fetchCollections();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedSectorId, periods]);
 
   // Toggle payment status with optimistic update + revert on error
   const handleToggle = useCallback(async (reading: CollectionReading) => {
