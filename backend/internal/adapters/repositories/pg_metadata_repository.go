@@ -33,7 +33,7 @@ func (r *PostgresMetadataRepository) ListCommunities(ctx context.Context) ([]dom
 
 func (r *PostgresMetadataRepository) ListSectors(ctx context.Context) ([]domain.Sector, error) {
 	var sectors []domain.Sector
-	query := "SELECT id, community_id AS communityid, name FROM sectors ORDER BY name ASC"
+	query := "SELECT id, COALESCE(community_id, '') AS communityid, name FROM sectors ORDER BY name ASC"
 	err := r.db.SelectContext(ctx, &sectors, query)
 	if err != nil {
 		return nil, fmt.Errorf("error listing sectors: %w", err)

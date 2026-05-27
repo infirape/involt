@@ -40,6 +40,7 @@ export interface CustomerTableHandle {
 
 interface CustomerTableProps {
   communityId?: string;
+  sectorId?: string;
   showActions?: boolean;
   hideHeaderButtons?: boolean;
 }
@@ -47,7 +48,7 @@ interface CustomerTableProps {
 export const CustomerTable = forwardRef<
   CustomerTableHandle,
   CustomerTableProps
->(({ communityId, showActions = true, hideHeaderButtons = false }, ref) => {
+>(({ communityId, sectorId, showActions = true, hideHeaderButtons = false }, ref) => {
   const {
     data,
     pagination,
@@ -63,23 +64,33 @@ export const CustomerTable = forwardRef<
     handleSave,
     handleDeleteCustomer,
     totalPages,
-  } = useCustomers();
+  } = useCustomers(sectorId);
 
   // Expose openNewModal to parent
   useImperativeHandle(ref, () => ({
     openNewModal: () => {
-      const defaultSector = data.sectors.find(
-        (s) => s.communityId === communityId,
-      );
-      handleOpenModal(defaultSector ? { sectorId: defaultSector.id } : null);
+      if (sectorId) {
+        handleOpenModal({ sectorId });
+      } else {
+        const defaultSector = data.sectors.find(
+          (s) => s.communityId === communityId,
+        );
+        handleOpenModal(defaultSector ? { sectorId: defaultSector.id } : null);
+      }
     },
-  }), [data.sectors, communityId, handleOpenModal]);
+  }), [data.sectors, communityId, sectorId, handleOpenModal]);
 
   useEffect(() => {
     if (communityId && filters.communityId !== communityId) {
       setFilters((prev) => ({ ...prev, communityId }));
     }
   }, [communityId, filters.communityId, setFilters]);
+
+  useEffect(() => {
+    if (sectorId && filters.sectorId !== sectorId) {
+      setFilters((prev) => ({ ...prev, sectorId }));
+    }
+  }, [sectorId, filters.sectorId, setFilters]);
 
   return (
     <div className="space-y-4">

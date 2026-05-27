@@ -31,17 +31,22 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { isAdmin } = useAuth();
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (typeof window === "undefined") return false;
-    const saved = localStorage.getItem("sidebar_collapsed");
-    return saved === "true";
-  });
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const { setSelectedPeriod, setPeriods } = useConfigStore();
 
-  // Load periods and initialize global state
+  // Load periods, initialize collapsed state and set mounted flag
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+      const saved = localStorage.getItem("sidebar_collapsed");
+      if (saved === "true") {
+        setIsCollapsed(true);
+      }
+    }, 0);
+
     const initConfig = async () => {
       try {
         const resp = await adminClient.listPeriods({});
@@ -62,6 +67,8 @@ export default function DashboardLayout({
     };
 
     initConfig();
+
+    return () => clearTimeout(timer);
   }, [setPeriods, setSelectedPeriod]);
 
   // Persistence for collapsed state is now handled during initialization
@@ -76,7 +83,7 @@ export default function DashboardLayout({
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/customers", label: "Clientes", icon: Users },
     { href: "/dashboard/readings", label: "Lecturas", icon: Zap },
-    ...(isAdmin
+    ...(isMounted && isAdmin
       ? [
           { href: "/dashboard/users", label: "Usuarios", icon: Users },
           { href: "/dashboard/communities", label: "Comunidades", icon: MapPin },

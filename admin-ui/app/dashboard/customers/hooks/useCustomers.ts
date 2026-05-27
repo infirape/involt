@@ -9,7 +9,7 @@ import {
 import { create } from "@bufbuild/protobuf";
 import { toast } from "sonner";
 
-export function useCustomers() {
+export function useCustomers(initialSectorId = "") {
   const [isPending, startTransition] = useTransition();
   const [data, setData] = useState<{
     customers: Customer[];
@@ -29,7 +29,7 @@ export function useCustomers() {
   });
 
   const [filters, setFilters] = useState({
-    sectorId: "",
+    sectorId: initialSectorId,
     searchQuery: "",
     communityId: "",
   });

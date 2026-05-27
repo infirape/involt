@@ -51,8 +51,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	communityMap := make(map[string]string) // Name -> ID
-	sectorMap := make(map[string]string)    // Name -> ID
+	// Insert Chetilla as the main community
+	const mainCommID = "COM-001"
+	const mainCommName = "Chetilla"
+	_, err = db.ExecContext(ctx, "INSERT INTO communities (id, name) VALUES ($1, $2)", mainCommID, mainCommName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sectorMap := make(map[string]string) // Sector/Caserío Name -> Sector ID
 	
 	// Chetilla Center
 	baseLat := -7.1470
@@ -67,32 +74,23 @@ func main() {
 		
 		name := record[1]
 		code := record[2]
-		commName := record[3]
+		commName := record[3] // This represents the sector/caserío name in the CSV
 		
 		if commName == "" {
 			commName = "GENERAL"
 		}
 
-		// Handle Community
-		commID, ok := communityMap[commName]
+		// Handle Sector (Caserío) under Chetilla
+		secID, ok := sectorMap[commName]
 		if !ok {
-			commID = fmt.Sprintf("COM-%03d", len(communityMap)+1)
-			_, err = db.ExecContext(ctx, "INSERT INTO communities (id, name) VALUES ($1, $2)", commID, commName)
-			if err != nil {
-				log.Fatal(err)
-			}
-			communityMap[commName] = commID
-			
-			// Handle Sector
-			secID := fmt.Sprintf("SEC-%03d", len(sectorMap)+1)
-			_, err = db.ExecContext(ctx, "INSERT INTO sectors (id, community_id, name) VALUES ($1, $2, $3)", secID, commID, commName+" Centro")
+			secID = fmt.Sprintf("SEC-%03d", len(sectorMap)+1)
+			_, err = db.ExecContext(ctx, "INSERT INTO sectors (id, community_id, name) VALUES ($1, $2, $3)", secID, mainCommID, commName)
 			if err != nil {
 				log.Fatal(err)
 			}
 			sectorMap[commName] = secID
 		}
 		
-		secID := sectorMap[commName]
 		custID := fmt.Sprintf("CUST-%s", code)
 		
 		// Random dispersion (approx 5km for full registry)
@@ -103,7 +101,7 @@ func main() {
 		_, err = db.ExecContext(ctx, `
 			INSERT INTO customers (id, code, name, community_id, sector_id, connection_type, tariff, meter_number, latitude, longitude, initial_reading)
 			VALUES ($1, $2, $3, $4, $5, 'MONOFASICA', 0.85, $6, $7, $8, $9)`,
-			custID, code, name, commID, secID, "MET-"+code, lat, lng, lastVal)
+			custID, code, name, mainCommID, secID, "MET-"+code, lat, lng, lastVal)
 		if err != nil {
 			log.Printf("⚠️ Error inserting customer %s: %v", code, err)
 			continue
@@ -127,5 +125,5 @@ func main() {
 		count++
 	}
 
-	fmt.Printf("✅ Seeding complete! Processed %d customers in %d communities.\n", count, len(communityMap))
+	fmt.Printf("✅ Seeding complete! Processed %d customers in 1 community (Chetilla).\n", count)
 }
