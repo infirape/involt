@@ -574,6 +574,33 @@ final $typed_data.Uint8List closePeriodResponseDescriptor = $convert.base64Decod
     'EuUGVyaW9kUgxjbG9zZWRQZXJpb2QSMgoLbmV4dF9wZXJpb2QYAiABKAsyES5pbnZvbHQudjEu'
     'UGVyaW9kUgpuZXh0UGVyaW9k');
 
+@$core.Deprecated('Use togglePaymentStatusRequestDescriptor instead')
+const TogglePaymentStatusRequest$json = {
+  '1': 'TogglePaymentStatusRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'is_paid', '3': 2, '4': 1, '5': 8, '10': 'isPaid'},
+  ],
+};
+
+/// Descriptor for `TogglePaymentStatusRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List togglePaymentStatusRequestDescriptor = $convert.base64Decode(
+    'ChpUb2dnbGVQYXltZW50U3RhdHVzUmVxdWVzdBIOCgJpZBgBIAEoCVICaWQSFwoHaXNfcGFpZB'
+    'gCIAEoCFIGaXNQYWlk');
+
+@$core.Deprecated('Use togglePaymentStatusResponseDescriptor instead')
+const TogglePaymentStatusResponse$json = {
+  '1': 'TogglePaymentStatusResponse',
+  '2': [
+    {'1': 'reading', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Reading', '10': 'reading'},
+  ],
+};
+
+/// Descriptor for `TogglePaymentStatusResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List togglePaymentStatusResponseDescriptor = $convert.base64Decode(
+    'ChtUb2dnbGVQYXltZW50U3RhdHVzUmVzcG9uc2USLAoHcmVhZGluZxgBIAEoCzISLmludm9sdC'
+    '52MS5SZWFkaW5nUgdyZWFkaW5n');
+
 const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
   '1': 'AdminService',
   '2': [
@@ -595,6 +622,7 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'ClosePeriod', '2': '.involt.v1.ClosePeriodRequest', '3': '.involt.v1.ClosePeriodResponse'},
     {'1': 'UpsertSector', '2': '.involt.v1.UpsertSectorRequest', '3': '.involt.v1.UpsertSectorResponse'},
     {'1': 'UpsertCommunity', '2': '.involt.v1.UpsertCommunityRequest', '3': '.involt.v1.UpsertCommunityResponse'},
+    {'1': 'TogglePaymentStatus', '2': '.involt.v1.TogglePaymentStatusRequest', '3': '.involt.v1.TogglePaymentStatusResponse'},
   ],
 };
 
@@ -645,6 +673,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.UpsertSectorResponse': UpsertSectorResponse$json,
   '.involt.v1.UpsertCommunityRequest': UpsertCommunityRequest$json,
   '.involt.v1.UpsertCommunityResponse': UpsertCommunityResponse$json,
+  '.involt.v1.TogglePaymentStatusRequest': TogglePaymentStatusRequest$json,
+  '.involt.v1.TogglePaymentStatusResponse': TogglePaymentStatusResponse$json,
 };
 
 /// Descriptor for `AdminService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -675,5 +705,7 @@ final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
     'NlUGVyaW9kUmVzcG9uc2USTwoMVXBzZXJ0U2VjdG9yEh4uaW52b2x0LnYxLlVwc2VydFNlY3Rv'
     'clJlcXVlc3QaHy5pbnZvbHQudjEuVXBzZXJ0U2VjdG9yUmVzcG9uc2USWAoPVXBzZXJ0Q29tbX'
     'VuaXR5EiEuaW52b2x0LnYxLlVwc2VydENvbW11bml0eVJlcXVlc3QaIi5pbnZvbHQudjEuVXBz'
-    'ZXJ0Q29tbXVuaXR5UmVzcG9uc2U=');
+    'ZXJ0Q29tbXVuaXR5UmVzcG9uc2USZAoTVG9nZ2xlUGF5bWVudFN0YXR1cxIlLmludm9sdC52MS'
+    '5Ub2dnbGVQYXltZW50U3RhdHVzUmVxdWVzdBomLmludm9sdC52MS5Ub2dnbGVQYXltZW50U3Rh'
+    'dHVzUmVzcG9uc2U=');
 

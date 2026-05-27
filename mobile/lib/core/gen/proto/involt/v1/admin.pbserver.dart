@@ -39,6 +39,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
   $async.Future<$1.ClosePeriodResponse> closePeriod($pb.ServerContext ctx, $1.ClosePeriodRequest request);
   $async.Future<$1.UpsertSectorResponse> upsertSector($pb.ServerContext ctx, $1.UpsertSectorRequest request);
   $async.Future<$1.UpsertCommunityResponse> upsertCommunity($pb.ServerContext ctx, $1.UpsertCommunityRequest request);
+  $async.Future<$1.TogglePaymentStatusResponse> togglePaymentStatus($pb.ServerContext ctx, $1.TogglePaymentStatusRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -60,6 +61,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'ClosePeriod': return $1.ClosePeriodRequest();
       case 'UpsertSector': return $1.UpsertSectorRequest();
       case 'UpsertCommunity': return $1.UpsertCommunityRequest();
+      case 'TogglePaymentStatus': return $1.TogglePaymentStatusRequest();
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }
@@ -84,6 +86,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'ClosePeriod': return this.closePeriod(ctx, request as $1.ClosePeriodRequest);
       case 'UpsertSector': return this.upsertSector(ctx, request as $1.UpsertSectorRequest);
       case 'UpsertCommunity': return this.upsertCommunity(ctx, request as $1.UpsertCommunityRequest);
+      case 'TogglePaymentStatus': return this.togglePaymentStatus(ctx, request as $1.TogglePaymentStatusRequest);
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }

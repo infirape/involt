@@ -436,6 +436,7 @@ class Reading extends $pb.GeneratedMessage {
     $core.String? period,
     $core.String? observation,
     $core.String? customerName,
+    $core.bool? isPaid,
   }) {
     final $result = create();
     if (id != null) {
@@ -513,6 +514,9 @@ class Reading extends $pb.GeneratedMessage {
     if (customerName != null) {
       $result.customerName = customerName;
     }
+    if (isPaid != null) {
+      $result.isPaid = isPaid;
+    }
     return $result;
   }
   Reading._() : super();
@@ -545,6 +549,7 @@ class Reading extends $pb.GeneratedMessage {
     ..aOS(23, _omitFieldNames ? '' : 'period')
     ..aOS(24, _omitFieldNames ? '' : 'observation')
     ..aOS(25, _omitFieldNames ? '' : 'customerName')
+    ..aOB(26, _omitFieldNames ? '' : 'isPaid')
     ..hasRequiredFields = false
   ;
 
@@ -796,6 +801,15 @@ class Reading extends $pb.GeneratedMessage {
   $core.bool hasCustomerName() => $_has(24);
   @$pb.TagNumber(25)
   void clearCustomerName() => clearField(25);
+
+  @$pb.TagNumber(26)
+  $core.bool get isPaid => $_getBF(25);
+  @$pb.TagNumber(26)
+  set isPaid($core.bool v) { $_setBool(25, v); }
+  @$pb.TagNumber(26)
+  $core.bool hasIsPaid() => $_has(25);
+  @$pb.TagNumber(26)
+  void clearIsPaid() => clearField(26);
 }
 
 /// AppConfig contains remote configuration for the mobile application.

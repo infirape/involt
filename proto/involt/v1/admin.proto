@@ -61,6 +61,12 @@ service AdminService {
 
   // UpsertCommunity creates or updates a community.
   rpc UpsertCommunity(UpsertCommunityRequest) returns (UpsertCommunityResponse);
+
+  // TogglePaymentStatus updates the payment status of a reading.
+  rpc TogglePaymentStatus(TogglePaymentStatusRequest) returns (TogglePaymentStatusResponse);
+
+  // GetCollections returns the payment matrix for a sector across periods.
+  rpc GetCollections(GetCollectionsRequest) returns (GetCollectionsResponse);
 }
 
 message UpsertSectorRequest {
@@ -254,4 +260,23 @@ message ClosePeriodRequest {
 message ClosePeriodResponse {
   Period closed_period = 1;
   Period next_period = 2;
+}
+
+message TogglePaymentStatusRequest {
+  string reading_id = 1; // Reading ID
+  bool is_paid = 2; // New status
+}
+
+message TogglePaymentStatusResponse {
+  string reading_id = 1;
+  bool is_paid = 2;
+}
+
+message GetCollectionsRequest {
+  string sector_id = 1;
+  repeated string periods = 2;
+}
+
+message GetCollectionsResponse {
+  repeated Reading readings = 1;
 }

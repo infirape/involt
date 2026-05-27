@@ -2415,6 +2415,122 @@ class ClosePeriodResponse extends $pb.GeneratedMessage {
   $0.Period ensureNextPeriod() => $_ensure(1);
 }
 
+class TogglePaymentStatusRequest extends $pb.GeneratedMessage {
+  factory TogglePaymentStatusRequest({
+    $core.String? id,
+    $core.bool? isPaid,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    if (isPaid != null) {
+      $result.isPaid = isPaid;
+    }
+    return $result;
+  }
+  TogglePaymentStatusRequest._() : super();
+  factory TogglePaymentStatusRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory TogglePaymentStatusRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'TogglePaymentStatusRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..aOB(2, _omitFieldNames ? '' : 'isPaid')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  TogglePaymentStatusRequest clone() => TogglePaymentStatusRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  TogglePaymentStatusRequest copyWith(void Function(TogglePaymentStatusRequest) updates) => super.copyWith((message) => updates(message as TogglePaymentStatusRequest)) as TogglePaymentStatusRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static TogglePaymentStatusRequest create() => TogglePaymentStatusRequest._();
+  TogglePaymentStatusRequest createEmptyInstance() => create();
+  static $pb.PbList<TogglePaymentStatusRequest> createRepeated() => $pb.PbList<TogglePaymentStatusRequest>();
+  @$core.pragma('dart2js:noInline')
+  static TogglePaymentStatusRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TogglePaymentStatusRequest>(create);
+  static TogglePaymentStatusRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.bool get isPaid => $_getBF(1);
+  @$pb.TagNumber(2)
+  set isPaid($core.bool v) { $_setBool(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasIsPaid() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearIsPaid() => clearField(2);
+}
+
+class TogglePaymentStatusResponse extends $pb.GeneratedMessage {
+  factory TogglePaymentStatusResponse({
+    $0.Reading? reading,
+  }) {
+    final $result = create();
+    if (reading != null) {
+      $result.reading = reading;
+    }
+    return $result;
+  }
+  TogglePaymentStatusResponse._() : super();
+  factory TogglePaymentStatusResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory TogglePaymentStatusResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'TogglePaymentStatusResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOM<$0.Reading>(1, _omitFieldNames ? '' : 'reading', subBuilder: $0.Reading.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  TogglePaymentStatusResponse clone() => TogglePaymentStatusResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  TogglePaymentStatusResponse copyWith(void Function(TogglePaymentStatusResponse) updates) => super.copyWith((message) => updates(message as TogglePaymentStatusResponse)) as TogglePaymentStatusResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static TogglePaymentStatusResponse create() => TogglePaymentStatusResponse._();
+  TogglePaymentStatusResponse createEmptyInstance() => create();
+  static $pb.PbList<TogglePaymentStatusResponse> createRepeated() => $pb.PbList<TogglePaymentStatusResponse>();
+  @$core.pragma('dart2js:noInline')
+  static TogglePaymentStatusResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TogglePaymentStatusResponse>(create);
+  static TogglePaymentStatusResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.Reading get reading => $_getN(0);
+  @$pb.TagNumber(1)
+  set reading($0.Reading v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasReading() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearReading() => clearField(1);
+  @$pb.TagNumber(1)
+  $0.Reading ensureReading() => $_ensure(0);
+}
+
 class AdminServiceApi {
   $pb.RpcClient _client;
   AdminServiceApi(this._client);
@@ -2472,6 +2588,9 @@ class AdminServiceApi {
   ;
   $async.Future<UpsertCommunityResponse> upsertCommunity($pb.ClientContext? ctx, UpsertCommunityRequest request) =>
     _client.invoke<UpsertCommunityResponse>(ctx, 'AdminService', 'UpsertCommunity', request, UpsertCommunityResponse())
+  ;
+  $async.Future<TogglePaymentStatusResponse> togglePaymentStatus($pb.ClientContext? ctx, TogglePaymentStatusRequest request) =>
+    _client.invoke<TogglePaymentStatusResponse>(ctx, 'AdminService', 'TogglePaymentStatus', request, TogglePaymentStatusResponse())
   ;
 }
 

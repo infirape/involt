@@ -24,6 +24,8 @@ type ReadingRepository interface {
 	SumConsumptionByPeriod(ctx context.Context, period string) (float64, error)
 	List(ctx context.Context, customerID, sectorID, period string, limit, offset int) ([]domain.Reading, int, error)
 	ListAll(ctx context.Context) ([]domain.Reading, error)
+	UpdatePaymentStatus(ctx context.Context, readingID string, isPaid bool) error
+	ListBySector(ctx context.Context, sectorID string, periods []string) ([]domain.Reading, error)
 }
 
 // CustomerRepository defines operations for customer data.

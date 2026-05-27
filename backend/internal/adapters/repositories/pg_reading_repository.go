@@ -243,3 +243,45 @@ func (r *PostgresReadingRepository) ListAll(ctx context.Context) ([]domain.Readi
 	err := r.db.SelectContext(ctx, &readings, query)
 	return readings, err
 }
+
+// UpdatePaymentStatus updates the is_paid flag for a single reading.
+func (r *PostgresReadingRepository) UpdatePaymentStatus(ctx context.Context, readingID string, isPaid bool) error {
+	query := `UPDATE readings SET is_paid = $1 WHERE id = $2`
+	_, err := r.db.ExecContext(ctx, query, isPaid, readingID)
+	if err != nil {
+		return fmt.Errorf("error updating payment status: %w", err)
+	}
+	return nil
+}
+
+// ListBySector returns all readings for the given sector filtered by a list of periods.
+// It joins with customers so we can filter by sector_id.
+func (r *PostgresReadingRepository) ListBySector(ctx context.Context, sectorID string, periods []string) ([]domain.Reading, error) {
+	if len(periods) == 0 {
+		return nil, nil
+	}
+
+	// Build $2, $3, ... placeholders for the IN clause
+	placeholders := ""
+	args := []interface{}{sectorID}
+	for i, p := range periods {
+		if i > 0 {
+			placeholders += ", "
+		}
+		placeholders += fmt.Sprintf("$%d", i+2)
+		args = append(args, p)
+	}
+
+	query := fmt.Sprintf(`
+		SELECT r.* FROM readings r
+		JOIN customers c ON r.customer_id = c.id
+		WHERE c.sector_id = $1 AND r.period IN (%s)
+		ORDER BY c.name ASC, r.period DESC`, placeholders)
+
+	var readings []domain.Reading
+	err := r.db.SelectContext(ctx, &readings, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("error listing readings by sector: %w", err)
+	}
+	return readings, nil
+}

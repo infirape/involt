@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   MapPin,
+  DollarSign,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -83,6 +84,7 @@ export default function DashboardLayout({
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/customers", label: "Clientes", icon: Users },
     { href: "/dashboard/readings", label: "Lecturas", icon: Zap },
+    { href: "/dashboard/collections", label: "Cobranzas", icon: DollarSign },
     ...(isMounted && isAdmin
       ? [
           { href: "/dashboard/users", label: "Usuarios", icon: Users },

@@ -83,7 +83,10 @@ CREATE TABLE IF NOT EXISTS readings (
     overdue_total DOUBLE PRECISION DEFAULT 0,    -- Total recibos vencidos
     total_to_pay DOUBLE PRECISION NOT NULL,
     -- Fechas
-    expiration_date DATE NOT NULL  -- Fecha de vencimiento
+    expiration_date DATE NOT NULL,  -- Fecha de vencimiento
+    period VARCHAR(10),
+    observation TEXT,
+    is_paid BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- Initial Mock Data for Testing

@@ -94,6 +94,7 @@ type Reading struct {
 	ExpirationDate   time.Time `db:"expiration_date"`
 	Observation      string    `db:"observation"`
 	CustomerName     string    `db:"-"`
+	IsPaid           bool      `db:"is_paid"`
 }
 
 // AppConfig contains remote configuration.

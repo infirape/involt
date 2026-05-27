@@ -85,7 +85,9 @@ CREATE TABLE IF NOT EXISTS readings (
     previous_balance double precision DEFAULT 0,
     overdue_total double precision DEFAULT 0,
     expiration_date date DEFAULT CURRENT_DATE NOT NULL,
-    period character varying(10)
+    period character varying(10),
+    observation text,
+    is_paid boolean DEFAULT false NOT NULL
 );
 
 -- Settings

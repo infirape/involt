@@ -43,6 +43,7 @@ func MapProtoToReading(p *involtv1.Reading) *Reading {
 		Period:           period,
 		Observation:      p.Observation,
 		CustomerName:     p.CustomerName,
+		IsPaid:           p.IsPaid,
 	}
 }
 
@@ -79,6 +80,7 @@ func MapReadingToProto(d *Reading) *involtv1.Reading {
 		Period:           period,
 		Observation:      d.Observation,
 		CustomerName:     d.CustomerName,
+		IsPaid:           d.IsPaid,
 	}
 }
 
