@@ -66,7 +66,7 @@ func (r *PostgresPeriodRepository) GetStats(ctx context.Context, periodID string
 	stats := &domain.PeriodStats{}
 
 	// 1. Total Customers
-	err := r.db.GetContext(ctx, &stats.TotalCustomers, "SELECT COUNT(*) FROM customers")
+	err := r.db.GetContext(ctx, &stats.TotalCustomers, "SELECT COUNT(*) FROM customers WHERE deleted_at IS NULL")
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (r *PostgresPeriodRepository) GetStats(ctx context.Context, periodID string
 			), 'Sin asignar') as supervisor
 		FROM customers c
 		JOIN sectors s ON c.sector_id = s.id
-		WHERE c.id NOT IN (
+		WHERE c.deleted_at IS NULL AND c.id NOT IN (
 			SELECT customer_id FROM readings WHERE period = $1
 		)
 		ORDER BY s.name ASC, c.name ASC
